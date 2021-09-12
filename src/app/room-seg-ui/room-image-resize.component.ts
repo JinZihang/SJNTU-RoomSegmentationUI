@@ -6,8 +6,6 @@ import { Directive, AfterViewInit, Input, ElementRef, Renderer2 } from '@angular
 export class RoomImage implements AfterViewInit {
   @Input() imageDim: any;
 
-
-
   constructor(private elementRef: ElementRef, private renderer: Renderer2) {}
 
   ngAfterViewInit() {
