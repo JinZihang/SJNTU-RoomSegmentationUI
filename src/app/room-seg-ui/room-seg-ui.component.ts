@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, OnInit, Input, Directive, ViewChild, ElementRef } from '@angular/core';
 import linesetData from '../../assets/mock-lineset.json';
 
 @Component({
@@ -11,16 +11,17 @@ export class RoomSegUIComponent implements OnInit {
 
   ngOnInit() {}
 
+  // ngAfterViewInit() {}
+
   // Change to @Input after completing the UI
   imageSrc = '/assets/mock-image.png';
   linesets = linesetData.Linesets;
-
-  // imageDimensions = ;
-
+  
+  // Get the image dimensions
+  imageDim = 1.5;
+  
   segAdd(): void {}
-
   segRemove(): void {}
-
   segConfirm(): void {}
 }
 

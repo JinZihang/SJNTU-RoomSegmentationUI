@@ -1,10 +1,1 @@
-<div *ngIf='linesets'>
-    <ul id='Canvas'>
-        <li *ngFor='let lineset of linesets'>
-            <span>{{lineset[0]}}</span>
-        </li>
-    </ul>
-    <canvas>
-        test
-    </canvas>
-</div>
+<canvas id='lineset-canvas' [canvasDim]='imageDim'></canvas>
