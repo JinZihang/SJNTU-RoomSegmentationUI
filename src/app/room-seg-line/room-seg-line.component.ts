@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef, Input, ViewChild, Renderer2 } from '@angular/core';
+import { Component, AfterViewInit, Input } from '@angular/core';
 
 @Component({
   selector: 'room-segmentation-line',
@@ -7,9 +7,6 @@ import { Component, OnInit, AfterViewInit, ElementRef, Input, ViewChild, Rendere
 })
 export class RoomSegLineComponent implements AfterViewInit {
   @Input() linesets: any;
-  @Input() imageDim: any;
-
-  constructor() {}
 
   ngAfterViewInit() {}
 }

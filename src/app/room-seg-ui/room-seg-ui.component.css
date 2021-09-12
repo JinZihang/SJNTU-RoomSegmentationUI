@@ -1,20 +1,26 @@
 #room-seg-ui {
-    position: relative;
+    position: absolute;
     height: 100%;
     width: 100%;
 }
 
 #container {
-    display: block;
     position: relative;
-    top: 10%;
-    height: 80%;
-    width: 60%;
+    top: 10px;
     margin: auto;
+    height: 600px;
+    width: 600px;
+}
+
+#dim-container {
+    position: absolute;
 }
 
 #room-top-view-image {
     position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
 }
 
 #buttonMenu {

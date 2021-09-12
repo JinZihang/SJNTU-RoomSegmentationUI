@@ -1,7 +1,9 @@
 <div id='room-seg-ui'>
     <div id='container'>
-        <img id='room-top-view-image' [src]='imageSrc' [imageDim]='imageDim'>
-        <room-segmentation-line [linesets]='linesets' [imageDim]='imageDim'></room-segmentation-line>
+        <div id='dim-container' #dimContainer>
+            <img id='room-top-view-image' #roomTopViewImage [src]='imageSrc' (load)='roomImgOnLoad()'>
+            <room-segmentation-line [linesets]='linesets'></room-segmentation-line>
+        </div>
     </div>
     <!-- Add a component to show current cursor coordinates. -->
     <div id='buttonMenu'>
