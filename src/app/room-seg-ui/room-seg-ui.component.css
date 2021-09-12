@@ -13,11 +13,8 @@
     margin: auto;
 }
 
-/* Should be determined via variables */
 #room-top-view-image {
     position: absolute;
-    /* height: 100%;
-    max-width: 100%; */
 }
 
 #buttonMenu {
