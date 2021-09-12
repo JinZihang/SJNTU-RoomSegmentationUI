@@ -1,7 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import{ RoomSegmemtationDataSource } from '../room-seg-data/room-seg-data-source';
-
-// import npyjs;
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'room-segmentation-line',
@@ -9,9 +6,9 @@ import{ RoomSegmemtationDataSource } from '../room-seg-data/room-seg-data-source
   styleUrls: ['./room-seg-line.component.css']
 })
 export class RoomSegLineComponent implements OnInit {
-  segDataSource = RoomSegmemtationDataSource
-
   constructor() {}
 
   ngOnInit() {}
+
+  @Input() linesets?: any;
 }

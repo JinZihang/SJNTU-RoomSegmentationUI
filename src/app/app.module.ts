@@ -21,4 +21,4 @@ import { RoomSegLineComponent } from './room-seg-line/room-seg-line.component';
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

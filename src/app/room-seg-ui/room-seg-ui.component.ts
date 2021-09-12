@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import{ RoomSegmemtationDataSource } from '../room-seg-data/room-seg-data-source';
+import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import linesetData from '../../assets/mock-lineset.json';
 
 @Component({
   selector: 'room-segmentation-ui',
@@ -7,9 +7,20 @@ import{ RoomSegmemtationDataSource } from '../room-seg-data/room-seg-data-source
   styleUrls: ['./room-seg-ui.component.css']
 })
 export class RoomSegUIComponent implements OnInit {
-  segDataSource = RoomSegmemtationDataSource
-
   constructor() {}
 
   ngOnInit() {}
+
+  // Change to @Input after completing the UI
+  imageSrc = '/assets/mock-image.png';
+  linesets = linesetData.Linesets;
+
+  // imageDimensions = ;
+
+  segAdd(): void {}
+
+  segRemove(): void {}
+
+  segConfirm(): void {}
 }
+

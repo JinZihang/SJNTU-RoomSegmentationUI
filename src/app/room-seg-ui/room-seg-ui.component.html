@@ -1,9 +1,14 @@
 <div id='room-seg-ui'>
-    <img src={{segDataSource.imagePath}} alt='image' id='room-top-view-image'>
-    <room-segmentation-line></room-segmentation-line>
-    <!-- Click this button, then add 2 points, the coordinates of points could be manually set, after complete click a complete button-->
-    <button id='seg-add'>Add a Segmentation Line</button>
-    <!-- Click this button, then click any lines, each one pops up a confirm dialogue box, after complete click a complete button-->
-    <button id='seg-remove'>Remove Segmentation Lines</button>
-    <button id='seg-confirm'>Confirm Result</button>
+    <div id='container'>
+        <img [src]='imageSrc' alt='image' id='room-top-view-image'>
+        <room-segmentation-line [linesets]='linesets'></room-segmentation-line>
+    </div>
+    <!-- Add a component to show current cursor coordinates. -->
+    <div id='buttonMenu'>
+        <!-- Click this button, then add 2 points, the coordinates of points could be manually set, after complete click a complete button-->
+        <button id='seg-add' (click)='segAdd()'>Add a Segmentation Line</button>
+        <!-- Click this button, then click any lines, each one pops up a confirm dialogue box, after complete click a complete button-->
+        <button id='seg-remove' (click)='segRemove()'>Remove Segmentation Lines</button>
+        <button id='seg-confirm' (click)='segConfirm()'>Confirm Result</button>
+    </div>
 </div>

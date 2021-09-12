@@ -1,0 +1,13 @@
+#Canvas {
+    position: absolute;
+    max-height: 100%;
+    max-width: 100%;
+    background-color: red;
+}
+
+canvas {
+    position: absolute;
+    max-height: 100%;
+    max-width: 100%;
+    background-color: blue;
+}
