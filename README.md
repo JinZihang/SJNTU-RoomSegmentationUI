@@ -1,8 +1,6 @@
 # RoomSegmentationUi
 
-This UI is developed for manually fixing room segmentation flaws. It is a component of a SJ-NTU Corp Lab project, Singapore.
-
-Developer: Jin Zihang
+- This UI was developed for manually fixing room segmentation flaws, as a component of a SJ-NTU Corp Lab project.
 
 # Notes
 
