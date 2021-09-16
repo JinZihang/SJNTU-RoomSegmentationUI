@@ -1,6 +1,24 @@
-canvas {
+svg {
     position: absolute;
     height: 100%;
     width: 100%;
-    z-index: 2;
+    z-index: 3;
+}
+
+.line-segment {
+    position: relative;
+    stroke: black;
+    stroke-width: 3;
+}
+
+.line-segment-extremity {
+    stroke: red;
+    stroke-width: 3;
+    fill: red;
+}
+
+.line {
+    position: relative;
+    stroke: cadetblue;
+    stroke-width: 3;
 }

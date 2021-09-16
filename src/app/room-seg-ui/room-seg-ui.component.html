@@ -2,7 +2,7 @@
     <div id='container'>
         <div id='dim-container' #dimContainer>
             <img id='room-top-view-image' #roomTopViewImage [src]='imageSrc' (load)='roomImgOnLoad()'>
-            <room-segmentation-line [linesets]='linesets'></room-segmentation-line>
+            <room-segmentation-line [linesets]='linesets' [extendedLinesets]='extendedLinesets'></room-segmentation-line>
         </div>
     </div>
     <!-- Add a component to show current cursor coordinates. -->

@@ -7,6 +7,7 @@ import { Component, AfterViewInit, Input } from '@angular/core';
 })
 export class RoomSegLineComponent implements AfterViewInit {
   @Input() linesets: any;
+  @Input() extendedLinesets: any;
 
   ngAfterViewInit() {}
 }
