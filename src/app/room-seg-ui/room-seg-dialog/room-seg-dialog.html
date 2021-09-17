@@ -1,5 +1,8 @@
 <h1 mat-dialog-title>{{title}}</h1>
-<div mat-dialog-actions>
-    <button mat-button [mat-dialog-close]='[true, action]'>Confirm</button>
-    <button mat-button [mat-dialog-close]='[false, action]'>Cancel</button>
+<div id='dialog-content' mat-dialog-content>
+    <p>{{content}}</p>
+</div>
+<div id='dialog-button-container' mat-dialog-actions>
+    <button class='dialog-button' mat-stroked-button [mat-dialog-close]='[true, action]'>Confirm</button>
+    <button class='dialog-button' mat-stroked-button [mat-dialog-close]='[false, action]'>Cancel</button>
 </div>

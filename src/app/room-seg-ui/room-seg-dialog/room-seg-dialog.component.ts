@@ -8,10 +8,12 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class RoomSegDialog implements OnInit {
     title: string;
+    content: string;
     action: string;
 
     constructor(@Inject(MAT_DIALOG_DATA) data: any) {
         this.title = data.title;
+        this.content = data.content;
         this.action = data.action;
     }
 

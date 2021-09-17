@@ -109,15 +109,28 @@ export class RoomSegUIComponent implements AfterViewInit {
   }
 
   public moveSegLine(elementIndex: number): void {
-    this.openDialog('Edit this segmentation line?', 'Edit');
+    this.openDialog('Edit this segmentation line?', 'Use cursor to move the line or key in its new extremities\' coordinates.', 'Edit');
   }
 
-  private openDialog(title: string, action: string): void {
+  segAdd(): void {
+    this.openDialog('Add a segmentation line?', 'Use cursor to place extremities or key in their coordinates.', 'Add');
+  }
+
+  segRemove(): void {
+    // onclick change this button's color, then change the line onclick function to remove
+  }
+  
+  segConfirm(): void {
+    this.openDialog('Proceed with this room segmentaion result?', 'Press cancel if you want to make further changes.', 'Proceed');
+  }
+
+  private openDialog(title: string, content: string, action: string): void {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = true;
     dialogConfig.data = {
       title: title,
+      content: content,
       action: action
     };
 
@@ -132,6 +145,10 @@ export class RoomSegUIComponent implements AfterViewInit {
           case 'Edit':
             // Call the functions here.
             break;
+          case 'Add':
+            break;
+          case 'Proceed':
+            break;
           default:
             console.warn('The indicated action is not in the action list!');
             break;
@@ -139,8 +156,4 @@ export class RoomSegUIComponent implements AfterViewInit {
       }
     });
   }
-
-  segAdd(): void {}
-  segRemove(): void {}
-  segConfirm(): void {}
 }
