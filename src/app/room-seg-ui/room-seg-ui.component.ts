@@ -79,33 +79,21 @@ export class RoomSegUIComponent implements AfterViewInit {
       let x2 = this.linesets[i][2];
       let y2 = this.linesets[i][3];
 
-      let extendedLine: any = [];
-
-      // Equation of the line is 'y = (x-x1) * (y1-y2)/(x1-x2) + y1'.
+      let extendedLine: any = [];  // Equation of the line is 'y = (x-x1) * (y1-y2)/(x1-x2) + y1'.
 
       // Find the 1st point.
       let val1 = x1 * (y2-y1)/(x1-x2) + y1;
-      if (val1 > 0) {
-        extendedLine.push(0, val1);
-      } else {
-        extendedLine.push((x2*y1-x1*y2) / (y1-y2), 0);
-      }
-
+      val1 > 0 ? extendedLine.push(0, val1) : extendedLine.push((x2*y1-x1*y2) / (y1-y2), 0);
+      
       // Find the 2nd point.
       if (this.imageDim > 1) {
         let val2 = (CanvasSideLength/this.imageDim-x1) * (y1-y2)/(x1-x2) + y1;
-        if (val2 < CanvasSideLength) {
-          extendedLine.push(CanvasSideLength/this.imageDim, val2);
-        } else {
-          extendedLine.push((CanvasSideLength*(x1-x2)-x1*y2+x2*y1) / (y1-y2), CanvasSideLength);
-        }
+        val2 < CanvasSideLength ? extendedLine.push(CanvasSideLength/this.imageDim, val2) 
+                                : extendedLine.push((CanvasSideLength*(x1-x2)-x1*y2+x2*y1) / (y1-y2), CanvasSideLength);
       } else {
         let val2 = (CanvasSideLength-x1)*(y1-y2) / (x1-x2) + y1;
-        if (val2 < CanvasSideLength*this.imageDim) {
-          extendedLine.push(CanvasSideLength, val2);
-        } else {
-          extendedLine.push((CanvasSideLength*this.imageDim*(x1- 2)-x1*y2+x2*y1) / (y1-y2), CanvasSideLength*this.imageDim);
-        }
+        val2 < CanvasSideLength*this.imageDim ? extendedLine.push(CanvasSideLength, val2) 
+                                              : extendedLine.push((CanvasSideLength*this.imageDim*(x1- 2)-x1*y2+x2*y1) / (y1-y2), CanvasSideLength*this.imageDim);
       }
       
       this.extendedLinesets.push(extendedLine);
