@@ -3,7 +3,6 @@
     height: 100%;
     width: 100%;
 }
-
 #container {
     position: relative;
     top: 10px;
@@ -11,7 +10,6 @@
     height: 600px;
     width: 600px;
 }
-
 #dim-container {
     position: absolute;
     border-style: solid;
@@ -25,11 +23,27 @@
     z-index: 1;
 }
 
+svg {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 3;
+}
+.line {
+    position: relative;
+    stroke: cadetblue;
+    stroke-width: 3;
+    cursor: pointer;
+}
+.line-segment-extremity {
+    position: relative;
+    fill: black;
+}
+
 #buttonMenu {
     position: absolute;
     top: 10%;
 }
-
 button {
     display: block;
     margin: auto;

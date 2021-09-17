@@ -15,9 +15,11 @@ export class RoomSegUIComponent implements AfterViewInit {
 
   imageDim: number;
   extendedLinesets: any = [];
+  extremities: any = [];
 
   @ViewChild('dimContainer') dimContainerElement: ElementRef;
   @ViewChild('roomTopViewImage') imageElement: ElementRef;
+  @ViewChild('line') lineElement: ElementRef;
 
   constructor(private renderer: Renderer2) {}
 
@@ -98,6 +100,15 @@ export class RoomSegUIComponent implements AfterViewInit {
       
       this.extendedLinesets.push(extendedLine);
     }
+  }
+
+  public showExtremities(elementIndex: number): void {
+    this.extremities = elementIndex !== -1 ? this.linesets[elementIndex] : [];
+  }
+
+  public moveSegLine(elementIndex: number): void {
+    let strToPrint = 'moveSegLine(' + String(elementIndex) + ')';
+    console.log(strToPrint);
   }
 
   segAdd(): void {}

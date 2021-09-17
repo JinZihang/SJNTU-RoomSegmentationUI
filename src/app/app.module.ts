@@ -5,13 +5,11 @@ import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { RoomSegUIComponent } from './room-seg-ui/room-seg-ui.component';
-import { RoomSegLineComponent } from './room-seg-ui/room-seg-line/room-seg-line.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    RoomSegUIComponent,
-    RoomSegLineComponent
+    RoomSegUIComponent
   ],
   imports: [
     BrowserModule,
