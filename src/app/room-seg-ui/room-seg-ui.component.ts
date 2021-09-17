@@ -1,12 +1,14 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import linesetData from '../../assets/mock-lineset.json';
+import { RoomSegDialog } from './room-seg-dialog/room-seg-dialog.component'
 
 const CanvasSideLength = 600;
 
 @Component({
   selector: 'room-segmentation-ui',
-  templateUrl: './room-seg-ui.component.html',
-  styleUrls: ['./room-seg-ui.component.css']
+  templateUrl: 'room-seg-ui.component.html',
+  styleUrls: ['room-seg-ui.component.css']
 })
 export class RoomSegUIComponent implements AfterViewInit {
   // Change to @Input after completing the UI
@@ -14,14 +16,14 @@ export class RoomSegUIComponent implements AfterViewInit {
   linesets = linesetData.Linesets;
 
   imageDim: number;
-  extendedLinesets: any = [];
-  extremities: any = [];
+  extendedLinesets: number[][] = [];
+  extremities: number[] = [];
 
   @ViewChild('dimContainer') dimContainerElement: ElementRef;
   @ViewChild('roomTopViewImage') imageElement: ElementRef;
   @ViewChild('line') lineElement: ElementRef;
 
-  constructor(private renderer: Renderer2) {}
+  constructor(private renderer: Renderer2, public dialog: MatDialog) {}
 
   ngAfterViewInit() {}
 
@@ -107,8 +109,35 @@ export class RoomSegUIComponent implements AfterViewInit {
   }
 
   public moveSegLine(elementIndex: number): void {
-    let strToPrint = 'moveSegLine(' + String(elementIndex) + ')';
-    console.log(strToPrint);
+    this.openDialog('Edit this segmentation line?', 'Edit');
+  }
+
+  private openDialog(title: string, action: string): void {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.data = {
+      title: title,
+      action: action
+    };
+
+    let dialogRef = this.dialog.open(RoomSegDialog, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      let confirm = result[0];
+      let action = result[1];
+
+      if (confirm) {
+        switch (action) {
+          case 'Edit':
+            // Call the functions here.
+            break;
+          default:
+            console.warn('The indicated action is not in the action list!');
+            break;
+        }
+      }
+    });
   }
 
   segAdd(): void {}
