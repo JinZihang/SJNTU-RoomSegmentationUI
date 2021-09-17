@@ -23,7 +23,7 @@ export class RoomSegUIComponent implements AfterViewInit {
 
   ngAfterViewInit() {}
 
-  roomImgOnLoad(): void {
+  public roomImgOnLoad(): void {
     this.resizeDimContainer()
     this.extendLineSegments();
   }
