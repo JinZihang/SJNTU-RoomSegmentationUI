@@ -3,13 +3,10 @@
         <div id='dim-container' #dimContainer>
             <img id='room-top-view-image' #roomTopViewImage [src]='imageSrc' (load)='roomImgOnLoad()'>
             <svg>
-                <line class='line' #line *ngFor='let line of extendedLinesets; let elementIndex = index;' 
-                    [attr.x1]='line[0]' 
-                    [attr.y1]='line[1]' 
-                    [attr.x2]='line[2]' 
-                    [attr.y2]='line[3]' 
-                    (mouseover)='showExtremities(elementIndex)' 
-                    (mouseout)='showExtremities(-1)'
+                <line class='line' #line 
+                    *ngFor='let line of extendedLinesets; let elementIndex = index;' 
+                    [attr.x1]='line[0]' [attr.y1]='line[1]' [attr.x2]='line[2]' [attr.y2]='line[3]' 
+                    (mouseover)='showExtremities(elementIndex)' (mouseout)='showExtremities(-1)'
                     (click)='moveSegLine(elementIndex)'
                 />
                 <circle class='line-segment-extremity' *ngIf='extremities[0]' [attr.cx]='extremities[0]' [attr.cy]='extremities[1]' r='3'/>
@@ -17,11 +14,8 @@
             </svg>
         </div>
     </div>
-    <!-- Add a component to show current cursor coordinates. -->
     <div id='buttonMenu'>
-        <!-- Click this button, then add 2 points, the coordinates of points could be manually set, after complete click a complete button-->
         <button id='seg-add' (click)='segAdd()'>Add a Segmentation Line</button>
-        <!-- Click this button, then click any lines, each one pops up a confirm dialogue box, after complete click a complete button-->
         <button id='seg-remove' (click)='segRemove()'>Remove Segmentation Lines</button>
         <button id='seg-confirm' (click)='segConfirm()'>Confirm Result</button>
     </div>
