@@ -176,11 +176,11 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.lineSegment = !this.lineSegment;
   }
 
-  public segAdd(): void {
+  public lineAdd(): void {
     this.openDialog('Add a segmentation line?', 'Use cursor to place extremities or key in their coordinates.', this.linesets.length + 1, 'Add');
   }
 
-  public segRemove(): void {
+  public lineRemove(): void {
     this.processStart = true;
     this.removalProcessStart = true;
 
