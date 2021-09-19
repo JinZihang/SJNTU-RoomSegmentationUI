@@ -71,11 +71,10 @@
         <p>
             <em>
                 <span id='cursor-position-text'>Cursor position: </span>
-                <span class='cursor-position'>x:{{cursorPosition[0]}}</span>
-                <span class='cursor-position'>y:{{cursorPosition[1]}}</span>
+                <span class='cursor-position-value'>x:{{cursorPosition[0]}}</span>
+                <span class='cursor-position-value'>y:{{cursorPosition[1]}}</span>
             </em>
         </p>
-        <p id='coor' #coor></p>
     </div>
 
     <div id='action-button-container'>
@@ -91,25 +90,32 @@
     </div>
 
     <form id='coor-input' *ngIf='addProcessStart'>
-        <div>
+        <div class='extremityCoorInput'>
             <mat-form-field appearance='fill'>
                 <mat-label>1st Extremity's X</mat-label>
-                <input #firstExtremX matInput placeholder='Input coordinate value' value='' (keyup)="addLineInputOnKey('firstExtremX', firstExtremX.value)">
+                <input #firstExtremX matInput placeholder='Input coordinate value' value='' (keyup)="addLineInputOnKey('firstExtremX', firstExtremX.value)" [formControl]='firstExtremXCoorCheck' required>
+                <mat-error *ngIf="firstExtremXCoorCheck.invalid">{{getErrorMessage('firstExtremXCoor')}}</mat-error>
               </mat-form-field>
               <mat-form-field appearance='fill'>
                 <mat-label>1st Extremity's Y</mat-label>
-                <input #firstExtremY matInput placeholder='Input coordinate value' value='' (keyup)="addLineInputOnKey('firstExtremY', firstExtremY.value)">
+                <input #firstExtremY matInput placeholder='Input coordinate value' value='' (keyup)="addLineInputOnKey('firstExtremY', firstExtremY.value)" [formControl]='firstExtremYCoorCheck' required>
+                <mat-error *ngIf="firstExtremYCoorCheck.invalid">{{getErrorMessage('firstExtremYCoor')}}</mat-error>
               </mat-form-field>
         </div>
-        <div>
+        <div class='extremityCoorInput'>
             <mat-form-field appearance='fill'>
                 <mat-label>2nd Extremity's X</mat-label>
-                <input #secondExtremX matInput placeholder='Input coordinate value' value='' (keyup)="addLineInputOnKey('secondExtremX', secondExtremX.value)">
+                <input #secondExtremX matInput placeholder='Input coordinate value' value='' (keyup)="addLineInputOnKey('secondExtremX', secondExtremX.value)" [formControl]='secondExtremXCoorCheck' required>
+                <mat-error *ngIf="secondExtremXCoorCheck.invalid">{{getErrorMessage('secondExtremXCoor')}}</mat-error>
               </mat-form-field>
               <mat-form-field appearance='fill'>
                 <mat-label>2nd Extremity's Y</mat-label>
-                <input #secondExtremY matInput placeholder='Input coordinate value' value='' (keyup)="addLineInputOnKey('secondExtremY', secondExtremY.value)">
+                <input #secondExtremY matInput placeholder='Input coordinate value' value='' (keyup)="addLineInputOnKey('secondExtremY', secondExtremY.value)" [formControl]='secondExtremYCoorCheck' required>
+                <mat-error *ngIf="secondExtremYCoorCheck.invalid">{{getErrorMessage('secondExtremYCoor')}}</mat-error>
               </mat-form-field>
         </div>
     </form>
+
+    <div id='action-button-disable' *ngIf='actionButtonDisable'></div>
+    <div id='process-confirm-button-disable' *ngIf='processConfirmButtonDisable'></div>
 </div>

@@ -51,7 +51,7 @@ svg {
 #cursor-position-text {
     margin-left: -40px;
 }
-.cursor-position {
+.cursor-position-value {
     margin-left: 20px;
 }
 
@@ -74,7 +74,29 @@ button {
 
 #coor-input {
     position: absolute;
-    top: 215px;
+    top: 660px;
+    left: 34px;
+    width: 563px;
+}
+.extremityCoorInput {
+    margin-left: 65px;
+}
+.mat-form-field {
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+#action-button-disable {
+    position: absolute;
+    top: 60px;
     left: 630px;
+    height: 129px;
+    width: 230px;
+}
+#process-confirm-button-disable {
+    position: absolute;
+    top: 544px;
+    left: 630px;
+    height: 36px;
     width: 230px;
 }

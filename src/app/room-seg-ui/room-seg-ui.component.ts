@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, Renderer2, Inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { FormControl, Validators } from '@angular/forms';
 import linesetData from '../../assets/mock-lineset.json';
 import { RoomSegDialog } from './room-seg-dialog/room-seg-dialog.component'
 
@@ -16,6 +17,8 @@ export class RoomSegUIComponent implements AfterViewInit {
 
   imageSrc: string = '/assets/mock-image.png';
   imageDim: number; // imageDim > 1 if the image is vertical.
+  canvasXMax:number;
+  canvasYMax: number;
 
   linesets: number[][] = linesetData.Linesets;
   extendedLinesets: number[][] = [];
@@ -42,6 +45,14 @@ export class RoomSegUIComponent implements AfterViewInit {
   addSecondExtremX: any;
   addSecondExtremY: any;
 
+  firstExtremXCoorCheck: FormControl;
+  firstExtremYCoorCheck: FormControl;
+  secondExtremXCoorCheck: FormControl;
+  secondExtremYCoorCheck: FormControl;
+
+  actionButtonDisable: boolean = false;
+  processConfirmButtonDisable: boolean = false;
+
   @ViewChild('dimContainer') dimContainerElement: ElementRef;
   @ViewChild('roomTopViewImage') imageElement: ElementRef;
   @ViewChild('svg') svgElement: ElementRef;
@@ -52,12 +63,18 @@ export class RoomSegUIComponent implements AfterViewInit {
 
   ngAfterViewInit() {}
 
+  // Initialization
   public roomImgOnLoad(): void {
     this.resizeDimContainer()
     this.extendLineSegments();
 
     this.linesetsBeforeEdit = JSON.parse(JSON.stringify(this.linesets));
     this.extendedLinesetsBeforeEdit = JSON.parse(JSON.stringify(this.extendedLinesets));
+
+    this.firstExtremXCoorCheck = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasXMax)]);
+    this.firstExtremYCoorCheck = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasYMax)]);
+    this.secondExtremXCoorCheck = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasXMax)]);
+    this.secondExtremYCoorCheck = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasYMax)]);
   }
 
   // Resize the dimContainerElement according to the original image dimension.
@@ -67,6 +84,9 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.imageDim = imgNaturalHeight / imgNaturalWidth;
 
     if (this.imageDim > 1) {
+      this.canvasXMax = CanvasSideLength/this.imageDim;
+      this.canvasYMax = CanvasSideLength;
+
       let width = String(100/this.imageDim) + '%';
       let leftMargin = String(0.5*(100 - 100/this.imageDim)) + '%';
 
@@ -74,6 +94,9 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.renderer.setStyle(this.dimContainerElement.nativeElement, 'width', width);
       this.renderer.setStyle(this.dimContainerElement.nativeElement, 'margin-left', leftMargin);
     } else {
+      this.canvasXMax = CanvasSideLength;
+      this.canvasYMax = CanvasSideLength*this.imageDim;
+
       let height = String(100*this.imageDim) + '%';
       let topMargin = String(0.5*(100 - 100*this.imageDim)) + '%';
 
@@ -87,20 +110,11 @@ export class RoomSegUIComponent implements AfterViewInit {
 
   // Adjust linesets' coordinates according to the canvas dimension.
   private adjustLinesetCoordinates(imgNaturalHeight: number, imgNaturalWidth: number): void {
-    if (this.imageDim > 1) {
-      for (let i=0; i<this.linesets.length; i++) {
-        this.linesets[i][0] = (this.linesets[i][0] / imgNaturalWidth) * CanvasSideLength/this.imageDim;
-        this.linesets[i][1] = (this.linesets[i][1] / imgNaturalHeight) * CanvasSideLength;
-        this.linesets[i][2] = (this.linesets[i][2] / imgNaturalWidth) * CanvasSideLength/this.imageDim;
-        this.linesets[i][3] = (this.linesets[i][3] / imgNaturalHeight) * CanvasSideLength;
-      }
-    } else {
-      for (let i=0; i<this.linesets.length; i++) {
-        this.linesets[i][0] = (this.linesets[i][0] / imgNaturalWidth) * CanvasSideLength;
-        this.linesets[i][1] = (this.linesets[i][1] / imgNaturalHeight) * CanvasSideLength*this.imageDim;
-        this.linesets[i][2] = (this.linesets[i][2] / imgNaturalWidth) * CanvasSideLength;
-        this.linesets[i][3] = (this.linesets[i][3] / imgNaturalHeight) * CanvasSideLength*this.imageDim;
-      }
+    for (let i=0; i<this.linesets.length; i++) {
+      this.linesets[i][0] = (this.linesets[i][0] / imgNaturalWidth) * this.canvasXMax;
+      this.linesets[i][1] = (this.linesets[i][1] / imgNaturalHeight) * this.canvasYMax;
+      this.linesets[i][2] = (this.linesets[i][2] / imgNaturalWidth) * this.canvasXMax;
+      this.linesets[i][3] = (this.linesets[i][3] / imgNaturalHeight) * this.canvasYMax;
     }
   }
 
@@ -121,13 +135,13 @@ export class RoomSegUIComponent implements AfterViewInit {
       
       // Find the 2nd point.
       if (this.imageDim > 1) {
-        let val2 = (CanvasSideLength/this.imageDim-x1) * (y1-y2)/(x1-x2) + y1;
-        val2 < CanvasSideLength ? extendedLine.push(CanvasSideLength/this.imageDim, val2) 
-                                : extendedLine.push((CanvasSideLength*(x1-x2)-x1*y2+x2*y1) / (y1-y2), CanvasSideLength);
+        let val2 = (this.canvasXMax-x1) * (y1-y2)/(x1-x2) + y1;
+        val2 < this.canvasYMax ? extendedLine.push(this.canvasXMax, val2) 
+                                : extendedLine.push((this.canvasYMax*(x1-x2)-x1*y2+x2*y1) / (y1-y2), this.canvasYMax);
       } else {
-        let val2 = (CanvasSideLength-x1)*(y1-y2) / (x1-x2) + y1;
-        val2 < CanvasSideLength*this.imageDim ? extendedLine.push(CanvasSideLength, val2) 
-                                              : extendedLine.push((CanvasSideLength*this.imageDim*(x1- 2)-x1*y2+x2*y1) / (y1-y2), CanvasSideLength*this.imageDim);
+        let val2 = (this.canvasXMax-x1)*(y1-y2) / (x1-x2) + y1;
+        val2 < this.canvasYMax ? extendedLine.push(this.canvasXMax, val2) 
+                                              : extendedLine.push((this.canvasYMax*(x1- 2)-x1*y2+x2*y1) / (y1-y2), this.canvasYMax);
       }
       
       this.extendedLinesets.push(extendedLine);
@@ -150,13 +164,8 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.extremities[0] = this.extremities[0] === 0 ? lineShrink : this.extremities[0];
       this.extremities[1] = this.extremities[1] === 0 ? lineShrink : this.extremities[1];
 
-      if (this.imageDim > 1) {
-        this.extremities[2] = this.extremities[2] === 600/this.imageDim ? 600/this.imageDim-lineShrink : this.extremities[2];
-        this.extremities[3] = this.extremities[3] === 600 ? 600-lineShrink : this.extremities[3];
-      } else {
-        this.extremities[2] = this.extremities[2] === 600 ? 600-lineShrink : this.extremities[2];
-        this.extremities[3] = this.extremities[3] === 600*this.imageDim ? 600*this.imageDim-lineShrink : this.extremities[3];
-      }
+      this.extremities[2] = this.extremities[2] === this.canvasXMax ? this.canvasXMax-lineShrink : this.extremities[2];
+      this.extremities[3] = this.extremities[3] === this.canvasYMax ? this.canvasYMax-lineShrink : this.extremities[3];
     }
 
     if (elementIndex === -1) {
@@ -205,6 +214,9 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.processStart = true;
       this.addProcessStart = true;
 
+      this.actionButtonDisable = true;
+      this.processConfirmButtonDisable = true;
+
       this.linesetsBeforeEdit = JSON.parse(JSON.stringify(this.linesets));
       this.extendedLinesetsBeforeEdit = JSON.parse(JSON.stringify(this.extendedLinesets));
 
@@ -212,50 +224,101 @@ export class RoomSegUIComponent implements AfterViewInit {
     }
   }
 
-  public addLineInputOnKey(placeHolder:string, value: any) {
-    switch (placeHolder) {
-      case 'firstExtremX':
-        this.addFirstExtremX = value;
-        break;
-      case 'firstExtremY':
-        this.addFirstExtremY = value;
-        break;
-      case 'secondExtremX':
-        this.addSecondExtremX = value;
-        break;
-      case 'secondExtremY':
-        this.addSecondExtremY = value;
-        break;
-      default:
-        break;
-    }
+  public addLineInputOnKey(placeHolder: string, value: any) {
+    let canAddLine = false;
 
-    if (this.addFirstExtremX && this.addFirstExtremY && this.addSecondExtremX && this.addSecondExtremY) {
-      this.addLineValueComplete = true;
+    if (!isNaN(Number(value)) && Number(value) >= 0) {
+      value = Number(value);
 
-      this.addLineProcessShowTempExtremity = false;
-      this.addLineTempExtremity = [];
-
-      this.linesets[this.addLineElementIndex] = [this.addFirstExtremX, this.addFirstExtremY, this.addSecondExtremX, this.addSecondExtremY];
-      this.extendLineSegments();
-    } else {
-      this.addLineValueComplete = false;
-      delete this.linesets[this.addLineElementIndex];
-      delete this.extendedLinesets[this.addLineElementIndex];
-      this.linesets.length = this.addLineElementIndex;
-      this.extendedLinesets.length = this.addLineElementIndex;
-
-      this.addLineProcessShowTempExtremity = false;
-      this.addLineTempExtremity = [];
-
-      if (this.addFirstExtremX && this.addFirstExtremY) {
-        this.addLineProcessShowTempExtremity = true;
-        this.addLineTempExtremity = [this.addFirstExtremX, this.addFirstExtremY]
-      } else if (this.addSecondExtremX && this.addSecondExtremY) {
-        this.addLineProcessShowTempExtremity = true;
-        this.addLineTempExtremity = [this.addSecondExtremX, this.addSecondExtremY]
+      switch (placeHolder) {
+        case 'firstExtremX':
+          if (value < this.canvasXMax) {
+            canAddLine = true;
+            this.addFirstExtremX = value;
+          } 
+          break;
+        case 'firstExtremY':
+          if (value < this.canvasYMax) {
+            canAddLine = true;
+            this.addFirstExtremY = value;
+          } 
+          break;
+        case 'secondExtremX':
+          if (value < this.canvasXMax) {
+            canAddLine = true;
+            this.addSecondExtremX = value;
+          } 
+          break;
+        case 'secondExtremY':
+          if (value < this.canvasYMax) {
+            canAddLine = true;
+            this.addSecondExtremY = value;
+          } 
+          break;
       }
+  
+      if (canAddLine) {
+        if (this.addFirstExtremX && this.addFirstExtremY && this.addSecondExtremX && this.addSecondExtremY) {
+          this.addLineValueComplete = true;
+          this.processConfirmButtonDisable = false;
+    
+          this.addLineProcessShowTempExtremity = false;
+          this.addLineTempExtremity = [];
+    
+          this.linesets[this.addLineElementIndex] = [this.addFirstExtremX, this.addFirstExtremY, this.addSecondExtremX, this.addSecondExtremY];
+          this.extendLineSegments();
+        } else {
+          this.addLineValueComplete = false;
+          this.processConfirmButtonDisable = true;
+
+          delete this.linesets[this.addLineElementIndex];
+          delete this.extendedLinesets[this.addLineElementIndex];
+          this.linesets.length = this.addLineElementIndex;
+          this.extendedLinesets.length = this.addLineElementIndex;
+    
+          this.addLineProcessShowTempExtremity = false;
+          this.addLineTempExtremity = [];
+    
+          if (this.addFirstExtremX && this.addFirstExtremY) {
+            this.addLineProcessShowTempExtremity = true;
+            this.addLineTempExtremity = [this.addFirstExtremX, this.addFirstExtremY]
+          } else if (this.addSecondExtremX && this.addSecondExtremY) {
+            this.addLineProcessShowTempExtremity = true;
+            this.addLineTempExtremity = [this.addSecondExtremX, this.addSecondExtremY]
+          }
+        }
+      } else {
+        console.warn('Use a valid coordinate value!')
+        this.processConfirmButtonDisable = true;
+      }
+    } else {
+      console.warn('Use a valid coordinate value!')
+      this.processConfirmButtonDisable = true;
     }
+  }
+  
+  public getErrorMessage(placeHolder: string) {
+    let placeHolderInput: FormControl = this.firstExtremXCoorCheck;
+    switch (placeHolder) {
+      case 'firstExtremXCoor':
+        placeHolderInput = this.firstExtremXCoorCheck;
+        break;
+      case 'firstExtremYCoor':
+        placeHolderInput = this.firstExtremYCoorCheck;
+        break;
+      case 'secondExtremXCoor':
+        placeHolderInput = this.secondExtremXCoorCheck;
+        break;
+      case 'secondExtremYCoor':
+        placeHolderInput = this.secondExtremYCoorCheck;
+        break;
+    }
+
+    if (placeHolderInput.hasError('min') || placeHolderInput.hasError('max')) {
+      return 'Use a valid coordinate value!'
+    }
+
+    return placeHolderInput.hasError('required') ? 'A coordinate value is required!' : '';
   }
 
   public lineRemove(startProcess: boolean): void {
@@ -264,6 +327,8 @@ export class RoomSegUIComponent implements AfterViewInit {
     } else {
       this.processStart = true;
       this.removalProcessStart = true;
+
+      this.actionButtonDisable = true;
 
       this.linesetsBeforeEdit = JSON.parse(JSON.stringify(this.linesets));
       this.extendedLinesetsBeforeEdit = JSON.parse(JSON.stringify(this.extendedLinesets));
@@ -316,9 +381,6 @@ export class RoomSegUIComponent implements AfterViewInit {
             break;
           case 'Proceed':
             break;
-          default:
-            console.warn('The indicated action is not in the action list!');
-            break;
         }
       }
     });
@@ -334,30 +396,36 @@ export class RoomSegUIComponent implements AfterViewInit {
     }
 
     this.processStart = false;
+    this.actionButtonDisable = false;
+
     if (this.addProcessStart) {
       this.addProcessStart = false;
+
+      this.firstExtremXCoorCheck = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasXMax)]);
+      this.firstExtremYCoorCheck = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasYMax)]);
+      this.secondExtremXCoorCheck = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasXMax)]);
+      this.secondExtremYCoorCheck = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasYMax)]);
+
       this.addFirstExtremX = undefined;
       this.addFirstExtremY = undefined;
       this.addSecondExtremX = undefined;
       this.addSecondExtremY = undefined;
-      this.addLineValueComplete = false;
+
       this.addLineTempExtremity = [];
+      this.addLineValueComplete = false;
+      this.processConfirmButtonDisable = false;
     } else if (this.removalProcessStart) {
       this.removalProcessStart = false;
     }
   }
 }
 
-// TO DOs:
-// Add a control so that the add, remove, confirm result button cannot be active together
-// Add input error situation (limit input to be a numeric value)
-
-// console.log('*******************************')
-// console.log('this.linesets');
-// console.log(this.linesets);
-// console.log('this.extendedLinesets');
-// console.log(this.extendedLinesets);
-// console.log('this.linesetsBeforeEdit');
-// console.log(this.linesetsBeforeEdit);
-// console.log('this.extendedLinesetsBeforeEdit');
-// console.log(this.extendedLinesetsBeforeEdit);
+/*
+TO DOs:
+- Change the way of limiting input to numeric.
+- Change the way to disable buttons.
+  - [Done] Limit add line input to numeric, disable the processConfirm button while addLineValueComplete is not true.
+  - [Done] Disable the segConfirm, addLine & removeLine buttons while there is a add/remove/edit action in progress.
+- Add the output variable.
+- Add the edit line scripts.
+*/
