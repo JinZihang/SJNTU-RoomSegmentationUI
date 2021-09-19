@@ -12,8 +12,9 @@ const CanvasSideLength = 600;
   styleUrls: ['room-seg-ui.component.css']
 })
 export class RoomSegUIComponent implements AfterViewInit {
-  // Change imageSrc and linsets to @Input after completing the UI
-  // Add a @Output linesets variable after completing the UI
+  // @Input: imageSrc & linesets.
+  // @Output: linesets
+  // Output at this.openDialog(): {switch(action): {case 'Proceed'}}.
 
   imageSrc: string = '/assets/mock-image.png';
   imageDim: number; // imageDim > 1 if the image is vertical.
@@ -380,6 +381,7 @@ export class RoomSegUIComponent implements AfterViewInit {
             this.lineRemove(true);
             break;
           case 'Proceed':
+            // Output this.linesets and jump to the next step's page.
             break;
         }
       }
