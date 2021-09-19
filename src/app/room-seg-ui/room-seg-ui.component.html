@@ -75,14 +75,37 @@
     </div>
 
     <div id='action-button-container'>
-        <button (click)='lineSwitch()' mat-stroked-button>Segment/Extended</button>
-        <button (click)='lineAdd()' mat-stroked-button>Add a Segmentation Line</button>
-        <button (click)='lineRemove()' mat-stroked-button>Remove Segmentation Lines</button>
-        <button (click)='segConfirm()' mat-stroked-button>Confirm Result</button>
+        <button mat-stroked-button (click)='lineSwitch()' >Segment/Extended</button>
+        <button mat-stroked-button (click)='lineAdd(false)'>Add a Segmentation Line</button>
+        <button mat-stroked-button (click)='lineRemove(false)'>Remove Segmentation Lines</button>
+        <button mat-stroked-button (click)='segConfirm()'>Confirm Result</button>
     </div>
 
     <div id='process-button-container' *ngIf='processStart'>
-        <button (click)='processControl(true)' mat-stroked-button>Confirm Edit</button>
-        <button (click)='processControl(false)' mat-stroked-button>Cancel Edit</button>
+        <button mat-stroked-button (click)='processControl(true)'>Confirm Edit</button>
+        <button mat-stroked-button (click)='processControl(false)'>Cancel Edit</button>
     </div>
+
+    <form id='coor-input' *ngIf='addProcessStart'>
+        <div>
+            <mat-form-field (submit)='onSubmit()' appearance='fill'>
+                <mat-label>1st Extremity's X</mat-label>
+                <input matInput name='firstExtremX' [(ngModel)]='firstExtremX' placeholder='Input coordinate value' value=''>
+              </mat-form-field>
+              <mat-form-field appearance='fill'>
+                <mat-label>1st Extremity's Y</mat-label>
+                <input matInput placeholder='Input coordinate value' value=''>
+              </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance='fill'>
+                <mat-label>2nd Extremity's X</mat-label>
+                <input matInput placeholder='Input coordinate value' value=''>
+              </mat-form-field>
+              <mat-form-field appearance='fill'>
+                <mat-label>2nd Extremity's Y</mat-label>
+                <input matInput placeholder='Input coordinate value' value=''>
+              </mat-form-field>
+        </div>
+    </form>
 </div>

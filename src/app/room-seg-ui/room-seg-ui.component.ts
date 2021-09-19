@@ -31,6 +31,8 @@ export class RoomSegUIComponent implements AfterViewInit {
 
   processStart: boolean = false;
   removalProcessStart: boolean = false;
+  addProcessStart: boolean = false;
+  firstExtremX: number;
 
   @ViewChild('dimContainer') dimContainerElement: ElementRef;
   @ViewChild('roomTopViewImage') imageElement: ElementRef;
@@ -46,6 +48,7 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.resizeDimContainer()
     this.extendLineSegments();
 
+    this.linesetsBeforeEdit = JSON.parse(JSON.stringify(this.linesets));
     this.extendedLinesetsBeforeEdit = JSON.parse(JSON.stringify(this.extendedLinesets));
   }
 
@@ -176,16 +179,33 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.lineSegment = !this.lineSegment;
   }
 
-  public lineAdd(): void {
-    this.openDialog('Add a segmentation line?', 'Use cursor to place extremities or key in their coordinates.', this.linesets.length + 1, 'Add');
+  public lineAdd(startProcess: boolean): void {
+    if (!startProcess) {
+      this.openDialog('Add a segmentation line?', 'Use cursor to place extremities or key in their coordinates.', this.linesets.length + 1, 'Add');
+    } else {
+      this.processStart = true;
+      this.addProcessStart = true;
+
+      this.linesetsBeforeEdit = JSON.parse(JSON.stringify(this.linesets));
+      this.extendedLinesetsBeforeEdit = JSON.parse(JSON.stringify(this.extendedLinesets));
+    }
   }
 
-  public lineRemove(): void {
-    this.processStart = true;
-    this.removalProcessStart = true;
+  public onSubmit(): void {
+    this.firstExtremX = this.firstExtremX;
+    console.log(this.firstExtremX);
+  }
 
-    this.linesetsBeforeEdit = JSON.parse(JSON.stringify(this.linesets));
-    this.extendedLinesetsBeforeEdit = JSON.parse(JSON.stringify(this.extendedLinesets));
+  public lineRemove(startProcess: boolean): void {
+    if (!startProcess) {
+      this.openDialog('Start removing segmentation lines?', 'Use cursor to click on the lines you want to remove.', -1, 'Remove');
+    } else {
+      this.processStart = true;
+      this.removalProcessStart = true;
+
+      this.linesetsBeforeEdit = JSON.parse(JSON.stringify(this.linesets));
+      this.extendedLinesetsBeforeEdit = JSON.parse(JSON.stringify(this.extendedLinesets));
+    }
   }
 
   public removeLine(elementIndex: number): void {
@@ -227,6 +247,10 @@ export class RoomSegUIComponent implements AfterViewInit {
             this.moveSegLine(elementIndex, true)
             break;
           case 'Add':
+            this.lineAdd(true);
+            break;
+          case 'Remove':
+            this.lineRemove(true);
             break;
           case 'Proceed':
             break;
@@ -248,8 +272,13 @@ export class RoomSegUIComponent implements AfterViewInit {
     }
 
     this.processStart = false;
-    if (this.removalProcessStart) {
+    if (this.addProcessStart) {
+      this.addProcessStart = false;
+    } else if (this.removalProcessStart) {
       this.removalProcessStart = false;
     }
   }
 }
+
+// Add a control so that add, remove, confirm result button cannot be active together
+// Add input error situation (has to be a numeric value)
