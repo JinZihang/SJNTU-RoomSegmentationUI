@@ -88,23 +88,23 @@
 
     <form id='coor-input' *ngIf='addProcessStart'>
         <div>
-            <mat-form-field (submit)='onSubmit()' appearance='fill'>
+            <mat-form-field appearance='fill'>
                 <mat-label>1st Extremity's X</mat-label>
-                <input matInput name='firstExtremX' [(ngModel)]='firstExtremX' placeholder='Input coordinate value' value=''>
+                <input #firstExtremX matInput placeholder='Input coordinate value' value='' (keyup)="addLineInputOnKey('firstExtremX', firstExtremX.value)">
               </mat-form-field>
               <mat-form-field appearance='fill'>
                 <mat-label>1st Extremity's Y</mat-label>
-                <input matInput placeholder='Input coordinate value' value=''>
+                <input #firstExtremY matInput placeholder='Input coordinate value' value='' (keyup)="addLineInputOnKey('firstExtremY', firstExtremY.value)">
               </mat-form-field>
         </div>
         <div>
             <mat-form-field appearance='fill'>
                 <mat-label>2nd Extremity's X</mat-label>
-                <input matInput placeholder='Input coordinate value' value=''>
+                <input #secondExtremX matInput placeholder='Input coordinate value' value='' (keyup)="addLineInputOnKey('secondExtremX', secondExtremX.value)">
               </mat-form-field>
               <mat-form-field appearance='fill'>
                 <mat-label>2nd Extremity's Y</mat-label>
-                <input matInput placeholder='Input coordinate value' value=''>
+                <input #secondExtremY matInput placeholder='Input coordinate value' value='' (keyup)="addLineInputOnKey('secondExtremY', secondExtremY.value)">
               </mat-form-field>
         </div>
     </form>

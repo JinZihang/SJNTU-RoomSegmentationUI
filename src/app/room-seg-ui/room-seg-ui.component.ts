@@ -32,7 +32,12 @@ export class RoomSegUIComponent implements AfterViewInit {
   processStart: boolean = false;
   removalProcessStart: boolean = false;
   addProcessStart: boolean = false;
-  firstExtremX: number;
+  addLineElementIndex: number;
+
+  addFirstExtremX: any;
+  addFirstExtremY: any;
+  addSecondExtremX: any;
+  addSecondExtremY: any;
 
   @ViewChild('dimContainer') dimContainerElement: ElementRef;
   @ViewChild('roomTopViewImage') imageElement: ElementRef;
@@ -97,6 +102,8 @@ export class RoomSegUIComponent implements AfterViewInit {
   }
 
   private extendLineSegments(): void {
+    this.extendedLinesets = [];
+
     for (let i=0; i<this.linesets.length; i++) {
       let x1 = this.linesets[i][0];
       let y1 = this.linesets[i][1];
@@ -188,12 +195,33 @@ export class RoomSegUIComponent implements AfterViewInit {
 
       this.linesetsBeforeEdit = JSON.parse(JSON.stringify(this.linesets));
       this.extendedLinesetsBeforeEdit = JSON.parse(JSON.stringify(this.extendedLinesets));
+
+      this.addLineElementIndex = this.linesets.length;
     }
   }
 
-  public onSubmit(): void {
-    this.firstExtremX = this.firstExtremX;
-    console.log(this.firstExtremX);
+  public addLineInputOnKey(placeHolder:string, value: any) {
+    switch (placeHolder) {
+      case 'firstExtremX':
+        this.addFirstExtremX = value;
+        break;
+      case 'firstExtremY':
+        this.addFirstExtremY = value;
+        break;
+      case 'secondExtremX':
+        this.addSecondExtremX = value;
+        break;
+      case 'secondExtremY':
+        this.addSecondExtremY = value;
+        break;
+      default:
+        break;
+    }
+
+    if (this.addFirstExtremX && this.addFirstExtremY && this.addSecondExtremX && this.addSecondExtremY) {
+      this.linesets[this.addLineElementIndex] = [this.addFirstExtremX, this.addFirstExtremY, this.addSecondExtremX, this.addSecondExtremY];
+      this.extendLineSegments();
+    }
   }
 
   public lineRemove(startProcess: boolean): void {
@@ -274,6 +302,10 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.processStart = false;
     if (this.addProcessStart) {
       this.addProcessStart = false;
+      this.addFirstExtremX = undefined;
+      this.addFirstExtremY = undefined;
+      this.addSecondExtremX = undefined;
+      this.addSecondExtremY = undefined;
     } else if (this.removalProcessStart) {
       this.removalProcessStart = false;
     }
@@ -282,3 +314,13 @@ export class RoomSegUIComponent implements AfterViewInit {
 
 // Add a control so that add, remove, confirm result button cannot be active together
 // Add input error situation (has to be a numeric value)
+
+// console.log('*******************************')
+// console.log('this.linesets');
+// console.log(this.linesets);
+// console.log('this.extendedLinesets');
+// console.log(this.extendedLinesets);
+// console.log('this.linesetsBeforeEdit');
+// console.log(this.linesetsBeforeEdit);
+// console.log('this.extendedLinesetsBeforeEdit');
+// console.log(this.extendedLinesetsBeforeEdit);
