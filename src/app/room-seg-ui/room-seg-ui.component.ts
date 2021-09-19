@@ -10,7 +10,7 @@ const CanvasSideLength = 600;
 TO DOs:
 - Change the way of limiting input to numeric.
 - Change the way to disable buttons.
-- Change the way to extend lines (the current extend line scipt only works as expected when the 2nd point is at the bottom-right side of the 1st point).
+- Change the way to extend lines, the current way leads to wrong result sometimes.
 */
 @Component({
   selector: 'room-segmentation-ui',
@@ -43,7 +43,7 @@ export class RoomSegUIComponent implements AfterViewInit {
   cursorPosition: number[] = [-1, -1];
 
   processStart: boolean = false;
-  moveSegStart: boolean = false;
+  editSegStart: boolean = false;
   addProcessStart: boolean = false;
   removalProcessStart: boolean = false;
   
@@ -61,11 +61,6 @@ export class RoomSegUIComponent implements AfterViewInit {
   addFirstExtremY: any;
   addSecondExtremX: any;
   addSecondExtremY: any;
-
-  // initialFirstExtremX: number = 1;
-  // initialFirstExtremY: number;
-  // initialSecondExtremX: number;
-  // initialSecondExtremY: number;
 
   actionButtonDisable: boolean = false;
   processConfirmButtonDisable: boolean = false;
@@ -168,7 +163,7 @@ export class RoomSegUIComponent implements AfterViewInit {
 
     if (lineSegment) {
       this.extremities = elementIndex !== -1 ? this.linesets[elementIndex] : [];
-    } else if (this.removalProcessStart || this.moveSegStart) {
+    } else if (this.removalProcessStart || this.editSegStart) {
       this.extremities = elementIndex !== -1 ? this.linesets[elementIndex] : [];
     } else if (this.addProcessStart && elementIndex === this.addLineElementIndex && this.addLineValueComplete) {
       this.extremities = elementIndex !== -1 ? this.linesets[elementIndex] : [];
@@ -186,9 +181,7 @@ export class RoomSegUIComponent implements AfterViewInit {
     if (elementIndex === -1) {
       this.extremities = [];
       if (this.tempExtremEdit) {
-        console.log('test1');
         if (!this.addProcessStart) {
-          console.log('test2');
           this.extendedLinesets = JSON.parse(JSON.stringify(this.extendedLinesetsBeforeEdit));
           this.tempExtremEdit = false;
         } else if (this.addLineValueComplete) {
@@ -210,16 +203,14 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.cursorPosition[1] = event.clientY - 28;
   }
 
-  public moveSegLine(elementIndex: number, confirmed: boolean): void {
+  public editSegLine(elementIndex: number, confirmed: boolean): void {
+    console.log('elementIndex');
+    console.log(elementIndex);
     if (confirmed) {
-      this.moveSegStart = true;
+      this.editSegStart = true;
 
       this.linesetsBeforeLineEdit = JSON.parse(JSON.stringify(this.linesets));
       this.extendedLinesetsBeforeLineEdit = JSON.parse(JSON.stringify(this.extendedLinesets));
-
-      this.removeLine(elementIndex);
-      this.linesetsBeforeEdit = JSON.parse(JSON.stringify(this.linesets));
-      this.extendedLinesetsBeforeEdit = JSON.parse(JSON.stringify(this.extendedLinesets));
       
       this.lineAdd(true, elementIndex, this.linesetsBeforeLineEdit[elementIndex]);
     } else {
@@ -254,15 +245,15 @@ export class RoomSegUIComponent implements AfterViewInit {
         let initialSecondExtremX: FormControl = this.secondExtremXCoorCheck;
         let initialSecondExtremY: FormControl = this.secondExtremYCoorCheck;
 
-        initialFirstExtremX.setValue(initialCoor[0]);
-        initialFirstExtremY.setValue(initialCoor[1]);
-        initialSecondExtremX.setValue(initialCoor[2]);
-        initialSecondExtremY.setValue(initialCoor[3]);
+        initialFirstExtremX.setValue(initialCoor[0].toFixed(0));
+        initialFirstExtremY.setValue(initialCoor[1].toFixed(0));
+        initialSecondExtremX.setValue(initialCoor[2].toFixed(0));
+        initialSecondExtremY.setValue(initialCoor[3].toFixed(0));
 
-        this.addLineInputOnKey('firstExtremX', initialCoor[0], true);
-        this.addLineInputOnKey('firstExtremY', initialCoor[1], true);
-        this.addLineInputOnKey('secondExtremX', initialCoor[2], true);
-        this.addLineInputOnKey('secondExtremY', initialCoor[3], true);
+        this.addLineInputOnKey('firstExtremX', initialCoor[0].toFixed(0), true);
+        this.addLineInputOnKey('firstExtremY', initialCoor[1].toFixed(0), true);
+        this.addLineInputOnKey('secondExtremX', initialCoor[2].toFixed(0), true);
+        this.addLineInputOnKey('secondExtremY', initialCoor[3].toFixed(0), true);
       }
     }
   }
@@ -314,7 +305,7 @@ export class RoomSegUIComponent implements AfterViewInit {
           this.addLineValueComplete = false;
           this.processConfirmButtonDisable = true;
 
-          if (!isFromMoveLineProcess){
+          if (!isFromMoveLineProcess && !this.editSegStart){
             delete this.linesets[this.addLineElementIndex];
             delete this.extendedLinesets[this.addLineElementIndex];
             this.linesets.length = this.addLineElementIndex;
@@ -412,7 +403,7 @@ export class RoomSegUIComponent implements AfterViewInit {
       if (confirm) {
         switch (action) {
           case 'Edit':
-            this.moveSegLine(elementIndex, true)
+            this.editSegLine(elementIndex, true)
             break;
           case 'Add':
             this.lineAdd(true, -1, []);
@@ -430,13 +421,8 @@ export class RoomSegUIComponent implements AfterViewInit {
 
   public processControl(processConfirm: boolean): void {
     if (!processConfirm) {
-      this.linesets = this.moveSegStart ? JSON.parse(JSON.stringify(this.linesetsBeforeLineEdit)) : JSON.parse(JSON.stringify(this.linesetsBeforeEdit));
-      this.extendedLinesets = this.moveSegStart ? JSON.parse(JSON.stringify(this.extendedLinesetsBeforeLineEdit)) : JSON.parse(JSON.stringify(this.extendedLinesetsBeforeEdit));
-
-      if (this.moveSegStart) {
-        this.linesetsBeforeEdit = JSON.parse(JSON.stringify(this.linesetsBeforeLineEdit));
-        this.extendedLinesetsBeforeEdit = JSON.parse(JSON.stringify(this.extendedLinesetsBeforeLineEdit));
-      }
+      this.linesets = JSON.parse(JSON.stringify(this.linesetsBeforeEdit));
+      this.extendedLinesets = JSON.parse(JSON.stringify(this.extendedLinesetsBeforeEdit));
     } else {
       this.linesetsBeforeEdit = JSON.parse(JSON.stringify(this.linesets));
       this.extendedLinesetsBeforeEdit = JSON.parse(JSON.stringify(this.extendedLinesets));
@@ -445,9 +431,16 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.processStart = false;
     this.actionButtonDisable = false;
 
-    if (this.moveSegStart) {
-      this.moveSegStart = false;
+    if (this.editSegStart) {
+      this.editSegStart = false;
       this.addProcessStart = false;
+
+      this.addLineProcessShowTempExtremity = false;
+
+      this.firstExtremXCoorCheck = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasXMax)]);
+      this.firstExtremYCoorCheck = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasYMax)]);
+      this.secondExtremXCoorCheck = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasXMax)]);
+      this.secondExtremYCoorCheck = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasYMax)]);
 
       this.linesetsBeforeLineEdit = [];
       this.extendedLinesetsBeforeLineEdit = [];
