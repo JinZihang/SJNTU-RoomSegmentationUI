@@ -33,6 +33,9 @@ export class RoomSegUIComponent implements AfterViewInit {
   removalProcessStart: boolean = false;
   addProcessStart: boolean = false;
   addLineElementIndex: number;
+  addLineProcessShowTempExtremity: boolean = false;
+  addLineTempExtremity: number[];
+  addLineValueComplete: boolean = false;
 
   addFirstExtremX: any;
   addFirstExtremY: any;
@@ -138,6 +141,8 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.extremities = elementIndex !== -1 ? this.linesets[elementIndex] : [];
     } else if (this.removalProcessStart) {
       this.extremities = elementIndex !== -1 ? this.linesets[elementIndex] : [];
+    } else if (this.addProcessStart && elementIndex === this.addLineElementIndex && this.addLineValueComplete) {
+      this.extremities = elementIndex !== -1 ? this.linesets[elementIndex] : [];
     } else if (elementIndex !== -1) {
       this.tempExtremEdit = true;
 
@@ -157,8 +162,15 @@ export class RoomSegUIComponent implements AfterViewInit {
     if (elementIndex === -1) {
       this.extremities = [];
       if (this.tempExtremEdit) {
-        this.extendedLinesets = JSON.parse(JSON.stringify(this.extendedLinesetsBeforeEdit));
-        this.tempExtremEdit = false;
+        if (!this.addProcessStart) {
+          this.extendedLinesets = JSON.parse(JSON.stringify(this.extendedLinesetsBeforeEdit));
+          this.tempExtremEdit = false;
+        } else if (this.addLineValueComplete) {
+          this.extendedLinesets = JSON.parse(JSON.stringify(this.extendedLinesetsBeforeEdit));
+          this.tempExtremEdit = false;
+
+          this.extendLineSegments();
+        }
       }
     }
   }
@@ -219,8 +231,30 @@ export class RoomSegUIComponent implements AfterViewInit {
     }
 
     if (this.addFirstExtremX && this.addFirstExtremY && this.addSecondExtremX && this.addSecondExtremY) {
+      this.addLineValueComplete = true;
+
+      this.addLineProcessShowTempExtremity = false;
+      this.addLineTempExtremity = [];
+
       this.linesets[this.addLineElementIndex] = [this.addFirstExtremX, this.addFirstExtremY, this.addSecondExtremX, this.addSecondExtremY];
       this.extendLineSegments();
+    } else {
+      this.addLineValueComplete = false;
+      delete this.linesets[this.addLineElementIndex];
+      delete this.extendedLinesets[this.addLineElementIndex];
+      this.linesets.length = this.addLineElementIndex;
+      this.extendedLinesets.length = this.addLineElementIndex;
+
+      this.addLineProcessShowTempExtremity = false;
+      this.addLineTempExtremity = [];
+
+      if (this.addFirstExtremX && this.addFirstExtremY) {
+        this.addLineProcessShowTempExtremity = true;
+        this.addLineTempExtremity = [this.addFirstExtremX, this.addFirstExtremY]
+      } else if (this.addSecondExtremX && this.addSecondExtremY) {
+        this.addLineProcessShowTempExtremity = true;
+        this.addLineTempExtremity = [this.addSecondExtremX, this.addSecondExtremY]
+      }
     }
   }
 
@@ -306,14 +340,17 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.addFirstExtremY = undefined;
       this.addSecondExtremX = undefined;
       this.addSecondExtremY = undefined;
+      this.addLineValueComplete = false;
+      this.addLineTempExtremity = [];
     } else if (this.removalProcessStart) {
       this.removalProcessStart = false;
     }
   }
 }
 
-// Add a control so that add, remove, confirm result button cannot be active together
-// Add input error situation (has to be a numeric value)
+// TO DOs:
+// Add a control so that the add, remove, confirm result button cannot be active together
+// Add input error situation (limit input to be a numeric value)
 
 // console.log('*******************************')
 // console.log('this.linesets');
