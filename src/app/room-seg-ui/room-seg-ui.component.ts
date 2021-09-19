@@ -6,6 +6,12 @@ import { RoomSegDialog } from './room-seg-dialog/room-seg-dialog.component'
 
 const CanvasSideLength = 600;
 
+/*
+TO DOs:
+- Change the way of limiting input to numeric.
+- Change the way to disable buttons.
+- Change the way to extend lines (the current extend line scipt only works as expected when the 2nd point is at the bottom-right side of the 1st point).
+*/
 @Component({
   selector: 'room-segmentation-ui',
   templateUrl: 'room-seg-ui.component.html',
@@ -22,10 +28,13 @@ export class RoomSegUIComponent implements AfterViewInit {
   canvasYMax: number;
 
   linesets: number[][] = linesetData.Linesets;
-  extendedLinesets: number[][] = [];
   linesetsBeforeEdit: number[][];
-  extendedLinesetsBeforeEdit: number[][];
+  linesetsBeforeLineEdit: number[][];
 
+  extendedLinesets: number[][] = [];
+  extendedLinesetsBeforeEdit: number[][];
+  extendedLinesetsBeforeLineEdit: number[][];
+  
   lineSegment: boolean = true;
   extremities: number[] = [];
   tempExtremEdit: boolean = false;
@@ -34,8 +43,15 @@ export class RoomSegUIComponent implements AfterViewInit {
   cursorPosition: number[] = [-1, -1];
 
   processStart: boolean = false;
-  removalProcessStart: boolean = false;
+  moveSegStart: boolean = false;
   addProcessStart: boolean = false;
+  removalProcessStart: boolean = false;
+  
+  firstExtremXCoorCheck: FormControl;
+  firstExtremYCoorCheck: FormControl;
+  secondExtremXCoorCheck: FormControl;
+  secondExtremYCoorCheck: FormControl;
+
   addLineElementIndex: number;
   addLineProcessShowTempExtremity: boolean = false;
   addLineTempExtremity: number[];
@@ -46,19 +62,17 @@ export class RoomSegUIComponent implements AfterViewInit {
   addSecondExtremX: any;
   addSecondExtremY: any;
 
-  firstExtremXCoorCheck: FormControl;
-  firstExtremYCoorCheck: FormControl;
-  secondExtremXCoorCheck: FormControl;
-  secondExtremYCoorCheck: FormControl;
+  // initialFirstExtremX: number = 1;
+  // initialFirstExtremY: number;
+  // initialSecondExtremX: number;
+  // initialSecondExtremY: number;
 
   actionButtonDisable: boolean = false;
   processConfirmButtonDisable: boolean = false;
 
   @ViewChild('dimContainer') dimContainerElement: ElementRef;
   @ViewChild('roomTopViewImage') imageElement: ElementRef;
-  @ViewChild('svg') svgElement: ElementRef;
   @ViewChild('line') lineElement: ElementRef;
-  @ViewChild('removeLineButton') removeLineButtonElement: ElementRef;
 
   constructor(private renderer: Renderer2, public dialog: MatDialog) {}
 
@@ -154,7 +168,7 @@ export class RoomSegUIComponent implements AfterViewInit {
 
     if (lineSegment) {
       this.extremities = elementIndex !== -1 ? this.linesets[elementIndex] : [];
-    } else if (this.removalProcessStart) {
+    } else if (this.removalProcessStart || this.moveSegStart) {
       this.extremities = elementIndex !== -1 ? this.linesets[elementIndex] : [];
     } else if (this.addProcessStart && elementIndex === this.addLineElementIndex && this.addLineValueComplete) {
       this.extremities = elementIndex !== -1 ? this.linesets[elementIndex] : [];
@@ -172,7 +186,9 @@ export class RoomSegUIComponent implements AfterViewInit {
     if (elementIndex === -1) {
       this.extremities = [];
       if (this.tempExtremEdit) {
+        console.log('test1');
         if (!this.addProcessStart) {
+          console.log('test2');
           this.extendedLinesets = JSON.parse(JSON.stringify(this.extendedLinesetsBeforeEdit));
           this.tempExtremEdit = false;
         } else if (this.addLineValueComplete) {
@@ -196,9 +212,16 @@ export class RoomSegUIComponent implements AfterViewInit {
 
   public moveSegLine(elementIndex: number, confirmed: boolean): void {
     if (confirmed) {
-      this.linesets = this.linesets.filter(e => e !== this.linesets[elementIndex]);
-      this.extendedLinesets = this.extendedLinesets.filter(e => e !== this.extendedLinesets[elementIndex]);
-      // Seg add a line
+      this.moveSegStart = true;
+
+      this.linesetsBeforeLineEdit = JSON.parse(JSON.stringify(this.linesets));
+      this.extendedLinesetsBeforeLineEdit = JSON.parse(JSON.stringify(this.extendedLinesets));
+
+      this.removeLine(elementIndex);
+      this.linesetsBeforeEdit = JSON.parse(JSON.stringify(this.linesets));
+      this.extendedLinesetsBeforeEdit = JSON.parse(JSON.stringify(this.extendedLinesets));
+      
+      this.lineAdd(true, elementIndex, this.linesetsBeforeLineEdit[elementIndex]);
     } else {
       this.openDialog('Edit this segmentation line?', 'Use cursor to move the line or key in its new extremities\' coordinates.', elementIndex, 'Edit');
     }
@@ -208,7 +231,7 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.lineSegment = !this.lineSegment;
   }
 
-  public lineAdd(startProcess: boolean): void {
+  public lineAdd(startProcess: boolean, elementIndex: number, initialCoor: number[]): void {
     if (!startProcess) {
       this.openDialog('Add a segmentation line?', 'Use cursor to place extremities or key in their coordinates.', this.linesets.length + 1, 'Add');
     } else {
@@ -221,11 +244,30 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.linesetsBeforeEdit = JSON.parse(JSON.stringify(this.linesets));
       this.extendedLinesetsBeforeEdit = JSON.parse(JSON.stringify(this.extendedLinesets));
 
-      this.addLineElementIndex = this.linesets.length;
+      if (elementIndex === -1) {
+        this.addLineElementIndex = this.linesets.length;
+      } else {
+        this.addLineElementIndex = elementIndex;
+
+        let initialFirstExtremX: FormControl = this.firstExtremXCoorCheck;
+        let initialFirstExtremY: FormControl = this.firstExtremYCoorCheck;
+        let initialSecondExtremX: FormControl = this.secondExtremXCoorCheck;
+        let initialSecondExtremY: FormControl = this.secondExtremYCoorCheck;
+
+        initialFirstExtremX.setValue(initialCoor[0]);
+        initialFirstExtremY.setValue(initialCoor[1]);
+        initialSecondExtremX.setValue(initialCoor[2]);
+        initialSecondExtremY.setValue(initialCoor[3]);
+
+        this.addLineInputOnKey('firstExtremX', initialCoor[0], true);
+        this.addLineInputOnKey('firstExtremY', initialCoor[1], true);
+        this.addLineInputOnKey('secondExtremX', initialCoor[2], true);
+        this.addLineInputOnKey('secondExtremY', initialCoor[3], true);
+      }
     }
   }
 
-  public addLineInputOnKey(placeHolder: string, value: any) {
+  public addLineInputOnKey(placeHolder: string, value: any, isFromMoveLineProcess: boolean) {
     let canAddLine = false;
 
     if (!isNaN(Number(value)) && Number(value) >= 0) {
@@ -272,11 +314,13 @@ export class RoomSegUIComponent implements AfterViewInit {
           this.addLineValueComplete = false;
           this.processConfirmButtonDisable = true;
 
-          delete this.linesets[this.addLineElementIndex];
-          delete this.extendedLinesets[this.addLineElementIndex];
-          this.linesets.length = this.addLineElementIndex;
-          this.extendedLinesets.length = this.addLineElementIndex;
-    
+          if (!isFromMoveLineProcess){
+            delete this.linesets[this.addLineElementIndex];
+            delete this.extendedLinesets[this.addLineElementIndex];
+            this.linesets.length = this.addLineElementIndex;
+            this.extendedLinesets.length = this.addLineElementIndex;
+          }
+          
           this.addLineProcessShowTempExtremity = false;
           this.addLineTempExtremity = [];
     
@@ -341,11 +385,6 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.extendedLinesets = this.extendedLinesets.filter(e => e !== this.extendedLinesets[elementIndex]);
 
     this.extremities = [];
-
-    console.log('this.linesets');
-    console.log(this.linesets);
-    console.log('this.extendedLinesets');
-    console.log(this.extendedLinesets);
   }
   
   public segConfirm(): void {
@@ -355,6 +394,7 @@ export class RoomSegUIComponent implements AfterViewInit {
   private openDialog(title: string, content: string, elementIndex: number, action: string): void {
     const dialogConfig = new MatDialogConfig();
 
+    dialogConfig.disableClose = true;
     dialogConfig.data = {
       title: title,
       content: content,
@@ -375,7 +415,7 @@ export class RoomSegUIComponent implements AfterViewInit {
             this.moveSegLine(elementIndex, true)
             break;
           case 'Add':
-            this.lineAdd(true);
+            this.lineAdd(true, -1, []);
             break;
           case 'Remove':
             this.lineRemove(true);
@@ -390,8 +430,13 @@ export class RoomSegUIComponent implements AfterViewInit {
 
   public processControl(processConfirm: boolean): void {
     if (!processConfirm) {
-      this.linesets = JSON.parse(JSON.stringify(this.linesetsBeforeEdit));
-      this.extendedLinesets = JSON.parse(JSON.stringify(this.extendedLinesetsBeforeEdit));
+      this.linesets = this.moveSegStart ? JSON.parse(JSON.stringify(this.linesetsBeforeLineEdit)) : JSON.parse(JSON.stringify(this.linesetsBeforeEdit));
+      this.extendedLinesets = this.moveSegStart ? JSON.parse(JSON.stringify(this.extendedLinesetsBeforeLineEdit)) : JSON.parse(JSON.stringify(this.extendedLinesetsBeforeEdit));
+
+      if (this.moveSegStart) {
+        this.linesetsBeforeEdit = JSON.parse(JSON.stringify(this.linesetsBeforeLineEdit));
+        this.extendedLinesetsBeforeEdit = JSON.parse(JSON.stringify(this.extendedLinesetsBeforeLineEdit));
+      }
     } else {
       this.linesetsBeforeEdit = JSON.parse(JSON.stringify(this.linesets));
       this.extendedLinesetsBeforeEdit = JSON.parse(JSON.stringify(this.extendedLinesets));
@@ -400,6 +445,13 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.processStart = false;
     this.actionButtonDisable = false;
 
+    if (this.moveSegStart) {
+      this.moveSegStart = false;
+      this.addProcessStart = false;
+
+      this.linesetsBeforeLineEdit = [];
+      this.extendedLinesetsBeforeLineEdit = [];
+    } 
     if (this.addProcessStart) {
       this.addProcessStart = false;
 
@@ -421,13 +473,3 @@ export class RoomSegUIComponent implements AfterViewInit {
     }
   }
 }
-
-/*
-TO DOs:
-- Change the way of limiting input to numeric.
-- Change the way to disable buttons.
-  - [Done] Limit add line input to numeric, disable the processConfirm button while addLineValueComplete is not true.
-  - [Done] Disable the segConfirm, addLine & removeLine buttons while there is a add/remove/edit action in progress.
-- Add the output variable.
-- Add the edit line scripts.
-*/
