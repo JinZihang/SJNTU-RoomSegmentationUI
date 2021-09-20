@@ -11,6 +11,8 @@ TO DOs:
 - Change the way of limiting input to numeric.
 - Change the way to disable buttons.
 - Change the way to extend lines, the current way leads to wrong result sometimes.
+
+- Revert the size of linesets?
 */
 @Component({
   selector: 'room-segmentation-ui',
