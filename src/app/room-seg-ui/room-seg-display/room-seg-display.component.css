@@ -23,8 +23,10 @@ svg {
 }
 .line-segment-extremity {
     position: relative;
+    z-index: 3;
     fill: red;
     cursor: pointer;
+    
 }
 
 #cursor-coor-container {

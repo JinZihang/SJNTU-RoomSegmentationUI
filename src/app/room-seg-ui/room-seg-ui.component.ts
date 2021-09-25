@@ -73,9 +73,31 @@ export class RoomSegUIComponent implements AfterViewInit {
             break;
         }
       } else if (this.canvasSideLength < minCanvasSideLength) {
-        this.canvasSideLength = minCanvasSideLength;
+        switch (direction) {
+          case 'bottom':
+            if (event.clientY - this.beforeResizeCursorPositionY > 0) {
+              this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientY - this.beforeResizeCursorPositionY);
+            }
+            break;
+          case 'right':
+            if (event.clientX - this.beforeResizeCursorPositionX > 0) {
+              this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientX - this.beforeResizeCursorPositionX);
+            }
+            break;
+        }
       } else {
-        this.canvasSideLength = maxCanvasSideLength;
+        switch (direction) {
+          case 'bottom':
+            if (event.clientY - this.beforeResizeCursorPositionY < 0) {
+              this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientY - this.beforeResizeCursorPositionY);
+            }
+            break;
+          case 'right':
+            if (event.clientX - this.beforeResizeCursorPositionX < 0) {
+              this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientX - this.beforeResizeCursorPositionX);
+            }
+            break;
+        }
       }
       
       this.setContainerPosition();
