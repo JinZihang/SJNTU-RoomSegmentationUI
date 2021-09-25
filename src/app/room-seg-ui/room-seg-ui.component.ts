@@ -33,12 +33,15 @@ export class RoomSegUIComponent implements AfterViewInit {
   lineSetToggle: boolean = false;
   lineSetToDisplay: number[][] = this.lineSet;
 
+  process: string = '';
+  lineSetBeforeProcess: number[][];
+
   @ViewChild('resizeContainerElement') resizeContainerElement: ElementRef;
   @ViewChild('displayElement') displayElement: ElementRef;
   @ViewChild('actionButtonContainerElement') actionButtonContainerElement: ElementRef;
   @ViewChild('processButtonContainerElement') processButtonContainerElement: ElementRef;
 
-  constructor(@Inject(DOCUMENT) private document: Document, private renderer: Renderer2, public dialog: MatDialog) {}
+  constructor(private renderer: Renderer2, public dialog: MatDialog) {}
 
   // Initialize.
   ngAfterViewInit(): void {
@@ -109,12 +112,13 @@ export class RoomSegUIComponent implements AfterViewInit {
   }
 
   // For extending line segments to lines.
-  public getRoomImgScale(imgScale: any): void {
+  public getRoomImgScale(imgScale: number[]): void {
     this.imgScale = imgScale;
     this.extendLineSet();
   }
   private extendLineSet(): void {
     this.lineSetExtended = [];
+
     let xMax = this.imgScale[0];
     let yMax = this.imgScale[1];
 
@@ -165,30 +169,29 @@ export class RoomSegUIComponent implements AfterViewInit {
       }
     }
   }
+
+  // Action buttons' functions.
   public toggleBetweenLineSegmentAndLine(): void {
     this.lineSetToggle = !this.lineSetToggle;
     this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
   }
-
   public lineRemoveProcess(processStart: boolean) {
     if (!processStart) {
-      this.openDialog('Remove', 'Start removing segmentation lines?', 'Click on the lines that you want to remove.', -1);
+      this.openDialog('remove', 'Start removing segmentation lines?', 'Click on the lines that you want to remove.', -1);
     } else {
-
+      this.process = 'remove';
     }
   }
-
-  public completeSegmentation() {
+  public completeSegmentation(): void {
     this.openDialog('Complete', 'Proceed with this room segmentaion result?', 'Press cancel if you want to make further edits.', -1);
   }
-
-  private openDialog(action: string, title: string, content: string, elementIndex: number): void {
+  private openDialog(action: string, title: string, content: string, lineIndex: number): void {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.data = {
       title: title,
       content: content,
-      elementIndex: elementIndex,
+      lineIndex: lineIndex,
       action: action
     };
 
@@ -197,23 +200,44 @@ export class RoomSegUIComponent implements AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       let shouldProceed = result[0];
       let action = result[1];
-      let elementIndex = result[2];
+      let lineIndex = result[2];
 
       if (shouldProceed) {
+        this.lineSetBeforeProcess = JSON.parse(JSON.stringify(this.lineSet));
+
         switch (action) {
-          case 'Edit':
+          case 'add':
             break;
-          case 'Add':
+          case 'remove':
+            this.lineRemoveProcess(true);
             break;
-          case 'Remove':
-            // this.lineRemove(true);
-            console.log('remove!!!');
-            break;
-          case 'Complete':
+          case 'complete':
             this.segmentationComplete.emit(this.lineSet);
+            // Jump to the next page.
             break;
         }
       }
     });
+  }
+  public processControl(confirmChanges: boolean): void {
+    this.process = '';
+
+    if (!confirmChanges) {
+      this.lineSet = JSON.parse(JSON.stringify(this.lineSetBeforeProcess));
+      this.extendLineSet();
+      this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
+    }
+  }
+  public updateLineSet(editResult: any[]): void {
+    let action = editResult[0];
+    let lineIndex = editResult[1];
+
+    switch (action) {
+      case 'remove':
+        this.lineSet = this.lineSet.filter(e => e !== this.lineSet[lineIndex]);
+        this.extendLineSet();
+        this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
+        break;
+    }
   }
 }

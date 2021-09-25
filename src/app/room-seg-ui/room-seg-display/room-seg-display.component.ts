@@ -12,8 +12,10 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
   @Input() imgSrc: string;
   @Input() lineSet: number[][];
   @Input() lineSetToDisplay: number[][];
+  @Input() process: string;
 
   @Output() roomImgScale = new EventEmitter<number[]>();
+  @Output() editResult = new EventEmitter<any[]>();
 
   initialized: boolean = false;
 
@@ -41,6 +43,9 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
 
   ngOnChanges(): void {
     if (this.initialized) {
+      this.lineSetCopy = JSON.parse(JSON.stringify(this.lineSet));
+      this.lineSetToDisplayCopy = JSON.parse(JSON.stringify(this.lineSetToDisplay));
+
       this.setScaleContainerDimension();
     }
   }
@@ -118,11 +123,33 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
     this.cursorCoor[1] = event.offsetY;
   }
 
-  public showExtremities(elementIndex: number): void {
-    if (elementIndex === -1) {
+  // Line functions.
+  public lineClickAction(lineIndex: number): void {
+    switch (this.process) {
+      case 'add':
+        this.addLine();
+        break;
+      case 'remove':
+        this.removeLine(lineIndex);
+        break;
+      default:
+        this.editLine(lineIndex);
+        break;
+    }
+  }
+  public addLine(): void {}
+  public removeLine(lineIndex: number): void {
+    this.extremities = [];
+    this.lineSetToDisplayCopy = this.lineSetToDisplayCopy.filter(e => e !== this.lineSetToDisplayCopy[lineIndex]);
+
+    this.editResult.emit(['remove', lineIndex]);
+  }
+  public editLine(lineIndex: number): void {}
+  public showExtremities(lineIndex: number): void {
+    if (lineIndex === -1) {
       this.extremities = [];
     } else {
-      this.extremities = this.lineSetCopy[elementIndex];
+      this.extremities = this.lineSetCopy[lineIndex];
     }
   }
 }
