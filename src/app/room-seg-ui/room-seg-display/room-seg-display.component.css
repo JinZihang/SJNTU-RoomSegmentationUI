@@ -1,0 +1,35 @@
+#scale-container {
+    position: absolute;
+}
+
+#room-top-view-image {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+}
+
+svg {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 2;
+}
+.line {
+    position: relative;
+    stroke: black;
+    stroke-width: 3;
+    cursor: pointer;
+}
+
+#cursor-coor-container {
+    position: absolute;
+    text-align: center;
+    z-index: 3;
+}
+#cursor-coor-text {
+    margin-left: -5px;
+}
+.cursor-coor-value {
+    margin-left: 20px;
+}

@@ -1,0 +1,12 @@
+#dialog-title {
+    margin-top: -10px;
+}
+
+#dialog-content {
+    margin-top: -23px;
+    font-size: small;
+}
+
+#dialog-button-container {
+    margin-top: -10px;
+}

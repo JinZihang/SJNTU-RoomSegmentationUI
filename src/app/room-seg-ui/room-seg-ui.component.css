@@ -1,102 +1,53 @@
-#room-seg-ui {
+#resize-container {
     position: absolute;
-    height: 100%;
-    width: 100%;
-}
-#container {
-    position: relative;
     top: 15px;
     left: 10px;
-    height: 600px;
-    width: 600px;
+    background-color: cadetblue;
 }
-#dim-container {
+#resize-container-bottom {
     position: absolute;
-    border-style: solid;
-    border-width: 5px;
+    bottom: -5px;
+    left: 0;
+    right: 5px;
+    height: 10px;
+    z-index: 10;
+    background-color: yellow;
+    opacity: .5;
+    cursor: s-resize;
 }
-
-#room-top-view-image {
+#resize-container-right {
     position: absolute;
-    height: 100%;
-    width: 100%;
-    z-index: 1;
+    top: 0;
+    bottom: 5px;
+    right: -5px;
+    width: 10px;
+    z-index: 10;
+    background-color: green;
+    opacity: .5;
+    cursor: e-resize;
 }
-
-svg {
+#resize-container-bottom-right {
     position: absolute;
-    height: 100%;
-    width: 100%;
-    z-index: 3;
-}
-.line {
-    position: relative;
-    stroke: cadetblue;
-    stroke-width: 3;
-    cursor: pointer;
-}
-.line-segment-extremity {
-    position: relative;
-    fill: red;
-    cursor: pointer;
-}
-
-#cursor-position-container {
-    position: absolute;
-    top: 615px;
-    left: 34px;
-    width: 563px;
-    text-align: center;
-}
-#cursor-position-text {
-    margin-left: -40px;
-}
-.cursor-position-value {
-    margin-left: 20px;
+    bottom: -5px;
+    right: -5px;
+    width: 10px;
+    height: 10px;
+    z-index: 10;
+    background-color: blue;
+    opacity: .5;
+    cursor: se-resize;
 }
 
 #action-button-container {
     position: absolute;
     top: 15px;
-    left: 630px;
     width: 230px;
 }
 #process-button-container {
     position: absolute;
-    top: 544px;
-    left: 630px;
     width: 230px;
 }
 button {
     display: block;
     margin-bottom: 10px;
-}
-
-#coor-input {
-    position: absolute;
-    top: 660px;
-    left: 34px;
-    width: 563px;
-}
-.extremityCoorInput {
-    margin-left: 65px;
-}
-.mat-form-field {
-    margin-left: 10px;
-    margin-bottom: 10px;
-}
-
-#action-button-disable {
-    position: absolute;
-    top: 60px;
-    left: 630px;
-    height: 129px;
-    width: 230px;
-}
-#process-confirm-button-disable {
-    position: absolute;
-    top: 544px;
-    left: 630px;
-    height: 36px;
-    width: 230px;
 }

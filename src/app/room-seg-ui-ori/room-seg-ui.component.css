@@ -1,0 +1,102 @@
+#room-seg-ui {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+#container {
+    position: relative;
+    top: 15px;
+    left: 10px;
+    height: 600px;
+    width: 600px;
+}
+#dim-container {
+    position: absolute;
+    border-style: solid;
+    border-width: 5px;
+}
+
+#room-top-view-image {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+}
+
+svg {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 3;
+}
+.line {
+    position: relative;
+    stroke: black;
+    stroke-width: 3;
+    cursor: pointer;
+}
+.line-segment-extremity {
+    position: relative;
+    fill: red;
+    cursor: pointer;
+}
+
+#cursor-position-container {
+    position: absolute;
+    top: 615px;
+    left: 34px;
+    width: 563px;
+    text-align: center;
+}
+#cursor-position-text {
+    margin-left: -40px;
+}
+.cursor-position-value {
+    margin-left: 20px;
+}
+
+#action-button-container {
+    position: absolute;
+    top: 15px;
+    left: 630px;
+    width: 230px;
+}
+#process-button-container {
+    position: absolute;
+    top: 544px;
+    left: 630px;
+    width: 230px;
+}
+button {
+    display: block;
+    margin-bottom: 10px;
+}
+
+#coor-input {
+    position: absolute;
+    top: 660px;
+    left: 34px;
+    width: 563px;
+}
+.extremityCoorInput {
+    margin-left: 65px;
+}
+.mat-form-field {
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+#action-button-disable {
+    position: absolute;
+    top: 60px;
+    left: 630px;
+    height: 129px;
+    width: 230px;
+}
+#process-confirm-button-disable {
+    position: absolute;
+    top: 544px;
+    left: 630px;
+    height: 36px;
+    width: 230px;
+}

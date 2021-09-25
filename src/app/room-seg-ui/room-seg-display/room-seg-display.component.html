@@ -1,0 +1,21 @@
+<div id='scale-container' #scaleContainer>
+    <img id='room-top-view-image' #roomTopViewImage [src]='imgSrc' (load)='roomTopViewImgOnLoad()'>
+    <svg #svg (mouseover)='showCursorCoordinates(true)' (mouseout)='showCursorCoordinates(false)' (mousemove)='updateCursorCoordinates($event)'>
+        <line #line class='line'
+            *ngFor='let line of lineSet; let elementIndex = index;' 
+            [attr.x1]='line[0]' [attr.y1]='line[1]' [attr.x2]='line[2]' [attr.y2]='line[3]' 
+        />
+    </svg>
+</div>
+
+<div id='cursor-coor-container' #cursorCoorContainer>
+    <div *ngIf='showCursorCoor'>
+        <p>
+            <em>
+                <span id='cursor-coor-text'>Cursor position: </span>
+                <span class='cursor-coor-value'>x:{{cursorCoor[0]}}</span>
+                <span class='cursor-coor-value'>y:{{cursorCoor[1]}}</span>
+            </em>
+        </p>
+    </div>
+</div>
