@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, Inject, Renderer2 } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Output, EventEmitter, ViewChild, ElementRef, Inject, Renderer2 } from '@angular/core';
 import { DOCUMENT } from "@angular/common";
 import { fromEvent } from "rxjs";
 import { filter, take, takeWhile } from "rxjs/operators";
@@ -14,13 +14,17 @@ import { RoomSegDialog } from './room-seg-dialog/room-seg-dialog.component'
   styleUrls: ['room-seg-ui.component.css']
 })
 export class RoomSegUIComponent implements AfterViewInit {
+  // @Input() imgSrc: string;
+  // @Input() lineSet: number[][];
+
+  @Output() segmentationComplete = new EventEmitter<number[][]>();
+
   canvasSideLength: number = 600;
   beforeResizeCanvasSideLength: number;
   resizeProcess: boolean = false;
   beforeResizeCursorPositionX: number;
   beforeResizeCursorPositionY: number;
-  
-  // @Input(): imgSrc & lineset
+
   imgSrc: string = '/assets/mock-image-2.png';
   imgScale: number[];
 
@@ -164,5 +168,52 @@ export class RoomSegUIComponent implements AfterViewInit {
   public toggleBetweenLineSegmentAndLine(): void {
     this.lineSetToggle = !this.lineSetToggle;
     this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
+  }
+
+  public lineRemoveProcess(processStart: boolean) {
+    if (!processStart) {
+      this.openDialog('Remove', 'Start removing segmentation lines?', 'Click on the lines that you want to remove.', -1);
+    } else {
+
+    }
+  }
+
+  public completeSegmentation() {
+    this.openDialog('Complete', 'Proceed with this room segmentaion result?', 'Press cancel if you want to make further edits.', -1);
+  }
+
+  private openDialog(action: string, title: string, content: string, elementIndex: number): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.data = {
+      title: title,
+      content: content,
+      elementIndex: elementIndex,
+      action: action
+    };
+
+    let dialogRef = this.dialog.open(RoomSegDialog, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      let shouldProceed = result[0];
+      let action = result[1];
+      let elementIndex = result[2];
+
+      if (shouldProceed) {
+        switch (action) {
+          case 'Edit':
+            break;
+          case 'Add':
+            break;
+          case 'Remove':
+            // this.lineRemove(true);
+            console.log('remove!!!');
+            break;
+          case 'Complete':
+            this.segmentationComplete.emit(this.lineSet);
+            break;
+        }
+      }
+    });
   }
 }

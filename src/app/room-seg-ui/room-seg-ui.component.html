@@ -16,8 +16,8 @@
 <div id='action-button-container' #actionButtonContainerElement>
     <button mat-stroked-button (click)='toggleBetweenLineSegmentAndLine()'>Segment/Extended</button>
     <button mat-stroked-button>Add a Segmentation Line</button>
-    <button mat-stroked-button>Remove Segmentation Lines</button>
-    <button mat-stroked-button>Confirm Result</button>
+    <button mat-stroked-button (click)='lineRemoveProcess(false)'>Remove Segmentation Lines</button>
+    <button mat-stroked-button (click)='completeSegmentation()'>Confirm Result</button>
 </div>
 
 <div id='process-button-container' #processButtonContainerElement>
