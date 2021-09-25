@@ -11,6 +11,7 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
   @Input() canvasSideLength: number;
   @Input() imgSrc: string;
   @Input() lineSet: number[][];
+  @Input() lineSetToDisplay: number[][];
 
   @Output() roomImgScale = new EventEmitter<number[]>();
 
@@ -23,9 +24,12 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
   canvasYMax: number;
 
   lineSetCopy: number[][];
+  lineSetToDisplayCopy: number[][];
 
   showCursorCoor: boolean;
   cursorCoor: number[] = [-1, -1];
+
+  extremities: number[] = [];
 
   @ViewChild('scaleContainerElement') scaleElement: ElementRef;
   @ViewChild('roomTopViewImageElement') imgElement: ElementRef;
@@ -41,13 +45,15 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
     }
   }
 
+  // Initialize elements.
   public roomTopViewImgOnLoad(): void {
     this.lineSetCopy = JSON.parse(JSON.stringify(this.lineSet));
+    this.lineSetToDisplayCopy = JSON.parse(JSON.stringify(this.lineSetToDisplay));
+
     this.setScaleContainerDimension();
+    
     this.initialized = true;
   }
-
-  // Initialize scale container and adjust coordinates according to the original image scale.
   private setScaleContainerDimension(): void {
     this.imgNaturalWidth = (this.imgElement.nativeElement as HTMLImageElement).naturalWidth;
     this.imgNaturalHeight = (this.imgElement.nativeElement as HTMLImageElement).naturalHeight;
@@ -87,6 +93,13 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
       this.lineSetCopy[i][2] = (this.lineSet[i][2] / this.imgNaturalWidth) * this.canvasXMax;
       this.lineSetCopy[i][3] = (this.lineSet[i][3] / this.imgNaturalHeight) * this.canvasYMax;
     }
+
+    for (let i=0; i<this.lineSetToDisplay.length; i++) {
+      this.lineSetToDisplayCopy[i][0] = (this.lineSetToDisplay[i][0] / this.imgNaturalWidth) * this.canvasXMax;
+      this.lineSetToDisplayCopy[i][1] = (this.lineSetToDisplay[i][1] / this.imgNaturalHeight) * this.canvasYMax;
+      this.lineSetToDisplayCopy[i][2] = (this.lineSetToDisplay[i][2] / this.imgNaturalWidth) * this.canvasXMax;
+      this.lineSetToDisplayCopy[i][3] = (this.lineSetToDisplay[i][3] / this.imgNaturalHeight) * this.canvasYMax;
+    }
   }
 
   // Cursor coordinates related.
@@ -103,5 +116,13 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
   public updateCursorCoordinates(event: any): void {
     this.cursorCoor[0] = event.offsetX;
     this.cursorCoor[1] = event.offsetY;
+  }
+
+  public showExtremities(elementIndex: number): void {
+    if (elementIndex === -1) {
+      this.extremities = [];
+    } else {
+      this.extremities = this.lineSetCopy[elementIndex];
+    }
   }
 }

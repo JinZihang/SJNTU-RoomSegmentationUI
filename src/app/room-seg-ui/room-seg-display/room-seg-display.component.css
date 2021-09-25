@@ -21,6 +21,11 @@ svg {
     stroke-width: 3;
     cursor: pointer;
 }
+.line-segment-extremity {
+    position: relative;
+    fill: red;
+    cursor: pointer;
+}
 
 #cursor-coor-container {
     position: absolute;

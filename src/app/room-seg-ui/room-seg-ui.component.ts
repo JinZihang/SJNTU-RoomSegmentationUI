@@ -36,10 +36,10 @@ export class RoomSegUIComponent implements AfterViewInit {
 
   constructor(@Inject(DOCUMENT) private document: Document, private renderer: Renderer2, public dialog: MatDialog) {}
 
+  // Initialize.
   ngAfterViewInit(): void {
     this.setContainerPosition();
   }
-
   private setContainerPosition(): void {
     this.renderer.setStyle(this.resizeContainerElement.nativeElement, 'height', String(this.canvasSideLength) + 'px');
     this.renderer.setStyle(this.resizeContainerElement.nativeElement, 'width', String(this.canvasSideLength) + 'px');
@@ -50,6 +50,7 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.renderer.setStyle(this.processButtonContainerElement.nativeElement, 'left', String(this.canvasSideLength + 30) + 'px');
   }
 
+  // For resizing the area to display image and line set.
   public resizeContainerControl(event: any, resizeProcess: boolean): void {
     this.resizeProcess = resizeProcess;
 
@@ -81,11 +82,11 @@ export class RoomSegUIComponent implements AfterViewInit {
     }
   }
 
+  // For extending line segments to lines.
   public getRoomImgScale(imgScale: any): void {
     this.imgScale = imgScale;
     this.extendLineSet();
   }
-
   private extendLineSet(): void {
     this.lineSetExtended = [];
     let xMax = this.imgScale[0];
@@ -138,7 +139,6 @@ export class RoomSegUIComponent implements AfterViewInit {
       }
     }
   }
-
   public toggleBetweenLineSegmentAndLine(): void {
     this.lineSetToggle = !this.lineSetToggle;
     this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
