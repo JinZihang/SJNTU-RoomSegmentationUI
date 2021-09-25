@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, Output, EventEmitter, ViewChild, ElementRef, Renderer2, Inject } from '@angular/core';
+import { Component, AfterViewInit, OnChanges, Input, Output, EventEmitter, ViewChild, ElementRef, Renderer2, Inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { FormControl, Validators } from '@angular/forms';
 
@@ -7,37 +7,51 @@ import { FormControl, Validators } from '@angular/forms';
   templateUrl: 'room-seg-display.component.html',
   styleUrls: ['room-seg-display.component.css']
 })
-export class RoomSegDisplayComponent implements AfterViewInit {
+export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
   @Input() canvasSideLength: number;
   @Input() imgSrc: string;
   @Input() lineSet: number[][];
 
   @Output() roomImgScale = new EventEmitter<number[]>();
 
+  initialized: boolean = false;
+
   imageScale: number; // Horizontal > 1
+  imgNaturalWidth: number;
+  imgNaturalHeight: number;
   canvasXMax: number;
   canvasYMax: number;
+
+  lineSetCopy: number[][];
 
   showCursorCoor: boolean;
   cursorCoor: number[] = [-1, -1];
 
-  @ViewChild('scaleContainer') scaleElement: ElementRef;
-  @ViewChild('roomTopViewImage') imgElement: ElementRef;
-  @ViewChild('cursorCoorContainer') cursorCoorElement: ElementRef;
+  @ViewChild('scaleContainerElement') scaleElement: ElementRef;
+  @ViewChild('roomTopViewImageElement') imgElement: ElementRef;
+  @ViewChild('cursorCoorContainerElement') cursorCoorElement: ElementRef;
 
   constructor(private renderer: Renderer2, public dialog: MatDialog) {}
 
-  ngAfterViewInit() {}
+  ngAfterViewInit(): void {}
+
+  ngOnChanges(): void {
+    if (this.initialized) {
+      this.setScaleContainerDimension();
+    }
+  }
 
   public roomTopViewImgOnLoad(): void {
+    this.lineSetCopy = JSON.parse(JSON.stringify(this.lineSet));
     this.setScaleContainerDimension();
+    this.initialized = true;
   }
 
   // Initialize scale container and adjust coordinates according to the original image scale.
   private setScaleContainerDimension(): void {
-    let imgNaturalWidth = (this.imgElement.nativeElement as HTMLImageElement).naturalWidth;
-    let imgNaturalHeight = (this.imgElement.nativeElement as HTMLImageElement).naturalHeight;
-    this.imageScale = imgNaturalWidth/imgNaturalHeight;
+    this.imgNaturalWidth = (this.imgElement.nativeElement as HTMLImageElement).naturalWidth;
+    this.imgNaturalHeight = (this.imgElement.nativeElement as HTMLImageElement).naturalHeight;
+    this.imageScale = this.imgNaturalWidth/this.imgNaturalHeight;
 
     if (this.imageScale > 1) {
       this.canvasXMax = this.canvasSideLength;
@@ -61,22 +75,22 @@ export class RoomSegDisplayComponent implements AfterViewInit {
       this.renderer.setStyle(this.scaleElement.nativeElement, 'margin-left', topMargin);
     }
 
-    this.adjustLinesetCoordinates(imgNaturalWidth, imgNaturalHeight);
+    this.adjustLinesetCoordinates();
     this.setCursorCoordinatesContainerPosition();
 
-    this.roomImgScale.emit([imgNaturalWidth, imgNaturalHeight]);
+    this.roomImgScale.emit([this.imgNaturalWidth, this.imgNaturalHeight]);
   }
-  private adjustLinesetCoordinates(imgNaturalWidth: number, imgNaturalHeight: number): void {
+  private adjustLinesetCoordinates(): void {
     for (let i=0; i<this.lineSet.length; i++) {
-      this.lineSet[i][0] = (this.lineSet[i][0] / imgNaturalWidth) * this.canvasXMax;
-      this.lineSet[i][1] = (this.lineSet[i][1] / imgNaturalHeight) * this.canvasYMax;
-      this.lineSet[i][2] = (this.lineSet[i][2] / imgNaturalWidth) * this.canvasXMax;
-      this.lineSet[i][3] = (this.lineSet[i][3] / imgNaturalHeight) * this.canvasYMax;
+      this.lineSetCopy[i][0] = (this.lineSet[i][0] / this.imgNaturalWidth) * this.canvasXMax;
+      this.lineSetCopy[i][1] = (this.lineSet[i][1] / this.imgNaturalHeight) * this.canvasYMax;
+      this.lineSetCopy[i][2] = (this.lineSet[i][2] / this.imgNaturalWidth) * this.canvasXMax;
+      this.lineSetCopy[i][3] = (this.lineSet[i][3] / this.imgNaturalHeight) * this.canvasYMax;
     }
   }
 
   // Cursor coordinates related.
-  private setCursorCoordinatesContainerPosition() {
+  private setCursorCoordinatesContainerPosition(): void {
     let top = String(this.canvasSideLength - 10) + 'px';
     let width = String(this.canvasSideLength) + 'px';
 

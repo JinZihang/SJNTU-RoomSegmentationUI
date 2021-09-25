@@ -1,18 +1,24 @@
-<div id='resize-container' #resizeContainer>
-    <room-seg-display [canvasSideLength]='canvasSideLength' [imgSrc]='imgSrc' [lineSet]='lineSetToDisplay' (roomImgScale)='getRoomImgScale($event)'></room-seg-display>
-    <div id='resize-container-bottom'></div>
-    <div id='resize-container-right'></div>
-    <div id='resize-container-bottom-right'></div>
+<div id='resize-container' #resizeContainerElement>
+    <room-seg-display #displayElement [canvasSideLength]='canvasSideLength' [imgSrc]='imgSrc' [lineSet]='lineSetToDisplay' (roomImgScale)='getRoomImgScale($event)'></room-seg-display>
+
+    <div id='resize-container-bottom' 
+        (mousedown)='resizeContainerControl($event, true)' (mouseup)='resizeContainerControl($event, false)' 
+        (mouseleave)='resizeContainerControl($event, false)' (mousemove)="resizeContainer($event, 'bottom')">
+    </div>
+    <div id='resize-container-right' 
+        (mousedown)='resizeContainerControl($event, true)' (mouseup)='resizeContainerControl($event, false)' 
+        (mouseleave)='resizeContainerControl($event, false)' (mousemove)="resizeContainer($event, 'right')">
+    </div>
 </div>
 
-<div id='action-button-container' #actionButtonContainer>
+<div id='action-button-container' #actionButtonContainerElement>
     <button mat-stroked-button (click)='toggleBetweenLineSegmentAndLine()'>Segment/Extended</button>
     <button mat-stroked-button>Add a Segmentation Line</button>
     <button mat-stroked-button>Remove Segmentation Lines</button>
     <button mat-stroked-button>Confirm Result</button>
 </div>
 
-<div id='process-button-container' #processButtonContainer>
+<div id='process-button-container' #processButtonContainerElement>
     <div>
         <button mat-stroked-button>Confirm Edit</button>
         <button mat-stroked-button>Cancel Edit</button>

@@ -1,4 +1,7 @@
-import { Component, AfterViewInit, ViewChild, ElementRef, Renderer2, Inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, Inject, Renderer2 } from '@angular/core';
+import { DOCUMENT } from "@angular/common";
+import { fromEvent } from "rxjs";
+import { filter, take, takeWhile } from "rxjs/operators";
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { FormControl, Validators } from '@angular/forms';
 import linesetData from '../../assets/mock-lineset-2.json';
@@ -12,6 +15,10 @@ import { RoomSegDialog } from './room-seg-dialog/room-seg-dialog.component'
 })
 export class RoomSegUIComponent implements AfterViewInit {
   canvasSideLength: number = 600;
+  beforeResizeCanvasSideLength: number;
+  resizeProcess: boolean = false;
+  beforeResizeCursorPositionX: number;
+  beforeResizeCursorPositionY: number;
   
   // @Input(): imgSrc & lineset
   imgSrc: string = '/assets/mock-image-2.png';
@@ -22,32 +29,64 @@ export class RoomSegUIComponent implements AfterViewInit {
   lineSetToggle: boolean = false;
   lineSetToDisplay: number[][] = this.lineSet;
 
-  @ViewChild('resizeContainer') resizeContainer: ElementRef;
-  @ViewChild('actionButtonContainer') actionButtonContainer: ElementRef;
-  @ViewChild('processButtonContainer') processButtonContainer: ElementRef;
+  @ViewChild('resizeContainerElement') resizeContainerElement: ElementRef;
+  @ViewChild('displayElement') displayElement: ElementRef;
+  @ViewChild('actionButtonContainerElement') actionButtonContainerElement: ElementRef;
+  @ViewChild('processButtonContainerElement') processButtonContainerElement: ElementRef;
 
-  constructor(private renderer: Renderer2, public dialog: MatDialog) {}
+  constructor(@Inject(DOCUMENT) private document: Document, private renderer: Renderer2, public dialog: MatDialog) {}
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.setContainerPosition();
   }
 
-  private setContainerPosition() {
-    this.renderer.setStyle(this.resizeContainer.nativeElement, 'height', String(this.canvasSideLength) + 'px');
-    this.renderer.setStyle(this.resizeContainer.nativeElement, 'width', String(this.canvasSideLength) + 'px');
+  private setContainerPosition(): void {
+    this.renderer.setStyle(this.resizeContainerElement.nativeElement, 'height', String(this.canvasSideLength) + 'px');
+    this.renderer.setStyle(this.resizeContainerElement.nativeElement, 'width', String(this.canvasSideLength) + 'px');
 
-    this.renderer.setStyle(this.actionButtonContainer.nativeElement, 'left', String(this.canvasSideLength + 30) + 'px');
+    this.renderer.setStyle(this.actionButtonContainerElement.nativeElement, 'left', String(this.canvasSideLength + 30) + 'px');
 
-    this.renderer.setStyle(this.processButtonContainer.nativeElement, 'top', String(this.canvasSideLength - 66) + 'px');
-    this.renderer.setStyle(this.processButtonContainer.nativeElement, 'left', String(this.canvasSideLength + 30) + 'px');
+    this.renderer.setStyle(this.processButtonContainerElement.nativeElement, 'top', String(this.canvasSideLength - 66) + 'px');
+    this.renderer.setStyle(this.processButtonContainerElement.nativeElement, 'left', String(this.canvasSideLength + 30) + 'px');
   }
 
-  public getRoomImgScale(imgScale: any) {
+  public resizeContainerControl(event: any, resizeProcess: boolean): void {
+    this.resizeProcess = resizeProcess;
+
+    this.beforeResizeCanvasSideLength = this.canvasSideLength;
+    this.beforeResizeCursorPositionX = event.clientX;
+    this.beforeResizeCursorPositionY = event.clientY;
+  }
+  public resizeContainer(event: any, direction: string): void {
+    const minCanvasSideLength = 300;
+    const maxCanvasSideLength = 700;
+
+    if (this.resizeProcess) {
+      if (this.canvasSideLength >= minCanvasSideLength && this.canvasSideLength <= maxCanvasSideLength) {
+        switch (direction) {
+          case 'bottom':
+            this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientY - this.beforeResizeCursorPositionY);
+            break;
+          case 'right':
+            this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientX - this.beforeResizeCursorPositionX);
+            break;
+        }
+      } else if (this.canvasSideLength < minCanvasSideLength) {
+        this.canvasSideLength = minCanvasSideLength;
+      } else {
+        this.canvasSideLength = maxCanvasSideLength;
+      }
+      
+      this.setContainerPosition();
+    }
+  }
+
+  public getRoomImgScale(imgScale: any): void {
     this.imgScale = imgScale;
     this.extendLineSet();
   }
 
-  private extendLineSet() {
+  private extendLineSet(): void {
     this.lineSetExtended = [];
     let xMax = this.imgScale[0];
     let yMax = this.imgScale[1];
@@ -100,7 +139,7 @@ export class RoomSegUIComponent implements AfterViewInit {
     }
   }
 
-  public toggleBetweenLineSegmentAndLine() {
+  public toggleBetweenLineSegmentAndLine(): void {
     this.lineSetToggle = !this.lineSetToggle;
     this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
   }
