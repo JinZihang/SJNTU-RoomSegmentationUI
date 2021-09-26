@@ -3,6 +3,13 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import linesetData from '../../assets/mock-lineset-2.json';
 import { RoomSegDialog } from './room-seg-dialog/room-seg-dialog.component'
 
+/*
+  ISSUES TO FIX/FUNCTIONS TO ADD:
+    1. ISSUE: When click the extended line for line edit process, there is an error in the console.
+    2. FUNCTION: Use cursor to move line in line edit process.
+    3. FUNCTION: Canvas in add process should change cursor style.
+    4. ISSUE: Dialog button of index 1 has darker background color.
+*/
 @Component({
   selector: 'room-seg-ui',
   templateUrl: 'room-seg-ui.component.html',
