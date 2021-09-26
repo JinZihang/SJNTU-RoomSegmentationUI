@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
     templateUrl: 'room-seg-dialog.html',
     styleUrls: ['room-seg-dialog.css']
 })
-export class RoomSegDialog implements OnInit {
+export class RoomSegDialog{
     action: string;
     title: string;
     content: string;
@@ -18,6 +18,4 @@ export class RoomSegDialog implements OnInit {
         this.content = data.content;
         this.lineIndex = data.lineIndex;
     }
-
-    ngOnInit() {}
 }

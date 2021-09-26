@@ -1,5 +1,4 @@
-import { Component, AfterViewInit, OnChanges, Input, Output, EventEmitter, ViewChild, ElementRef, Renderer2, Inject } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Component, AfterViewInit, OnChanges, Input, Output, EventEmitter, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 
 @Component({
@@ -48,7 +47,7 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
   @ViewChild('cursorCoorContainerElement') cursorCoorContainerElement: ElementRef;
   @ViewChild('coorInputContainer') coorInputContainerElement: ElementRef;
 
-  constructor(private renderer: Renderer2, public dialog: MatDialog) {}
+  constructor(private renderer: Renderer2) {}
 
   ngAfterViewInit(): void {}
 

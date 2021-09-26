@@ -1,11 +1,6 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, Output, EventEmitter, ViewChild, ElementRef, Inject, Renderer2, ɵɵsetComponentScope } from '@angular/core';
-import { DOCUMENT } from "@angular/common";
-import { fromEvent } from "rxjs";
-import { filter, take, takeWhile } from "rxjs/operators";
+import { Component, AfterViewInit, Output, EventEmitter, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { FormControl, Validators } from '@angular/forms';
 import linesetData from '../../assets/mock-lineset-2.json';
-import { RoomSegDisplayComponent } from './room-seg-display/room-seg-display.component'
 import { RoomSegDialog } from './room-seg-dialog/room-seg-dialog.component'
 
 @Component({
