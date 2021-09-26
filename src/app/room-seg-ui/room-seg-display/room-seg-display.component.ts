@@ -215,27 +215,6 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
 
     this.lineAddProcessControl.emit([lineToBeAddedIsComplete, this.lineToBeAddedOutput]);
   }
-  public removeLine(lineIndex: number): void {
-    this.extremities = [];
-    this.lineSetToDisplayCopy = this.lineSetToDisplayCopy.filter(e => e !== this.lineSetToDisplayCopy[lineIndex]);
-
-    this.editResult.emit(['remove', lineIndex]);
-  }
-  public editLine(lineIndex: number): void {
-    console.log('Edit line.');
-  }
-  public showExtremities(lineIndex: number): void {
-    if (lineIndex === -1) {
-      this.extremities = [];
-    } else {
-      this.extremities = this.lineSetCopy[lineIndex];
-    }
-  }
-
-  public canvasClickAction(): void {
-    console.log('Canvas click.');
-  }
-
   public getErrorMessage(placeHolder: string) { // For now only an integer coordinate value within the canvas range does not display any error.
     let placeHolderControl;
 
@@ -263,6 +242,25 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
     }
 
     return 'Use a valid coordinate value!';
+  }
+  public canvasClickAction(): void {
+    console.log('Canvas click.');
+  }
+  public removeLine(lineIndex: number): void {
+    this.extremities = [];
+    this.lineSetToDisplayCopy = this.lineSetToDisplayCopy.filter(e => e !== this.lineSetToDisplayCopy[lineIndex]);
+
+    this.editResult.emit(['remove', lineIndex]);
+  }
+  public editLine(lineIndex: number): void {
+    console.log('Edit line.');
+  }
+  public showExtremities(lineIndex: number): void {
+    if (lineIndex === -1) {
+      this.extremities = [];
+    } else {
+      this.extremities = this.lineSetCopy[lineIndex];
+    }
   }
 
   // Cursor coordinates related.
