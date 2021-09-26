@@ -33,6 +33,11 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
   extremities: number[] = [];
   addLineProcessExtremities: number[][] = [[], []];
 
+  firstExtremXInputControl: FormControl;
+  firstExtremYInputControl: FormControl;
+  secondExtremXInputControl: FormControl;
+  secondExtremYInputControl: FormControl;
+
   showCursorCoor: boolean;
   cursorCoor: number[] = [-1, -1];
 
@@ -65,6 +70,11 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
     this.lineSetToDisplayCopy = JSON.parse(JSON.stringify(this.lineSetToDisplay));
 
     this.setScaleContainerDimension();
+
+    this.firstExtremXInputControl = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(this.canvasXMax)]);
+    this.firstExtremYInputControl = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(this.canvasYMax)]);
+    this.secondExtremXInputControl = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(this.canvasXMax)]);
+    this.secondExtremYInputControl = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(this.canvasYMax)]);
     
     this.initialized = true;
   }
@@ -123,6 +133,20 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
       this.lineToBeAddedOutput[3] = (this.lineToBeAdded[3] / this.canvasYMax) * this.imgNaturalHeight;
     }
   }
+  private setCursorCoordinatesContainerPosition(): void {
+    let top = String(this.canvasSideLength - 10) + 'px';
+    let width = String(this.canvasSideLength) + 'px';
+
+    this.renderer.setStyle(this.cursorCoorContainerElement.nativeElement, 'top', top);
+    this.renderer.setStyle(this.cursorCoorContainerElement.nativeElement, 'width', width);
+  }
+  private setCoordinatesInputContainerPosition(): void {
+    let top = String(this.canvasSideLength + 35) + 'px';
+    let width = String(this.canvasSideLength) + 'px';
+
+    this.renderer.setStyle(this.coorInputContainerElement.nativeElement, 'top', top);
+    this.renderer.setStyle(this.coorInputContainerElement.nativeElement, 'width', width);
+  }
 
   // Line related functions.
   public lineClickAction(lineIndex: number): void {
@@ -134,13 +158,6 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
         this.editLine(lineIndex);
         break;
     }
-  }
-  private setCoordinatesInputContainerPosition(): void {
-    let top = String(this.canvasSideLength + 35) + 'px';
-    let width = String(this.canvasSideLength) + 'px';
-
-    this.renderer.setStyle(this.coorInputContainerElement.nativeElement, 'top', top);
-    this.renderer.setStyle(this.coorInputContainerElement.nativeElement, 'width', width);
   }
   public addLineProcessInputOnKey(placeHolder: string, value: any): void {
     switch (placeHolder) {
@@ -205,7 +222,7 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
     this.editResult.emit(['remove', lineIndex]);
   }
   public editLine(lineIndex: number): void {
-    console.log('edit line');
+    console.log('Edit line.');
   }
   public showExtremities(lineIndex: number): void {
     if (lineIndex === -1) {
@@ -215,14 +232,40 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
     }
   }
 
-  // Cursor coordinates related.
-  private setCursorCoordinatesContainerPosition(): void {
-    let top = String(this.canvasSideLength - 10) + 'px';
-    let width = String(this.canvasSideLength) + 'px';
-
-    this.renderer.setStyle(this.cursorCoorContainerElement.nativeElement, 'top', top);
-    this.renderer.setStyle(this.cursorCoorContainerElement.nativeElement, 'width', width);
+  public canvasClickAction(): void {
+    console.log('Canvas click.');
   }
+
+  public getErrorMessage(placeHolder: string) { // For now only an integer coordinate value within the canvas range does not display any error.
+    let placeHolderControl;
+
+    switch (placeHolder) {
+      case 'firstExtremX':
+        placeHolderControl = this.firstExtremXInputControl;
+        break;
+      case 'firstExtremY':
+        placeHolderControl = this.firstExtremYInputControl;
+        break;
+      case 'secondExtremX':
+        placeHolderControl = this.secondExtremXInputControl;
+        break;
+      case 'secondExtremY':
+        placeHolderControl = this.secondExtremYInputControl;
+        break;
+      default:
+        placeHolderControl = this.firstExtremXInputControl;
+        console.error('Form input error!');
+        break;
+    }
+
+    if (placeHolderControl.hasError('required')) {
+      return 'A coordinate value is required!';
+    }
+
+    return 'Use a valid coordinate value!';
+  }
+
+  // Cursor coordinates related.
   public showCursorCoordinates(show: boolean): void {
     this.showCursorCoor = show;
   }

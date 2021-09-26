@@ -143,7 +143,7 @@ export class RoomSegUIComponent implements AfterViewInit {
 
           if (yAtx0 < 0) {
             if (yAtxMax < 0) {
-              console.warn('Check line ' + i + '.');
+              console.error('Check line ' + i + '.');
             } else if (yAtxMax > yMax) {
               this.lineSetExtended.push([xAty0, 0, xAtyMax, yMax]);
             } else {
@@ -153,7 +153,7 @@ export class RoomSegUIComponent implements AfterViewInit {
             if (yAtxMax < 0) {
               this.lineSetExtended.push([xAtyMax, yMax, xAty0, 0]);
             } else if (yAtxMax > yMax) {
-              console.warn('Check line ' + i + '.');
+              console.error('Check line ' + i + '.');
             } else {
               this.lineSetExtended.push([xAtyMax, yMax, xMax, yAtxMax]);
             }
