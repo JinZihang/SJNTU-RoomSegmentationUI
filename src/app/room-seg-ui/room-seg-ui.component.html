@@ -2,7 +2,9 @@
     <room-seg-display #displayElement 
         [canvasSideLength]='canvasSideLength' [imgSrc]='imgSrc' (roomImgScale)='getRoomImgScale($event)'
         [lineSet]='lineSet' [lineSetToDisplay]='lineSetToDisplay'
-        [processInfo]='processInfo' (lineAddProcessControl)='lineAddProcessControl($event)' (editResult)='updateLineSet($event)'>
+        [processInfo]='processInfo' 
+        (lineAddProcessControl)='lineAddProcessControl($event)' (lineEditProcessControl)='lineEditProcess(false, $event)' 
+        (editResult)='updateLineSet($event)'>
     </room-seg-display>
 
     <div *ngIf="!(processInfo[0] === 'add')">
@@ -19,7 +21,7 @@
 
 <div id='action-button-container' #actionBtnContainerElement>
     <button mat-stroked-button (click)='toggleBetweenLineSegmentAndLine()'>Segment/Extended</button>
-    <button mat-stroked-button (click)='lineAddProcess(false)' [disabled]="!(processInfo[0] === '')">Add a Segmentation Line</button>
+    <button mat-stroked-button (click)='lineAddProcess(false, -1)' [disabled]="!(processInfo[0] === '')">Add a Segmentation Line</button>
     <button mat-stroked-button (click)='lineRemoveProcess(false)' [disabled]="!(processInfo[0] === '')">Remove Segmentation Lines</button>
     <button mat-stroked-button (click)='completeSegmentation()' [disabled]="!(processInfo[0] === '')">Confirm Result</button>
 </div>

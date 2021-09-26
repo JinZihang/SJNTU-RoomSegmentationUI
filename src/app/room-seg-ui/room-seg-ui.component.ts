@@ -28,7 +28,7 @@ export class RoomSegUIComponent implements AfterViewInit {
   lineSetToggle: boolean = false;
   lineSetToDisplay: number[][] = this.lineSet;
 
-  processInfo: any[] = ['']; // Action, action description, line index. Check if this is necessary after finishing the line edit function.
+  processInfo: any[] = ['', -1]; // Action, line index.
   processCanConfirm: boolean = true;
   lineSetBeforeProcess: number[][];
 
@@ -113,10 +113,10 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.extendLineSet();
   }
   private extendLineSet(): void {
-    this.lineSetExtended = [];
-
     let xMax = this.imgScale[0];
     let yMax = this.imgScale[1];
+
+    this.lineSetExtended = [];
 
     for (let i=0; i<this.lineSet.length; i++) {
       // Equation of the line is 'y = (x-x1) * (y1-y2)/(x1-x2) + y1' ('x = (y-y1) * (x1-x2)/(y1-y2) + x1').
@@ -171,7 +171,7 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.lineSetToggle = !this.lineSetToggle;
     this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
   }
-  public lineAddProcess(processStart: boolean) {
+  public lineAddProcess(processStart: boolean, lineIndex: number) {
     if (!processStart) {
       this.openDialog(
         'add', 
@@ -180,18 +180,22 @@ export class RoomSegUIComponent implements AfterViewInit {
         -1);
     } else {
       this.processInfo[0] = 'add';
+      this.processInfo[1] = lineIndex;
       this.processCanConfirm = false;
     }
   }
   public lineAddProcessControl(lineAddProcessInfo: any) {
     this.processCanConfirm = lineAddProcessInfo[0];
     let lineToBeAdded = lineAddProcessInfo[1];
+    let fromLineEditProcess = lineAddProcessInfo[2];
 
+    let lineSetLengthBeforeAddProcess = fromLineEditProcess ? this.lineSetBeforeProcess.length - 1: this.lineSetBeforeProcess.length;
+    
     if (this.processCanConfirm) {
-      if (this.lineSet.length === this.lineSetBeforeProcess.length) {
+      if (this.lineSet.length === lineSetLengthBeforeAddProcess) {
         this.lineSet.push(lineToBeAdded);
       } else {
-        this.lineSet[this.lineSetBeforeProcess.length] = lineToBeAdded;
+        this.lineSet[this.lineSet.length - 1] = lineToBeAdded;
       }
       
       this.extendLineSet();
@@ -200,9 +204,9 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.lineSet = this.lineSet.slice(); // The ngOnChanges in the display component only listen for reference changes. 
                                            // Thus this step is necessary for triggering the ngOnChanges in the display component.
     } else {
-      if (this.lineSet.length !== this.lineSetBeforeProcess.length) {
-        delete this.lineSet[this.lineSetBeforeProcess.length];
-        this.lineSet.length = this.lineSetBeforeProcess.length;
+      if (this.lineSet.length !== lineSetLengthBeforeAddProcess) {
+        delete this.lineSet[this.lineSet.length - 1];
+        this.lineSet.length = lineSetLengthBeforeAddProcess;
         this.extendLineSet();
         this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
 
@@ -217,8 +221,22 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.processInfo[0] = 'remove';
     }
   }
+  public lineEditProcess(processStart: boolean, lineIndex: number) {
+    if (!processStart) {
+      this.openDialog(
+        'edit', 
+        'Edit this segmentation line?', 
+        'Use cursor to move the line or key in its new extremities\' coordinates. (Canvas resize will be disabled through this process.)', 
+        lineIndex);
+    } else {
+      this.processInfo[0] = 'edit';
+      this.processInfo[1] = lineIndex;
+
+      this.updateLineSet(['remove', lineIndex]);
+    }
+  }
   public completeSegmentation(): void {
-    this.openDialog('Complete', 'Proceed with this room segmentaion result?', 'Press cancel if you want to make further edits.', -1);
+    this.openDialog('complete', 'Proceed with this room segmentaion result?', 'Press cancel if you want to make further edits.', -1);
   }
   private openDialog(action: string, title: string, content: string, lineIndex: number): void {
     const dialogConfig = new MatDialogConfig();
@@ -243,10 +261,13 @@ export class RoomSegUIComponent implements AfterViewInit {
 
         switch (action) {
           case 'add':
-            this.lineAddProcess(true);
+            this.lineAddProcess(true, -1);
             break;
           case 'remove':
             this.lineRemoveProcess(true);
+            break;
+          case 'edit':
+            this.lineEditProcess(true, lineIndex);
             break;
           case 'complete':
             this.segmentationComplete.emit(this.lineSet);
@@ -257,7 +278,7 @@ export class RoomSegUIComponent implements AfterViewInit {
     });
   }
   public processControl(confirmChanges: boolean): void {
-    this.processInfo = [''];
+    this.processInfo = ['', -1];
     this.processCanConfirm = true;
 
     if (!confirmChanges) {
@@ -275,6 +296,9 @@ export class RoomSegUIComponent implements AfterViewInit {
         this.lineSet = this.lineSet.filter(e => e !== this.lineSet[lineIndex]);
         this.extendLineSet();
         this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
+        break;
+      case 'edit':
+        this.lineAddProcess(true, lineIndex);
         break;
     }
   }
