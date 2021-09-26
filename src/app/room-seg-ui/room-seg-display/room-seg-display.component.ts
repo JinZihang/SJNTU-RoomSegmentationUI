@@ -14,7 +14,7 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
   @Input() lineSetToDisplay: number[][];
   @Input() processInfo: any[];
 
-  @Output() roomImgScale = new EventEmitter<number[]>();
+  @Output() roomImgScale = new EventEmitter<number[]>(); // Image natural width, image natural height.
   @Output() lineAddProcessControl = new EventEmitter<any[]>(); // Whether line extremities are complete, line to be added.
   @Output() editResult = new EventEmitter<any[]>(); // Action, line index.
 

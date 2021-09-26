@@ -17,7 +17,7 @@ export class RoomSegUIComponent implements AfterViewInit {
   // @Input() imgSrc: string;
   // @Input() lineSet: number[][];
 
-  @Output() segmentationComplete = new EventEmitter<number[][]>();
+  @Output() segmentationComplete = new EventEmitter<number[][]>(); // Final segmentation line set.
 
   canvasSideLength: number = 600;
   beforeResizeCanvasSideLength: number;
