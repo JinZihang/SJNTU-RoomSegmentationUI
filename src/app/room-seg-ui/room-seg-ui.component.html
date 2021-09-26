@@ -2,29 +2,31 @@
     <room-seg-display #displayElement 
         [canvasSideLength]='canvasSideLength' [imgSrc]='imgSrc' (roomImgScale)='getRoomImgScale($event)'
         [lineSet]='lineSet' [lineSetToDisplay]='lineSetToDisplay'
-        [process]='process' (editResult)='updateLineSet($event)'>
+        [processInfo]='processInfo' (lineAddProcessControl)='lineAddProcessControl($event)' (editResult)='updateLineSet($event)'>
     </room-seg-display>
 
-    <div id='resize-container-bottom' 
-        (mousedown)='resizeContainerControl($event, true)' (mouseup)='resizeContainerControl($event, false)' 
-        (mouseout)='resizeContainerControl($event, false)' (mousemove)="resizeContainer($event, 'bottom')">
-    </div>
-    <div id='resize-container-right' 
-        (mousedown)='resizeContainerControl($event, true)' (mouseup)='resizeContainerControl($event, false)' 
-        (mouseout)='resizeContainerControl($event, false)' (mousemove)="resizeContainer($event, 'right')">
+    <div *ngIf="!(processInfo[0] === 'add')">
+        <div id='resize-container-bottom' 
+            (mousedown)='resizeContainerControl($event, true)' (mouseup)='resizeContainerControl($event, false)' 
+            (mouseout)='resizeContainerControl($event, false)' (mousemove)="resizeContainer($event, 'bottom')">
+        </div>
+        <div id='resize-container-right' 
+            (mousedown)='resizeContainerControl($event, true)' (mouseup)='resizeContainerControl($event, false)' 
+            (mouseout)='resizeContainerControl($event, false)' (mousemove)="resizeContainer($event, 'right')">
+        </div>
     </div>
 </div>
 
-<div id='action-button-container' #actionButtonContainerElement>
+<div id='action-button-container' #actionBtnContainerElement>
     <button mat-stroked-button (click)='toggleBetweenLineSegmentAndLine()'>Segment/Extended</button>
-    <button mat-stroked-button [disabled]="!(process === '')">Add a Segmentation Line</button>
-    <button mat-stroked-button (click)='lineRemoveProcess(false)' [disabled]="!(process === '')">Remove Segmentation Lines</button>
-    <button mat-stroked-button (click)='completeSegmentation()' [disabled]="!(process === '')">Confirm Result</button>
+    <button mat-stroked-button (click)='lineAddProcess(false)' [disabled]="!(processInfo[0] === '')">Add a Segmentation Line</button>
+    <button mat-stroked-button (click)='lineRemoveProcess(false)' [disabled]="!(processInfo[0] === '')">Remove Segmentation Lines</button>
+    <button mat-stroked-button (click)='completeSegmentation()' [disabled]="!(processInfo[0] === '')">Confirm Result</button>
 </div>
 
-<div id='process-button-container' #processButtonContainerElement>
-    <div *ngIf="!(process === '')">
-        <button mat-stroked-button (click)='processControl(true)'>Confirm Edit</button>
+<div id='process-button-container' #processBtnContainerElement>
+    <div *ngIf="!(processInfo[0] === '')">
+        <button mat-stroked-button (click)='processControl(true)' [disabled]='!(processCanConfirm)'>Confirm Edit</button>
         <button mat-stroked-button (click)='processControl(false)'>Cancel Edit</button>
     </div>
 </div>

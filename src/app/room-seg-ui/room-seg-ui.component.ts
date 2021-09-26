@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, Output, EventEmitter, ViewChild, ElementRef, Inject, Renderer2 } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Output, EventEmitter, ViewChild, ElementRef, Inject, Renderer2, ɵɵsetComponentScope } from '@angular/core';
 import { DOCUMENT } from "@angular/common";
 import { fromEvent } from "rxjs";
 import { filter, take, takeWhile } from "rxjs/operators";
@@ -33,13 +33,14 @@ export class RoomSegUIComponent implements AfterViewInit {
   lineSetToggle: boolean = false;
   lineSetToDisplay: number[][] = this.lineSet;
 
-  process: string = '';
+  processInfo: any[] = ['']; // Action, action description, line index. Check if this is necessary after finishing the line edit function.
+  processCanConfirm: boolean = true;
   lineSetBeforeProcess: number[][];
 
   @ViewChild('resizeContainerElement') resizeContainerElement: ElementRef;
   @ViewChild('displayElement') displayElement: ElementRef;
-  @ViewChild('actionButtonContainerElement') actionButtonContainerElement: ElementRef;
-  @ViewChild('processButtonContainerElement') processButtonContainerElement: ElementRef;
+  @ViewChild('actionBtnContainerElement') actionBtnContainerElement: ElementRef;
+  @ViewChild('processBtnContainerElement') processBtnContainerElement: ElementRef;
 
   constructor(private renderer: Renderer2, public dialog: MatDialog) {}
 
@@ -51,10 +52,10 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.renderer.setStyle(this.resizeContainerElement.nativeElement, 'height', String(this.canvasSideLength) + 'px');
     this.renderer.setStyle(this.resizeContainerElement.nativeElement, 'width', String(this.canvasSideLength) + 'px');
 
-    this.renderer.setStyle(this.actionButtonContainerElement.nativeElement, 'left', String(this.canvasSideLength + 30) + 'px');
+    this.renderer.setStyle(this.actionBtnContainerElement.nativeElement, 'left', String(this.canvasSideLength + 30) + 'px');
 
-    this.renderer.setStyle(this.processButtonContainerElement.nativeElement, 'top', String(this.canvasSideLength - 66) + 'px');
-    this.renderer.setStyle(this.processButtonContainerElement.nativeElement, 'left', String(this.canvasSideLength + 30) + 'px');
+    this.renderer.setStyle(this.processBtnContainerElement.nativeElement, 'top', String(this.canvasSideLength - 66) + 'px');
+    this.renderer.setStyle(this.processBtnContainerElement.nativeElement, 'left', String(this.canvasSideLength + 30) + 'px');
   }
 
   // For resizing the area to display image and line set.
@@ -67,7 +68,7 @@ export class RoomSegUIComponent implements AfterViewInit {
   }
   public resizeContainer(event: any, direction: string): void {
     const minCanvasSideLength = 300;
-    const maxCanvasSideLength = 700;
+    const maxCanvasSideLength = 650;
 
     if (this.resizeProcess) {
       if (this.canvasSideLength >= minCanvasSideLength && this.canvasSideLength <= maxCanvasSideLength) {
@@ -175,11 +176,50 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.lineSetToggle = !this.lineSetToggle;
     this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
   }
+  public lineAddProcess(processStart: boolean) {
+    if (!processStart) {
+      this.openDialog(
+        'add', 
+        'Add a segmentation line?', 
+        'Use cursor to place line segments\' extremities or key in their coordinates. (Canvas resize will be disabled through this process.)', 
+        -1);
+    } else {
+      this.processInfo[0] = 'add';
+      this.processCanConfirm = false;
+    }
+  }
+  public lineAddProcessControl(lineAddProcessInfo: any) {
+    this.processCanConfirm = lineAddProcessInfo[0];
+    let lineToBeAdded = lineAddProcessInfo[1];
+
+    if (this.processCanConfirm) {
+      if (this.lineSet.length === this.lineSetBeforeProcess.length) {
+        this.lineSet.push(lineToBeAdded);
+      } else {
+        this.lineSet[this.lineSetBeforeProcess.length] = lineToBeAdded;
+      }
+      
+      this.extendLineSet();
+      this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
+
+      this.lineSet = this.lineSet.slice(); // The ngOnChanges in the display component only listen for reference changes. 
+                                           // Thus this step is necessary for triggering the ngOnChanges in the display component.
+    } else {
+      if (this.lineSet.length !== this.lineSetBeforeProcess.length) {
+        delete this.lineSet[this.lineSetBeforeProcess.length];
+        this.lineSet.length = this.lineSetBeforeProcess.length;
+        this.extendLineSet();
+        this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
+
+        this.lineSet = this.lineSet.slice();
+      }
+    }
+  }
   public lineRemoveProcess(processStart: boolean) {
     if (!processStart) {
       this.openDialog('remove', 'Start removing segmentation lines?', 'Click on the lines that you want to remove.', -1);
     } else {
-      this.process = 'remove';
+      this.processInfo[0] = 'remove';
     }
   }
   public completeSegmentation(): void {
@@ -187,6 +227,7 @@ export class RoomSegUIComponent implements AfterViewInit {
   }
   private openDialog(action: string, title: string, content: string, lineIndex: number): void {
     const dialogConfig = new MatDialogConfig();
+    dialogConfig.maxWidth = '50%';
     dialogConfig.disableClose = true;
     dialogConfig.data = {
       title: title,
@@ -207,6 +248,7 @@ export class RoomSegUIComponent implements AfterViewInit {
 
         switch (action) {
           case 'add':
+            this.lineAddProcess(true);
             break;
           case 'remove':
             this.lineRemoveProcess(true);
@@ -220,7 +262,8 @@ export class RoomSegUIComponent implements AfterViewInit {
     });
   }
   public processControl(confirmChanges: boolean): void {
-    this.process = '';
+    this.processInfo = [''];
+    this.processCanConfirm = true;
 
     if (!confirmChanges) {
       this.lineSet = JSON.parse(JSON.stringify(this.lineSetBeforeProcess));

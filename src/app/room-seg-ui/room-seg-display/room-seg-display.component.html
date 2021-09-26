@@ -1,7 +1,7 @@
 <div id='scale-container' #scaleContainerElement>
     <img id='room-top-view-image' #roomTopViewImageElement [src]='imgSrc' (load)='roomTopViewImgOnLoad()'>
     <svg #svg (mouseover)='showCursorCoordinates(true)' (mouseout)='showCursorCoordinates(false)' (mousemove)='updateCursorCoordinates($event)'>
-        <line #line class='line'
+        <line #line
             *ngFor='let line of lineSetToDisplayCopy; let lineIndex = index;' 
             [attr.x1]='line[0]' [attr.y1]='line[1]' [attr.x2]='line[2]' [attr.y2]='line[3]' 
             (mouseover)='showExtremities(lineIndex)' (mouseout)='showExtremities(-1)'
@@ -9,6 +9,9 @@
         />
         <circle class='line-segment-extremity' *ngIf='extremities[0]' [attr.cx]='extremities[0]' [attr.cy]='extremities[1]' r='3'/>
         <circle class='line-segment-extremity' *ngIf='extremities[0]' [attr.cx]='extremities[2]' [attr.cy]='extremities[3]' r='3'/>
+        <!-- Add line process extremities. -->
+        <circle class='line-segment-extremity' *ngIf='addLineProcessExtremities[0][0]' [attr.cx]='addLineProcessExtremities[0][0]' [attr.cy]='addLineProcessExtremities[0][1]' r='3'/>
+        <circle class='line-segment-extremity' *ngIf='addLineProcessExtremities[1][0]' [attr.cx]='addLineProcessExtremities[1][0]' [attr.cy]='addLineProcessExtremities[1][1]' r='3'/>
     </svg>
 </div>
 
@@ -23,3 +26,28 @@
         </p>
     </div>
 </div>
+
+<form #coorInputContainer>
+    <div *ngIf="processInfo[0] === 'add'">
+        <div class='extremity-coor-input'>
+            <mat-form-field appearance='fill'>
+                <mat-label>1st Extremity's X</mat-label>
+                <input #firstExtremX matInput placeholder='Input coordinate value' (keyup)="addLineProcessInputOnKey('firstExtremX', firstExtremX.value)" required>
+            </mat-form-field>
+            <mat-form-field appearance='fill'>
+                <mat-label>1st Extremity's Y</mat-label>
+                <input #firstExtremY matInput placeholder='Input coordinate value' (keyup)="addLineProcessInputOnKey('firstExtremY', firstExtremY.value)" required>
+            </mat-form-field>
+        </div>
+        <div class='extremity-coor-input'>
+            <mat-form-field appearance='fill'>
+                <mat-label>2nd Extremity's X</mat-label>
+                <input #secondExtremX matInput placeholder='Input coordinate value' (keyup)="addLineProcessInputOnKey('secondExtremX', secondExtremX.value)" required>
+            </mat-form-field>
+            <mat-form-field appearance='fill'>
+                <mat-label>2nd Extremity's Y</mat-label>
+                <input #secondExtremY matInput placeholder='Input coordinate value' (keyup)="addLineProcessInputOnKey('secondExtremY', secondExtremY.value)" required>
+            </mat-form-field>
+        </div>
+    </div>
+</form>
