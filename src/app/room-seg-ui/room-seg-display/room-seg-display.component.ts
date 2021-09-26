@@ -28,9 +28,11 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
 
   lineSetCopy: number[][];
   lineSetToDisplayCopy: number[][];
-  lineToBeAdded: number[] = [-1, -1, -1, -1];
-  lineToBeAddedOutput: number[] = [-1, -1, -1, -1];
   extremities: number[] = [];
+
+  lineToBeAdded: number[] = [-1, -1, -1, -1];
+  lineToBeAddedIsComplete: boolean;
+  lineToBeAddedOutput: number[] = [-1, -1, -1, -1];
   addLineProcessExtremities: number[][] = [[], []];
 
   firstExtremXInputControl: FormControl;
@@ -58,9 +60,15 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
       this.setScaleContainerDimension();
     }
 
-    if (this.processInfo[0] === '') {
+    if (this.processInfo[0] !== 'add') {
       this.lineToBeAdded = [-1, -1, -1, -1];
+      this.lineToBeAddedIsComplete = false;
       this.addLineProcessExtremities = [[], []];
+
+      this.firstExtremXInputControl = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(this.canvasXMax)]);
+      this.firstExtremYInputControl = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(this.canvasYMax)]);
+      this.secondExtremXInputControl = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(this.canvasXMax)]);
+      this.secondExtremYInputControl = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(this.canvasYMax)]);
     }
   }
 
@@ -191,14 +199,14 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
         break;
     }
 
-    let lineToBeAddedIsComplete = false;
+    this.lineToBeAddedIsComplete = false;
     this.addLineProcessExtremities = [[], []];
     
     if (this.lineToBeAdded[0] >= 0 && this.lineToBeAdded[0] <= this.canvasXMax
       && this.lineToBeAdded[1] >= 0 && this.lineToBeAdded[1] <= this.canvasYMax
       && this.lineToBeAdded[2] >= 0 && this.lineToBeAdded[2] <= this.canvasXMax
       && this.lineToBeAdded[3] >= 0 && this.lineToBeAdded[3] <= this.canvasYMax) { // Line complete.
-      lineToBeAddedIsComplete = true;
+        this.lineToBeAddedIsComplete = true;
       this.adjustLinesetCoordinates(true);
 
       this.addLineProcessExtremities[0].push(this.lineToBeAdded[0], this.lineToBeAdded[1]);
@@ -213,7 +221,7 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
       this.lineToBeAddedOutput = [-1, -1, -1, -1];
     }
 
-    this.lineAddProcessControl.emit([lineToBeAddedIsComplete, this.lineToBeAddedOutput]);
+    this.lineAddProcessControl.emit([this.lineToBeAddedIsComplete, this.lineToBeAddedOutput]);
   }
   public getErrorMessage(placeHolder: string) { // For now only an integer coordinate value within the canvas range does not display any error.
     let placeHolderControl;
@@ -244,7 +252,29 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
     return 'Use a valid coordinate value!';
   }
   public canvasClickAction(): void {
-    console.log('Canvas click.');
+    if (this.processInfo[0] === 'add' && !this.lineToBeAddedIsComplete) {
+      if (!(this.lineToBeAdded[0] >= 0 && this.lineToBeAdded[0] <= this.canvasXMax 
+        && this.lineToBeAdded[1] >= 0 && this.lineToBeAdded[1] <= this.canvasYMax)) { // The first extremity coordinates are incomplete.
+          let firstExtremXControl: FormControl = this.firstExtremXInputControl;
+          let firstExtremYControl: FormControl = this.firstExtremYInputControl;
+
+          firstExtremXControl.setValue(this.cursorCoor[0]);
+          firstExtremYControl.setValue(this.cursorCoor[1]);
+
+          this.addLineProcessInputOnKey('firstExtremX', this.cursorCoor[0]);
+          this.addLineProcessInputOnKey('firstExtremY', this.cursorCoor[1]);
+      } else if (!(this.lineToBeAdded[2] >= 0 && this.lineToBeAdded[2] <= this.canvasXMax
+        && this.lineToBeAdded[3] >= 0 && this.lineToBeAdded[3] <= this.canvasYMax)) { // The second extremity coordinates are incomplete.
+          let secondExtremXControl: FormControl = this.secondExtremXInputControl;
+          let secondExtremYControl: FormControl = this.secondExtremYInputControl;
+
+          secondExtremXControl.setValue(this.cursorCoor[0]);
+          secondExtremYControl.setValue(this.cursorCoor[1]);
+
+          this.addLineProcessInputOnKey('secondExtremX', this.cursorCoor[0]);
+          this.addLineProcessInputOnKey('secondExtremY', this.cursorCoor[1]);
+      }
+    }
   }
   public removeLine(lineIndex: number): void {
     this.extremities = [];
