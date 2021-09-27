@@ -228,7 +228,7 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.openDialog(
         'edit', 
         'Edit this segmentation line?', 
-        'Use cursor to move the line or key in its new extremities\' coordinates. (Canvas resize will be disabled through this process.)', 
+        'Use cursor to set or key in its new extremities\' coordinates. (Canvas resize will be disabled through this process.)', 
         lineIndex);
     } else {
       this.processInfo[0] = 'edit';
