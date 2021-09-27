@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, Output, EventEmitter, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import linesetData from '../../assets/mock-lineset-2.json';
+import linesetData from '../../assets/mock-lineset-1.json';
 import { RoomSegDialog } from './room-seg-dialog/room-seg-dialog.component'
 
 @Component({
@@ -20,7 +20,7 @@ export class RoomSegUIComponent implements AfterViewInit {
   beforeResizeCursorPositionX: number;
   beforeResizeCursorPositionY: number;
 
-  imgSrc: string = '/assets/mock-image-2.png';
+  imgSrc: string = '/assets/mock-image-1.png';
   imgScale: number[];
 
   lineSet: number[][] = linesetData;

@@ -196,7 +196,7 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
         }
         break;
       case 'firstExtremY':
-        if(value === '' || value < 0 || value > this.canvasXMax) {
+        if(value === '' || value < 0 || value > this.canvasYMax) {
           this.lineToBeAdded[1] = -1;
         } else {
           this.lineToBeAdded[1] = value;
@@ -210,7 +210,7 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
         }
         break;
       case 'secondExtremY':
-        if(value === '' || value < 0 || value > this.canvasXMax) {
+        if(value === '' || value < 0 || value > this.canvasYMax) {
           this.lineToBeAdded[3] = -1;
         } else {
           this.lineToBeAdded[3] = value;
