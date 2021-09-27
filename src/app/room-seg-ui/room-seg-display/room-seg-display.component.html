@@ -35,7 +35,7 @@
                 <input #firstExtremX 
                     matInput placeholder='Input coordinate value' 
                     (keyup)="lineAddProcessInputOnKey('firstExtremX', firstExtremX.value)" 
-                    [formControl]='firstExtremXInputControl' required
+                    [formControl]='firstExtremXInputControl' type='number' required
                 />
                 <mat-error *ngIf="firstExtremXInputControl.invalid">{{getErrorMessage('firstExtremX')}}</mat-error>
             </mat-form-field>
@@ -44,7 +44,7 @@
                 <input #firstExtremY 
                     matInput placeholder='Input coordinate value' 
                     (keyup)="lineAddProcessInputOnKey('firstExtremY', firstExtremY.value)" 
-                    [formControl]='firstExtremYInputControl' required
+                    [formControl]='firstExtremYInputControl' type='number' required
                 />
                 <mat-error *ngIf="firstExtremYInputControl.invalid">{{getErrorMessage('firstExtremY')}}</mat-error>
             </mat-form-field>
@@ -55,7 +55,7 @@
                 <input #secondExtremX 
                     matInput placeholder='Input coordinate value' 
                     (keyup)="lineAddProcessInputOnKey('secondExtremX', secondExtremX.value)" 
-                    [formControl]='secondExtremXInputControl' required
+                    [formControl]='secondExtremXInputControl' type='number' required
                 />
                 <mat-error *ngIf="secondExtremXInputControl.invalid">{{getErrorMessage('secondExtremX')}}</mat-error>
             </mat-form-field>
@@ -64,7 +64,7 @@
                 <input #secondExtremY 
                     matInput placeholder='Input coordinate value' 
                     (keyup)="lineAddProcessInputOnKey('secondExtremY', secondExtremY.value)" 
-                    [formControl]='secondExtremYInputControl' required
+                    [formControl]='secondExtremYInputControl' type='number' required
                 />
                 <mat-error *ngIf="secondExtremYInputControl.invalid">{{getErrorMessage('secondExtremY')}}</mat-error>
             </mat-form-field>

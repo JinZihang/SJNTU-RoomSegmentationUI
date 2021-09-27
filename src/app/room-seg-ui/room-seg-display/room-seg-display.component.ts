@@ -89,10 +89,10 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
 
     this.setScaleContainerDimension();
 
-    this.firstExtremXInputControl = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(this.canvasXMax)]);
-    this.firstExtremYInputControl = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(this.canvasYMax)]);
-    this.secondExtremXInputControl = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(this.canvasXMax)]);
-    this.secondExtremYInputControl = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(this.canvasYMax)]);
+    this.firstExtremXInputControl = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasXMax)]);
+    this.firstExtremYInputControl = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasYMax)]);
+    this.secondExtremXInputControl = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasXMax)]);
+    this.secondExtremYInputControl = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasYMax)]);
     
     this.initialized = true;
   }
@@ -261,7 +261,7 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
       return 'A coordinate value is required!';
     }
 
-    return 'Use a valid integer coordinate value!';
+    return 'Use a valid integer value!';
   }
   public canvasClickAction(): void {
     if (this.processInfo[0] === 'add' && !this.lineToBeAddedIsComplete) {
