@@ -74,10 +74,10 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
         this.lineAddProcessExtremities = [[], []];
         this.lineAddInputIsFromLineEditProcess = false;
   
-        this.firstExtremXInputControl = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(this.canvasXMax)]);
-        this.firstExtremYInputControl = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(this.canvasYMax)]);
-        this.secondExtremXInputControl = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(this.canvasXMax)]);
-        this.secondExtremYInputControl = new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(this.canvasYMax)]);
+        this.firstExtremXInputControl = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasXMax)]);
+        this.firstExtremYInputControl = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasYMax)]);
+        this.secondExtremXInputControl = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasXMax)]);
+        this.secondExtremYInputControl = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasYMax)]);
       }
     }
   }
@@ -257,11 +257,7 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
         break;
     }
 
-    if (placeHolderControl.hasError('required')) {
-      return 'A coordinate value is required!';
-    }
-
-    return 'Use a valid integer value!';
+    return 'Valid value required!';
   }
   public canvasClickAction(): void {
     if (this.processInfo[0] === 'add' && !this.lineToBeAddedIsComplete) {
