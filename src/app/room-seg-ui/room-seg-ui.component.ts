@@ -6,7 +6,6 @@ import { RoomSegDialog } from './room-seg-dialog/room-seg-dialog.component'
 /*
   ISSUES TO FIX/FUNCTIONS TO ADD:
     1. FUNCTION: Use cursor to move line in line edit process.
-    2. FUNCTION: Canvas in add process should change cursor style.
     3. ISSUE: When click the extended line for line edit process, there is an error in the console.
     4. ISSUE: Dialog button of index 1 has darker background color.
 */
@@ -189,6 +188,8 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.processInfo[0] = 'add';
       this.processInfo[1] = lineIndex;
       this.processCanConfirm = false;
+
+      this.lineSet = this.lineSet.slice();
     }
   }
   public lineAddProcessControl(lineAddProcessInfo: any) {

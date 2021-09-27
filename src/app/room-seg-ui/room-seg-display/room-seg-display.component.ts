@@ -25,6 +25,7 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
   imgNaturalHeight: number;
   canvasXMax: number;
   canvasYMax: number;
+  canvasPointer: boolean = false;
 
   lineSetCopy: number[][];
   lineSetToDisplayCopy: number[][];
@@ -66,9 +67,10 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
 
       this.setScaleContainerDimension();
 
-      if (action === 'edit') {
-        this.editLine(true, lineIndex);
+      if (action === 'add' && !this.lineToBeAddedIsComplete) {
+        this.canvasPointer = true;
       } else if (action !== 'add') {
+        this.canvasPointer = false;
         this.lineToBeAdded = [-1, -1, -1, -1];
         this.lineToBeAddedIsComplete = false;
         this.lineAddProcessExtremities = [[], []];
@@ -78,6 +80,10 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
         this.firstExtremYInputControl = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasYMax)]);
         this.secondExtremXInputControl = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasXMax)]);
         this.secondExtremYInputControl = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasYMax)]);
+      }
+
+      if (action === 'edit') {
+        this.editLine(true, lineIndex);
       }
     }
   }
@@ -211,6 +217,7 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
         break;
     }
 
+    this.canvasPointer = true;
     this.lineToBeAddedIsComplete = false;
     this.lineAddProcessExtremities = [[], []];
     
@@ -218,19 +225,21 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
       && this.lineToBeAdded[1] >= 0 && this.lineToBeAdded[1] <= this.canvasYMax
       && this.lineToBeAdded[2] >= 0 && this.lineToBeAdded[2] <= this.canvasXMax
       && this.lineToBeAdded[3] >= 0 && this.lineToBeAdded[3] <= this.canvasYMax) { // Line complete.
-        this.lineToBeAddedIsComplete = true;
-      this.adjustLinesetCoordinates(true);
+        this.canvasPointer = false;
 
-      this.lineAddProcessExtremities[0].push(this.lineToBeAdded[0], this.lineToBeAdded[1]);
-      this.lineAddProcessExtremities[1].push(this.lineToBeAdded[2], this.lineToBeAdded[3]);
+        this.lineToBeAddedIsComplete = true;
+        this.adjustLinesetCoordinates(true);
+
+        this.lineAddProcessExtremities[0].push(this.lineToBeAdded[0], this.lineToBeAdded[1]);
+        this.lineAddProcessExtremities[1].push(this.lineToBeAdded[2], this.lineToBeAdded[3]);
     } else if (this.lineToBeAdded[0] >= 0 && this.lineToBeAdded[0] <= this.canvasXMax 
       && this.lineToBeAdded[1] >= 0 && this.lineToBeAdded[1] <= this.canvasYMax) { // First extremity complete.
-      this.lineAddProcessExtremities[0].push(this.lineToBeAdded[0], this.lineToBeAdded[1]);
-      this.lineToBeAddedOutput = [-1, -1, -1, -1];
+        this.lineAddProcessExtremities[0].push(this.lineToBeAdded[0], this.lineToBeAdded[1]);
+        this.lineToBeAddedOutput = [-1, -1, -1, -1];
     } else if (this.lineToBeAdded[2] >= 0 && this.lineToBeAdded[2] <= this.canvasXMax
       && this.lineToBeAdded[3] >= 0 && this.lineToBeAdded[3] <= this.canvasYMax) { // Second extermity complete.
-      this.lineAddProcessExtremities[1].push(this.lineToBeAdded[2], this.lineToBeAdded[3]);
-      this.lineToBeAddedOutput = [-1, -1, -1, -1];
+        this.lineAddProcessExtremities[1].push(this.lineToBeAdded[2], this.lineToBeAdded[3]);
+        this.lineToBeAddedOutput = [-1, -1, -1, -1];
     }
 
     this.lineAddProcessControl.emit([this.lineToBeAddedIsComplete, this.lineToBeAddedOutput, this.lineAddInputIsFromLineEditProcess]);
