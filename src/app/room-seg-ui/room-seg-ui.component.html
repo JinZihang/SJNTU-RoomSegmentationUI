@@ -2,7 +2,7 @@
     <room-seg-display #displayElement 
         [canvasSideLength]='canvasSideLength' [imgSrc]='imgSrc' (roomImgScale)='getRoomImgScale($event)'
         [lineSet]='lineSet' [lineSetToDisplay]='lineSetToDisplay'
-        [processInfo]='processInfo' 
+        [processInfo]='processInfo' [updateTriggerer]='updateTriggerer'
         (lineAddProcessControl)='lineAddProcessControl($event)' (lineEditProcessControl)='lineEditProcess(false, $event)' 
         (editResult)='updateLineSet($event)'>
     </room-seg-display>

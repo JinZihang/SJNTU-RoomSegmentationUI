@@ -29,6 +29,7 @@ export class RoomSegUIComponent implements AfterViewInit {
   lineSetToDisplay: number[][] = this.lineSet;
 
   processInfo: any[] = ['', -1]; // Action, line index.
+  updateTriggerer: string = 'Triggering updates.';
   processCanConfirm: boolean = true;
   lineSetBeforeProcess: number[][];
 
@@ -183,7 +184,9 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.processInfo[1] = lineIndex;
       this.processCanConfirm = false;
 
-      this.lineSet = this.lineSet.slice();
+      // The ngOnChanges in the display component only listen for reference changes.
+      // Thus the following step is necessary for triggering the ngOnChanges function in the display component.
+      this.updateTriggerer = this.updateTriggerer === 'Triggering updates.' ? 'Igonore this error the development mode.' : 'Triggering updates.';
     }
   }
   public lineAddProcessControl(lineAddProcessInfo: any) {
@@ -203,8 +206,7 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.extendLineSet();
       this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
 
-      this.lineSet = this.lineSet.slice(); // The ngOnChanges in the display component only listen for reference changes. 
-                                           // Thus this step is necessary for triggering the ngOnChanges in the display component.
+      this.updateTriggerer = this.updateTriggerer === 'Triggering updates.' ? 'Igonore this error the development mode.' : 'Triggering updates.';
     } else {
       if (this.lineSet.length !== lineSetLengthBeforeAddProcess) {
         delete this.lineSet[this.lineSet.length - 1];
@@ -212,7 +214,7 @@ export class RoomSegUIComponent implements AfterViewInit {
         this.extendLineSet();
         this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
 
-        this.lineSet = this.lineSet.slice();
+        this.updateTriggerer = this.updateTriggerer === 'Triggering updates.' ? 'Igonore this error the development mode.' : 'Triggering updates.';
       }
     }
   }
