@@ -6,8 +6,7 @@ import { RoomSegDialog } from './room-seg-dialog/room-seg-dialog.component'
 /*
   ISSUES TO FIX/FUNCTIONS TO ADD:
     1. FUNCTION: Use cursor to move line in line edit process.
-    3. ISSUE: When click the extended line for line edit process, there is an error in the console.
-    4. ISSUE: Dialog button of index 1 has darker background color.
+    2. ISSUE: When click the extended line for line edit process, there is an error in the console.
 */
 @Component({
   selector: 'room-seg-ui',
@@ -249,6 +248,7 @@ export class RoomSegUIComponent implements AfterViewInit {
   private openDialog(action: string, title: string, content: string, lineIndex: number): void {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.maxWidth = '50%';
+    dialogConfig.autoFocus = false;
     dialogConfig.disableClose = true;
     dialogConfig.data = {
       title: title,
