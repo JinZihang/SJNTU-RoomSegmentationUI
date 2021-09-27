@@ -3,11 +3,6 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import linesetData from '../../assets/mock-lineset-2.json';
 import { RoomSegDialog } from './room-seg-dialog/room-seg-dialog.component'
 
-/*
-  ISSUES TO FIX/FUNCTIONS TO ADD:
-    1. FUNCTION: Use cursor to move line in line edit process.
-    2. ISSUE: When click the extended line for line edit process, there is an error in the console.
-*/
 @Component({
   selector: 'room-seg-ui',
   templateUrl: 'room-seg-ui.component.html',
