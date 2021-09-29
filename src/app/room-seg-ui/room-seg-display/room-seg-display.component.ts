@@ -269,16 +269,19 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
       let secondExtremY = this.lineToBeAdded[3];
 
       // The equation of line is 'y = (x-x1) * (y1-y2)/(x1-x2) + y1' ('x = (y-y1) * (x1-x2)/(y1-y2) + x1').
-      let yIfSelectXIsOnTheLine = (selectX-firstExtremX) * (firstExtremY-secondExtremY)/(firstExtremX-secondExtremX) + firstExtremY
+      let valueDifference = Math.abs(firstExtremX - secondExtremX) > Math.abs(firstExtremY - secondExtremY)
+      // Assume the mouse down point to be on the line, use one of its coordinate value to calculate the other one.
+      // Then compare it with the real value to see if the click point is approximately on the line. 
+        ? Math.abs(Math.abs(selectY) - Math.abs((selectX-firstExtremX) * (firstExtremY-secondExtremY)/(firstExtremX-secondExtremX) + firstExtremY)) // If the line is approximately horizontal.
+        : Math.abs(Math.abs(selectX) - Math.abs((selectY-firstExtremY) * (firstExtremX-secondExtremX)/(firstExtremY-secondExtremY) + firstExtremX)); // If the line is approximately vertical.
 
-      if (firstExtremX-selectX <= 3 && firstExtremX-selectX >= -3
-        && firstExtremY-selectY <= 3 && firstExtremY-selectY >= -3) { // The mouse down point is around the first line extremity.
+      if (Math.abs(firstExtremX-selectX) <= 3 && Math.abs(firstExtremY-selectY) <= 3) { // The mouse down point is around the first line extremity.
           this.elementToBeMoved = 'firstExtremity';
-      } else if (secondExtremX-selectX <= 3 && secondExtremX-selectX >= -3
-        && secondExtremY-selectY <= 3 && secondExtremY-selectY >= -3) { // The mouse down point is around the second line extremity.
+      } else if (Math.abs(secondExtremX-selectX) <= 3 && Math.abs(secondExtremY-selectY) <= 3) { // The mouse down point is around the second line extremity.
           this.elementToBeMoved = 'secondExtremity';
-      } else if (yIfSelectXIsOnTheLine - selectY <= 3 && yIfSelectXIsOnTheLine - selectY >= -3) { // The mouse down point is approximately on the line.
+      } else if (valueDifference <= 3) { // The mouse down point is approximately on the line.
         this.elementToBeMoved = 'lineToBeAdded';
+
         this.lineMoveProcessMouseDownCoor = [selectX, selectY];
         this.lineMoveProcessInitialLinePosition = JSON.parse(JSON.stringify(this.lineToBeAdded));
       } else {
@@ -325,9 +328,11 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
     }
   }
   public canvasCursorMoveAction(event: any): void {
+    // For displaying cursor position.
     this.cursorCoor[0] = event.offsetX;
     this.cursorCoor[1] = event.offsetY;
 
+    // For the line-move process.
     if (this.processInfo[0] === 'add' && this.moveLineProcessStart) {
       let cursorX = event.offsetX;
       let cursorY = event.offsetY;
