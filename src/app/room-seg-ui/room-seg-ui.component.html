@@ -20,7 +20,7 @@
 </div>
 
 <div id='action-button-container' #actionBtnContainerElement>
-    <button mat-stroked-button (click)='toggleBetweenLineSegmentAndLine()'>Segment/Extended</button>
+    <button mat-stroked-button (click)='toggleBetweenLineSegmentsAndLines()'>Segment/Extended</button>
     <button mat-stroked-button (click)='lineAddProcess(false, -1)' [disabled]="!(processInfo[0] === '')">Add a Segmentation Line</button>
     <button mat-stroked-button (click)='lineRemoveProcess(false)' [disabled]="!(processInfo[0] === '')">Remove Segmentation Lines</button>
     <button mat-stroked-button (click)='completeSegmentation()' [disabled]="!(processInfo[0] === '')">Confirm Result</button>

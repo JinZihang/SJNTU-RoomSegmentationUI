@@ -42,9 +42,9 @@ export class RoomSegUIComponent implements AfterViewInit {
 
   // Initialize.
   ngAfterViewInit(): void {
-    this.setContainerPosition();
+    this.setContainersPositions();
   }
-  private setContainerPosition(): void {
+  private setContainersPositions(): void {
     this.renderer.setStyle(this.resizeContainerElement.nativeElement, 'height', String(this.canvasSideLength) + 'px');
     this.renderer.setStyle(this.resizeContainerElement.nativeElement, 'width', String(this.canvasSideLength) + 'px');
 
@@ -104,16 +104,16 @@ export class RoomSegUIComponent implements AfterViewInit {
         }
       }
       
-      this.setContainerPosition();
+      this.setContainersPositions();
     }
   }
 
   // For extending line segments to lines.
   public getRoomImgScale(imgScale: number[]): void {
     this.imgScale = imgScale;
-    this.extendLineSet();
+    this.extendLineSegments();
   }
-  private extendLineSet(): void {
+  private extendLineSegments(): void {
     let xMax = this.imgScale[0];
     let yMax = this.imgScale[1];
 
@@ -168,7 +168,7 @@ export class RoomSegUIComponent implements AfterViewInit {
   }
 
   // Action buttons' functions.
-  public toggleBetweenLineSegmentAndLine(): void {
+  public toggleBetweenLineSegmentsAndLines(): void {
     this.lineSetToggle = !this.lineSetToggle;
     this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
   }
@@ -203,7 +203,7 @@ export class RoomSegUIComponent implements AfterViewInit {
         this.lineSet[this.lineSet.length - 1] = lineToBeAdded;
       }
       
-      this.extendLineSet();
+      this.extendLineSegments();
       this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
 
       this.updateTriggerer = this.updateTriggerer === 'Triggering updates.' ? 'Igonore this error the development mode.' : 'Triggering updates.';
@@ -211,7 +211,7 @@ export class RoomSegUIComponent implements AfterViewInit {
       if (this.lineSet.length !== lineSetLengthBeforeAddProcess) {
         delete this.lineSet[this.lineSet.length - 1];
         this.lineSet.length = lineSetLengthBeforeAddProcess;
-        this.extendLineSet();
+        this.extendLineSegments();
         this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
 
         this.updateTriggerer = this.updateTriggerer === 'Triggering updates.' ? 'Igonore this error the development mode.' : 'Triggering updates.';
@@ -288,7 +288,7 @@ export class RoomSegUIComponent implements AfterViewInit {
 
     if (!confirmChanges) {
       this.lineSet = JSON.parse(JSON.stringify(this.lineSetBeforeProcess));
-      this.extendLineSet();
+      this.extendLineSegments();
       this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
     }
   }
@@ -299,7 +299,7 @@ export class RoomSegUIComponent implements AfterViewInit {
     switch (action) {
       case 'remove':
         this.lineSet = this.lineSet.filter(e => e !== this.lineSet[lineIndex]);
-        this.extendLineSet();
+        this.extendLineSegments();
         this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
         break;
       case 'edit':
