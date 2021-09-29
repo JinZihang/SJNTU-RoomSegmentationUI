@@ -60,7 +60,7 @@ export class RoomSegUIComponent implements AfterViewInit {
   // For resizing the area to display image and line set.
   public resizeContainerControl(event: any, resizeProcess: boolean, resizeTriggeringSide: string): void {
     this.resizeProcess = resizeProcess;
-    this.resizeTriggeringSide = resizeTriggeringSide;
+    this.resizeTriggeringSide = this.resizeProcess ? resizeTriggeringSide : '';
 
     this.beforeResizeCanvasSideLength = this.canvasSideLength;
     this.beforeResizeCursorPositionX = event.clientX;
