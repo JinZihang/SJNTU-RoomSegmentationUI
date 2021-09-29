@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Output, EventEmitter, ViewChild, ElementRef, Renderer2 } from '@angular/core';
+import { Component, AfterViewInit, Output, EventEmitter, ViewChild, ElementRef, Renderer2, HostListener } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import linesetData from '../../assets/mock-lineset-1.json';
 import { RoomSegDialog } from './room-seg-dialog/room-seg-dialog.component'
@@ -17,6 +17,7 @@ export class RoomSegUIComponent implements AfterViewInit {
   canvasSideLength: number = 600;
   beforeResizeCanvasSideLength: number;
   resizeProcess: boolean = false;
+  resizeTriggeringSide: string;
   beforeResizeCursorPositionX: number;
   beforeResizeCursorPositionY: number;
 
@@ -42,6 +43,7 @@ export class RoomSegUIComponent implements AfterViewInit {
 
   // Initialize.
   ngAfterViewInit(): void {
+    
     this.setContainersPositions();
   }
   private setContainersPositions(): void {
@@ -54,13 +56,20 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.renderer.setStyle(this.processBtnContainerElement.nativeElement, 'left', String(this.canvasSideLength + 30) + 'px');
   }
 
+  
   // For resizing the area to display image and line set.
-  public resizeContainerControl(event: any, resizeProcess: boolean): void {
+  public resizeContainerControl(event: any, resizeProcess: boolean, resizeTriggeringSide: string): void {
     this.resizeProcess = resizeProcess;
+    this.resizeTriggeringSide = resizeTriggeringSide;
 
     this.beforeResizeCanvasSideLength = this.canvasSideLength;
     this.beforeResizeCursorPositionX = event.clientX;
     this.beforeResizeCursorPositionY = event.clientY;
+  }
+  @HostListener('document:mousemove', ['$event']) onMouseMove(mouseMovementListener: any) {
+    if (this.resizeProcess) {
+      this.resizeContainer(mouseMovementListener, this.resizeTriggeringSide);
+    }
   }
   public resizeContainer(event: any, direction: string): void {
     const minCanvasSideLength = 300;
@@ -107,7 +116,7 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.setContainersPositions();
     }
   }
-
+  
   // For extending line segments to lines.
   public getRoomImgScale(imgScale: number[]): void {
     this.imgScale = imgScale;

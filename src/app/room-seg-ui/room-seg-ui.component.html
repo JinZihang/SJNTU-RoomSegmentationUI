@@ -8,14 +8,8 @@
     </room-seg-display>
 
     <div *ngIf="!(processInfo[0] === 'add')">
-        <div id='resize-container-bottom' 
-            (mousedown)='resizeContainerControl($event, true)' (mouseup)='resizeContainerControl($event, false)' 
-            (mouseout)='resizeContainerControl($event, false)' (mousemove)="resizeContainer($event, 'bottom')">
-        </div>
-        <div id='resize-container-right' 
-            (mousedown)='resizeContainerControl($event, true)' (mouseup)='resizeContainerControl($event, false)' 
-            (mouseout)='resizeContainerControl($event, false)' (mousemove)="resizeContainer($event, 'right')">
-        </div>
+        <div id='resize-container-bottom' (mousedown)="resizeContainerControl($event, true, 'bottom')" (mouseup)="resizeContainerControl($event, false, 'bottom')"></div>
+        <div id='resize-container-right' (mousedown)="resizeContainerControl($event, true, 'right')" (mouseup)="resizeContainerControl($event, false, 'right')"></div>
     </div>
 </div>
 
