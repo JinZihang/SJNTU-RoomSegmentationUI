@@ -1,8 +1,8 @@
 <div id='scale-container' #scaleContainerElement>
     <img id='room-top-view-image' #roomTopViewImageElement [src]='imgSrc' (load)='roomTopViewImgOnLoad()'>
-    <svg #svgCanvasElement 
-        (mouseover)='showCursorCoordinates(true)' (mouseout)='showCursorCoordinates(false)' (mousemove)='updateCursorCoordinates($event)' 
-        [ngStyle]="{cursor: canvasPointer ? 'pointer' : ''}" (click)='canvasClickAction()'>
+    <svg #svgCanvasElement [ngStyle]="{cursor: canvasPointer ? 'pointer' : ''}"
+        (mouseover)='showCursorCoordinates(true)' (mouseleave)='showCursorCoordinates(false)' (mousemove)='canvasCursorMoveAction($event)' 
+        (mousedown)='moveLineProcessControl($event, true)' (mouseup)='moveLineProcessControl($event, false)' (click)='canvasCursorClickAction()'>
         <line #line
             *ngFor='let line of lineSetToDisplayCopy; let lineIndex = index;' 
             [attr.x1]='line[0]' [attr.y1]='line[1]' [attr.x2]='line[2]' [attr.y2]='line[3]' 
@@ -12,8 +12,14 @@
         <circle class='line-segment-extremity' *ngIf='extremities[0]' [attr.cx]='extremities[0]' [attr.cy]='extremities[1]' r='3'/>
         <circle class='line-segment-extremity' *ngIf='extremities[0]' [attr.cx]='extremities[2]' [attr.cy]='extremities[3]' r='3'/>
         <!-- Add line process extremities. -->
-        <circle class='line-segment-extremity' *ngIf='lineAddProcessExtremities[0][0]' [attr.cx]='lineAddProcessExtremities[0][0]' [attr.cy]='lineAddProcessExtremities[0][1]' r='3'/>
-        <circle class='line-segment-extremity' *ngIf='lineAddProcessExtremities[1][0]' [attr.cx]='lineAddProcessExtremities[1][0]' [attr.cy]='lineAddProcessExtremities[1][1]' r='3'/>
+        <circle class='line-segment-extremity' 
+            *ngIf='lineAddProcessExtremities[0][0]' 
+            [attr.cx]='lineAddProcessExtremities[0][0]' [attr.cy]='lineAddProcessExtremities[0][1]' 
+            [ngStyle]="{cursor: 'move'}" r='3'/>
+        <circle class='line-segment-extremity' 
+            *ngIf='lineAddProcessExtremities[1][0]' 
+            [attr.cx]='lineAddProcessExtremities[1][0]' [attr.cy]='lineAddProcessExtremities[1][1]' 
+            [ngStyle]="{cursor: 'move'}" r='3'/>
     </svg>
 </div>
 
@@ -39,7 +45,7 @@
                     (keyup)="lineAddProcessInputOnKey('firstExtremX', firstExtremX.value)" 
                     [formControl]='firstExtremXInputControl' type='number' required
                 />
-                <mat-error *ngIf="firstExtremXInputControl.invalid">{{getErrorMessage('firstExtremX')}}</mat-error>
+                <mat-error *ngIf="firstExtremXInputControl.invalid">Valid value required!</mat-error>
             </mat-form-field>
             <mat-form-field appearance='fill'>
                 <mat-label>1st Extremity's Y</mat-label>
@@ -48,7 +54,7 @@
                     (keyup)="lineAddProcessInputOnKey('firstExtremY', firstExtremY.value)" 
                     [formControl]='firstExtremYInputControl' type='number' required
                 />
-                <mat-error *ngIf="firstExtremYInputControl.invalid">{{getErrorMessage('firstExtremY')}}</mat-error>
+                <mat-error *ngIf="firstExtremYInputControl.invalid">Valid value required!</mat-error>
             </mat-form-field>
         </div>
         <div class='extremity-coor-input'>
@@ -59,7 +65,7 @@
                     (keyup)="lineAddProcessInputOnKey('secondExtremX', secondExtremX.value)" 
                     [formControl]='secondExtremXInputControl' type='number' required
                 />
-                <mat-error *ngIf="secondExtremXInputControl.invalid">{{getErrorMessage('secondExtremX')}}</mat-error>
+                <mat-error *ngIf="secondExtremXInputControl.invalid">Valid value required!</mat-error>
             </mat-form-field>
             <mat-form-field appearance='fill'>
                 <mat-label>2nd Extremity's Y</mat-label>
@@ -68,7 +74,7 @@
                     (keyup)="lineAddProcessInputOnKey('secondExtremY', secondExtremY.value)" 
                     [formControl]='secondExtremYInputControl' type='number' required
                 />
-                <mat-error *ngIf="secondExtremYInputControl.invalid">{{getErrorMessage('secondExtremY')}}</mat-error>
+                <mat-error *ngIf="secondExtremYInputControl.invalid">Valid value required!</mat-error>
             </mat-form-field>
         </div>
     </div>

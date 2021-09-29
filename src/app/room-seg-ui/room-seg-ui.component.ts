@@ -64,11 +64,6 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.beforeResizeCursorPositionX = event.clientX;
     this.beforeResizeCursorPositionY = event.clientY;
   }
-  @HostListener('document:mousemove', ['$event']) onMouseMove(mouseMovementListener: any) {
-    if (this.resizeProcess) {
-      this.resizeContainer(mouseMovementListener, this.resizeTriggeringSide);
-    }
-  }
   public resizeContainer(event: any, direction: string): void {
     const minCanvasSideLength = 300;
     const maxCanvasSideLength = 650;
@@ -122,6 +117,11 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.setContainersPositions();
     }
   }
+  @HostListener('document:mousemove', ['$event']) onMouseMove(mouseMovementListener: any) {
+    if (this.resizeProcess) {
+      this.resizeContainer(mouseMovementListener, this.resizeTriggeringSide);
+    }
+  }
   
   // For extending line segments to lines.
   public getRoomImgScale(imgScale: number[]): void {
@@ -135,7 +135,7 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.lineSetExtended = [];
 
     for (let i=0; i<this.lineSet.length; i++) {
-      // Equation of the line is 'y = (x-x1) * (y1-y2)/(x1-x2) + y1' ('x = (y-y1) * (x1-x2)/(y1-y2) + x1').
+      // The equation of line is 'y = (x-x1) * (y1-y2)/(x1-x2) + y1' ('x = (y-y1) * (x1-x2)/(y1-y2) + x1').
       let x1 = this.lineSet[i][0];
       let y1 = this.lineSet[i][1];
       let x2 = this.lineSet[i][2];
@@ -199,9 +199,7 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.processInfo[1] = lineIndex;
       this.processCanConfirm = false;
 
-      // The ngOnChanges in the display component only listen for reference changes.
-      // Thus the following step is necessary for triggering the ngOnChanges function in the display component.
-      this.updateTriggerer = this.updateTriggerer === 'Triggering updates.' ? 'Igonore this error the development mode.' : 'Triggering updates.';
+      this.forceUpdate();
     }
   }
   public lineAddProcessControl(lineAddProcessInfo: any) {
@@ -221,7 +219,7 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.extendLineSegments();
       this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
 
-      this.updateTriggerer = this.updateTriggerer === 'Triggering updates.' ? 'Igonore this error the development mode.' : 'Triggering updates.';
+      this.forceUpdate();
     } else {
       if (this.lineSet.length !== lineSetLengthBeforeAddProcess) {
         delete this.lineSet[this.lineSet.length - 1];
@@ -229,7 +227,7 @@ export class RoomSegUIComponent implements AfterViewInit {
         this.extendLineSegments();
         this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
 
-        this.updateTriggerer = this.updateTriggerer === 'Triggering updates.' ? 'Igonore this error the development mode.' : 'Triggering updates.';
+        this.forceUpdate();
       }
     }
   }
@@ -257,6 +255,8 @@ export class RoomSegUIComponent implements AfterViewInit {
   public completeSegmentation(): void {
     this.openDialog('complete', 'Proceed with this room segmentaion result?', 'Press cancel if you want to make further edits.', -1);
   }
+
+  // Process controls.
   private openDialog(action: string, title: string, content: string, lineIndex: number): void {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.maxWidth = '50%';
@@ -321,5 +321,10 @@ export class RoomSegUIComponent implements AfterViewInit {
         this.lineAddProcess(true, lineIndex);
         break;
     }
+  }
+  // The ngOnChanges in the display component only listen for reference changes.
+  // Thus the following step is sometimes necessary for triggering the ngOnChanges function in the display component.
+  public forceUpdate(): void {
+    this.updateTriggerer = this.updateTriggerer === 'Triggering updates.' ? 'Igonore this error in the development mode.' : 'Triggering updates.';
   }
 }
