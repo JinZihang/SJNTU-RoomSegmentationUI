@@ -43,7 +43,6 @@ export class RoomSegUIComponent implements AfterViewInit {
 
   // Initialize.
   ngAfterViewInit(): void {
-    
     this.setContainersPositions();
   }
   private setContainersPositions(): void {
@@ -56,7 +55,6 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.renderer.setStyle(this.processBtnContainerElement.nativeElement, 'left', String(this.canvasSideLength + 30) + 'px');
   }
 
-  
   // For resizing the area to display image and line set.
   public resizeContainerControl(event: any, resizeProcess: boolean, resizeTriggeringSide: string): void {
     this.resizeProcess = resizeProcess;
@@ -90,11 +88,15 @@ export class RoomSegUIComponent implements AfterViewInit {
           case 'bottom':
             if (event.clientY - this.beforeResizeCursorPositionY > 0) {
               this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientY - this.beforeResizeCursorPositionY);
+            } else {
+              this.resizeProcess = false;
             }
             break;
           case 'right':
             if (event.clientX - this.beforeResizeCursorPositionX > 0) {
               this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientX - this.beforeResizeCursorPositionX);
+            } else {
+              this.resizeProcess = false;
             }
             break;
         }
@@ -103,11 +105,15 @@ export class RoomSegUIComponent implements AfterViewInit {
           case 'bottom':
             if (event.clientY - this.beforeResizeCursorPositionY < 0) {
               this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientY - this.beforeResizeCursorPositionY);
+            } else {
+              this.resizeProcess = false;
             }
             break;
           case 'right':
             if (event.clientX - this.beforeResizeCursorPositionX < 0) {
               this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientX - this.beforeResizeCursorPositionX);
+            } else {
+              this.resizeProcess = false;
             }
             break;
         }
