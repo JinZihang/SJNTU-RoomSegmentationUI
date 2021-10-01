@@ -14,7 +14,10 @@ export class RoomSegUIComponent implements AfterViewInit {
 
   @Output() segmentationComplete = new EventEmitter<number[][]>(); // Final segmentation line set.
 
+  pageTopDistance: number = 15; // Constant yet.
+  historyContainerWidth: number = 60;
   canvasSideLength: number = 600;
+
   beforeResizeCanvasSideLength: number;
   resizeProcess: boolean = false;
   resizeTriggeringSide: string;
@@ -46,13 +49,16 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.setContainersPositions();
   }
   private setContainersPositions(): void {
+    this.renderer.setStyle(this.displayResizeContainerElement.nativeElement, 'top', String(this.pageTopDistance) + 'px');
+    this.renderer.setStyle(this.displayResizeContainerElement.nativeElement, 'left', String(this.historyContainerWidth + 10) + 'px');
     this.renderer.setStyle(this.displayResizeContainerElement.nativeElement, 'height', String(this.canvasSideLength) + 'px');
     this.renderer.setStyle(this.displayResizeContainerElement.nativeElement, 'width', String(this.canvasSideLength) + 'px');
 
-    this.renderer.setStyle(this.actionBtnContainerElement.nativeElement, 'left', String(this.canvasSideLength + 30) + 'px');
+    this.renderer.setStyle(this.actionBtnContainerElement.nativeElement, 'top', String(this.pageTopDistance) + 'px');
+    this.renderer.setStyle(this.actionBtnContainerElement.nativeElement, 'left', String(this.historyContainerWidth + this.canvasSideLength + 30) + 'px');
 
-    this.renderer.setStyle(this.processBtnContainerElement.nativeElement, 'top', String(this.canvasSideLength - 66) + 'px');
-    this.renderer.setStyle(this.processBtnContainerElement.nativeElement, 'left', String(this.canvasSideLength + 30) + 'px');
+    this.renderer.setStyle(this.processBtnContainerElement.nativeElement, 'top', String(this.pageTopDistance + this.canvasSideLength - 81) + 'px');
+    this.renderer.setStyle(this.processBtnContainerElement.nativeElement, 'left', String(this.historyContainerWidth + this.canvasSideLength + 30) + 'px');
   }
 
   // For resizing the area to display image and line set.
