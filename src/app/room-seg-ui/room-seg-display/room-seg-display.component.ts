@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnChanges, Input, Output, EventEmitter, ViewChild, ElementRef, Renderer2 } from '@angular/core';
+import { Component, OnChanges, Input, Output, EventEmitter, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 
 @Component({
@@ -6,7 +6,7 @@ import { FormControl, Validators } from '@angular/forms';
   templateUrl: 'room-seg-display.component.html',
   styleUrls: ['room-seg-display.component.css']
 })
-export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
+export class RoomSegDisplayComponent implements OnChanges {
   @Input() canvasSideLength: number;
   @Input() imgSrc: string;
   @Input() lineSet: number[][];
@@ -64,8 +64,6 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
   @ViewChild('coorInputContainer') coorInputContainerElement: ElementRef;
 
   constructor(private renderer: Renderer2) {}
-
-  ngAfterViewInit(): void {}
 
   ngOnChanges(): void {
     const action = this.processInfo[0];

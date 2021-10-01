@@ -8,6 +8,11 @@
     margin: auto;
     line-height: 1;
 }
+room-seg-history {
+    position: absolute;
+    top: 40px;
+    width: 100%;
+}
 
 #display-resize-container {
     position: absolute;

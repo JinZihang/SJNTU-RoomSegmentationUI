@@ -69,6 +69,18 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.renderer.setStyle(this.processBtnContainerElement.nativeElement, 'left', String(this.pageLeftDistance + this.historyContainerWidth + this.canvasSideLength + 40) + 'px');
   }
 
+  // History list related.
+  public displayEditHistory(): void {
+    this.showEditHistory = !this.showEditHistory;
+
+    if (this.showEditHistory) {
+      this.historyContainerWidth = 200;
+    } else {
+      this.historyContainerWidth = 40;
+    }
+    this.setContainersPositions()
+  }
+
   // For resizing the area to display image and line set.
   public resizeContainerControl(event: any, resizeProcess: boolean, resizeTriggeringSide: string): void {
     this.resizeProcess = resizeProcess;
@@ -194,18 +206,6 @@ export class RoomSegUIComponent implements AfterViewInit {
         }
       }
     }
-  }
-
-  // History list related.
-  public displayEditHistory(): void {
-    this.showEditHistory = !this.showEditHistory;
-
-    if (this.showEditHistory) {
-      this.historyContainerWidth = 200;
-    } else {
-      this.historyContainerWidth = 40;
-    }
-    this.setContainersPositions()
   }
 
   // Action buttons' functions.
