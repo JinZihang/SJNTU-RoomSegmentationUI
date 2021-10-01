@@ -129,17 +129,17 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.extendLineSegments();
   }
   private extendLineSegments(): void {
-    let xMax = this.imgScale[0];
-    let yMax = this.imgScale[1];
+    const xMax = this.imgScale[0];
+    const yMax = this.imgScale[1];
 
     this.lineSetExtended = [];
 
     for (let i=0; i<this.lineSet.length; i++) {
       // The equation of line is 'y = (x-x1) * (y1-y2)/(x1-x2) + y1' ('x = (y-y1) * (x1-x2)/(y1-y2) + x1').
-      let x1 = this.lineSet[i][0];
-      let y1 = this.lineSet[i][1];
-      let x2 = this.lineSet[i][2];
-      let y2 = this.lineSet[i][3];
+      const x1 = this.lineSet[i][0];
+      const y1 = this.lineSet[i][1];
+      const x2 = this.lineSet[i][2];
+      const y2 = this.lineSet[i][3];
        
       if (x1 === x2) {
         this.lineSetExtended.push([x1, 0, x1, yMax]);
@@ -147,10 +147,10 @@ export class RoomSegUIComponent implements AfterViewInit {
         if (y1 === y2) {
           this.lineSetExtended.push([0, y1, xMax, y1]);
         } else {
-          let yAtx0 = x1 * (y2-y1)/(x1-x2) + y1;
-          let yAtxMax = (xMax-x1) * (y1-y2)/(x1-x2) + y1;
-          let xAty0 = y1 * (x2-x1)/(y1-y2) + x1;
-          let xAtyMax = (yMax-y1) * (x1-x2)/(y1-y2) + x1;
+          const yAtx0 = x1 * (y2-y1)/(x1-x2) + y1;
+          const yAtxMax = (xMax-x1) * (y1-y2)/(x1-x2) + y1;
+          const xAty0 = y1 * (x2-x1)/(y1-y2) + x1;
+          const xAtyMax = (yMax-y1) * (x1-x2)/(y1-y2) + x1;
 
           if (yAtx0 < 0) {
             if (yAtxMax < 0) {
@@ -204,10 +204,10 @@ export class RoomSegUIComponent implements AfterViewInit {
   }
   public lineAddProcessControl(lineAddProcessInfo: any) {
     this.processCanConfirm = lineAddProcessInfo[0];
-    let lineToBeAdded = lineAddProcessInfo[1];
-    let fromLineEditProcess = lineAddProcessInfo[2];
+    const lineToBeAdded = lineAddProcessInfo[1];
+    const fromLineEditProcess = lineAddProcessInfo[2];
 
-    let lineSetLengthBeforeAddProcess = fromLineEditProcess ? this.lineSetBeforeProcess.length - 1: this.lineSetBeforeProcess.length;
+    const lineSetLengthBeforeAddProcess = fromLineEditProcess ? this.lineSetBeforeProcess.length - 1: this.lineSetBeforeProcess.length;
     
     if (this.processCanConfirm) {
       if (this.lineSet.length === lineSetLengthBeforeAddProcess) {
@@ -269,12 +269,12 @@ export class RoomSegUIComponent implements AfterViewInit {
       action: action
     };
 
-    let dialogRef = this.dialog.open(RoomSegDialogComponent, dialogConfig);
+    const dialogRef = this.dialog.open(RoomSegDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(result => {
-      let shouldProceed = result[0];
-      let action = result[1];
-      let lineIndex = result[2];
+      const shouldProceed = result[0];
+      const action = result[1];
+      const lineIndex = result[2];
 
       if (shouldProceed) {
         this.lineSetBeforeProcess = JSON.parse(JSON.stringify(this.lineSet));
@@ -308,8 +308,8 @@ export class RoomSegUIComponent implements AfterViewInit {
     }
   }
   public updateLineSet(editResult: any[]): void {
-    let action = editResult[0];
-    let lineIndex = editResult[1];
+    const action = editResult[0];
+    const lineIndex = editResult[1];
 
     switch (action) {
       case 'remove':

@@ -68,8 +68,8 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
   ngAfterViewInit(): void {}
 
   ngOnChanges(): void {
-    let action = this.processInfo[0];
-    let lineIndex = this.processInfo[1];
+    const action = this.processInfo[0];
+    const lineIndex = this.processInfo[1];
 
     if (this.initialized) {
       this.lineSetCopy = JSON.parse(JSON.stringify(this.lineSet));
@@ -121,8 +121,8 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
       this.canvasXMax = this.canvasSideLength;
       this.canvasYMax = this.canvasSideLength/this.imgScale;
 
-      let height = String(100/this.imgScale) + '%';
-      let topMargin = String(0.5*(100 - 100/this.imgScale)) + '%';
+      const height = String(100/this.imgScale) + '%';
+      const topMargin = String(0.5*(100 - 100/this.imgScale)) + '%';
 
       this.renderer.setStyle(this.scaleContainerElement.nativeElement, 'width', '100%');
       this.renderer.setStyle(this.scaleContainerElement.nativeElement, 'height', height);
@@ -131,8 +131,8 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
       this.canvasXMax = this.canvasSideLength*this.imgScale;
       this.canvasYMax = this.canvasSideLength;
 
-      let width = String(100*this.imgScale) + '%';
-      let topMargin = String(0.5*(100 - 100*this.imgScale)) + '%';
+      const width = String(100*this.imgScale) + '%';
+      const topMargin = String(0.5*(100 - 100*this.imgScale)) + '%';
 
       this.renderer.setStyle(this.scaleContainerElement.nativeElement, 'height', '100%');
       this.renderer.setStyle(this.scaleContainerElement.nativeElement, 'width', width);
@@ -168,15 +168,15 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
     }
   }
   private setCursorCoordinatesContainerPosition(): void {
-    let top = String(this.canvasSideLength - 10) + 'px';
-    let width = String(this.canvasSideLength) + 'px';
+    const top = String(this.canvasSideLength - 10) + 'px';
+    const width = String(this.canvasSideLength) + 'px';
 
     this.renderer.setStyle(this.cursorCoorContainerElement.nativeElement, 'top', top);
     this.renderer.setStyle(this.cursorCoorContainerElement.nativeElement, 'width', width);
   }
   private setCoordinatesInputContainerPosition(): void {
-    let top = String(this.canvasSideLength + 35) + 'px';
-    let width = String(this.canvasSideLength) + 'px';
+    const top = String(this.canvasSideLength + 35) + 'px';
+    const width = String(this.canvasSideLength) + 'px';
 
     this.renderer.setStyle(this.coorInputContainerElement.nativeElement, 'top', top);
     this.renderer.setStyle(this.coorInputContainerElement.nativeElement, 'width', width);
@@ -260,16 +260,16 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
     this.moveLineProcessStart = startProcess;
 
     if (this.processInfo[0] === 'add') {
-      let selectX = event.offsetX;
-      let selectY = event.offsetY
+      const selectX = event.offsetX;
+      const selectY = event.offsetY
 
-      let firstExtremX = this.lineToBeAdded[0];
-      let firstExtremY = this.lineToBeAdded[1];
-      let secondExtremX = this.lineToBeAdded[2];
-      let secondExtremY = this.lineToBeAdded[3];
+      const firstExtremX = this.lineToBeAdded[0];
+      const firstExtremY = this.lineToBeAdded[1];
+      const secondExtremX = this.lineToBeAdded[2];
+      const secondExtremY = this.lineToBeAdded[3];
 
       // The equation of line is 'y = (x-x1) * (y1-y2)/(x1-x2) + y1' ('x = (y-y1) * (x1-x2)/(y1-y2) + x1').
-      let valueDifference = Math.abs(firstExtremX - secondExtremX) > Math.abs(firstExtremY - secondExtremY)
+      const valueDifference = Math.abs(firstExtremX - secondExtremX) > Math.abs(firstExtremY - secondExtremY)
       // Assume the mouse down point to be on the line, use one of its coordinate value to calculate the other one.
       // Then compare it with the real value to see if the click point is approximately on the line. 
         ? Math.abs(Math.abs(selectY) - Math.abs((selectX-firstExtremX) * (firstExtremY-secondExtremY)/(firstExtremX-secondExtremX) + firstExtremY)) // If the line is approximately horizontal.
@@ -334,8 +334,8 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
 
     // For the line-move process.
     if (this.processInfo[0] === 'add' && this.moveLineProcessStart) {
-      let cursorX = event.offsetX;
-      let cursorY = event.offsetY;
+      const cursorX = event.offsetX;
+      const cursorY = event.offsetY;
 
       switch (this.elementToBeMoved) {
         case 'firstExtremity':
@@ -353,13 +353,13 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
           break;
 
         case 'lineToBeAdded':
-          let xDisplacement = cursorX - this.lineMoveProcessMouseDownCoor[0];
-          let yDisplacement = cursorY - this.lineMoveProcessMouseDownCoor[1];
+          const xDisplacement = cursorX - this.lineMoveProcessMouseDownCoor[0];
+          const yDisplacement = cursorY - this.lineMoveProcessMouseDownCoor[1];
 
-          let afterMoveFirstExtremX = this.lineMoveProcessInitialLinePosition[0] + xDisplacement;
-          let afterMoveFirstExtremY = this.lineMoveProcessInitialLinePosition[1] + yDisplacement;
-          let afterMoveSecondExtremX = this.lineMoveProcessInitialLinePosition[2] + xDisplacement;
-          let afterMoveSecondExtremY = this.lineMoveProcessInitialLinePosition[3] + yDisplacement;
+          const afterMoveFirstExtremX = this.lineMoveProcessInitialLinePosition[0] + xDisplacement;
+          const afterMoveFirstExtremY = this.lineMoveProcessInitialLinePosition[1] + yDisplacement;
+          const afterMoveSecondExtremX = this.lineMoveProcessInitialLinePosition[2] + xDisplacement;
+          const afterMoveSecondExtremY = this.lineMoveProcessInitialLinePosition[3] + yDisplacement;
 
           if (afterMoveFirstExtremX >= 0 && afterMoveFirstExtremX <= this.canvasXMax
             && afterMoveFirstExtremY >= 0 && afterMoveFirstExtremY <= this.canvasYMax
