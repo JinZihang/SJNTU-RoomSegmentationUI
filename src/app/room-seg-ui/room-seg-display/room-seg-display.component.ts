@@ -203,28 +203,28 @@ export class RoomSegDisplayComponent implements AfterViewInit, OnChanges {
         if(value === '' || value < 0 || value > this.canvasXMax) {
           this.lineToBeAdded[0] = -1;
         } else {
-          this.lineToBeAdded[0] = value;
+          this.lineToBeAdded[0] = Number(value);
         }
         break;
       case 'firstExtremY':
         if(value === '' || value < 0 || value > this.canvasYMax) {
           this.lineToBeAdded[1] = -1;
         } else {
-          this.lineToBeAdded[1] = value;
+          this.lineToBeAdded[1] = Number(value);
         }
         break;
       case 'secondExtremX':
         if(value === '' || value < 0 || value > this.canvasXMax) {
           this.lineToBeAdded[2] = -1;
         } else {
-          this.lineToBeAdded[2] = value;
+          this.lineToBeAdded[2] = Number(value);
         }
         break;
       case 'secondExtremY':
         if(value === '' || value < 0 || value > this.canvasYMax) {
           this.lineToBeAdded[3] = -1;
         } else {
-          this.lineToBeAdded[3] = value;
+          this.lineToBeAdded[3] = Number(value);
         }
         break;
     }
