@@ -4,22 +4,24 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 
 import { AppComponent } from './app.component';
 import { RoomSegUIComponent } from './room-seg-ui/room-seg-ui.component';
+import { RoomSegHistoryComponent } from './room-seg-ui/room-seg-history/room-seg-history.component';
 import { RoomSegDisplayComponent } from './room-seg-ui/room-seg-display/room-seg-display.component';
 import { RoomSegDialogComponent } from './room-seg-ui/room-seg-dialog/room-seg-dialog.component';
-import { RoomSegHistoryComponent } from './room-seg-ui/room-seg-history/room-seg-history.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     RoomSegUIComponent,
+    RoomSegHistoryComponent,
     RoomSegDisplayComponent,
-    RoomSegDialogComponent,
-    RoomSegHistoryComponent
+    RoomSegDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -27,6 +29,8 @@ import { RoomSegHistoryComponent } from './room-seg-ui/room-seg-history/room-seg
     AppRoutingModule,
     MatDialogModule,
     MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
     FormsModule,
     ReactiveFormsModule,
     MatInputModule

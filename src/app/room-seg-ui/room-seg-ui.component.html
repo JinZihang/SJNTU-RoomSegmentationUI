@@ -1,3 +1,13 @@
+<div id='history-resize-container' #historyResizeContainerElement>
+    <button id='history-display-control-button' mat-icon-button 
+        matTooltip='Edit History' matTooltipPosition='after'
+        (click)='displayEditHistory()'>
+        <mat-icon>menu</mat-icon>
+    </button>
+
+    <room-seg-history></room-seg-history>
+</div>
+
 <div id='display-resize-container' #displayResizeContainerElement>
     <room-seg-display #displayElement 
         [canvasSideLength]='canvasSideLength' [imgSrc]='imgSrc' (roomImgScale)='getRoomImgScale($event)'

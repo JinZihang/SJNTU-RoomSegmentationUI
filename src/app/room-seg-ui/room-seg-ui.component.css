@@ -1,3 +1,14 @@
+#history-resize-container {
+    position: absolute;
+    height: 100%;
+}
+#history-display-control-button {
+    position: absolute;
+    top: 0;
+    margin: auto;
+    line-height: 1;
+}
+
 #display-resize-container {
     position: absolute;
     background-color: cadetblue;
