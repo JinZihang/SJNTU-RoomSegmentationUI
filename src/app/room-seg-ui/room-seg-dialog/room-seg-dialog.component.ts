@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
     templateUrl: 'room-seg-dialog.html',
     styleUrls: ['room-seg-dialog.css']
 })
-export class RoomSegDialog{
+export class RoomSegDialogComponent{
     action: string;
     title: string;
     content: string;

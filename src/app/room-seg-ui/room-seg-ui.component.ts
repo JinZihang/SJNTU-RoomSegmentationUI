@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, Output, EventEmitter, ViewChild, ElementRef, Renderer2, HostListener } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import linesetData from '../../assets/mock-lineset-1.json';
-import { RoomSegDialog } from './room-seg-dialog/room-seg-dialog.component'
+import { RoomSegDialogComponent } from './room-seg-dialog/room-seg-dialog.component'
 
 @Component({
   selector: 'room-seg-ui',
@@ -269,7 +269,7 @@ export class RoomSegUIComponent implements AfterViewInit {
       action: action
     };
 
-    let dialogRef = this.dialog.open(RoomSegDialog, dialogConfig);
+    let dialogRef = this.dialog.open(RoomSegDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(result => {
       let shouldProceed = result[0];
