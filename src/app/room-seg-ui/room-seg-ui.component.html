@@ -1,4 +1,4 @@
-<div id='resize-container' #resizeContainerElement>
+<div id='display-resize-container' #displayResizeContainerElement>
     <room-seg-display #displayElement 
         [canvasSideLength]='canvasSideLength' [imgSrc]='imgSrc' (roomImgScale)='getRoomImgScale($event)'
         [lineSet]='lineSet' [lineSetToDisplay]='lineSetToDisplay'
@@ -8,8 +8,8 @@
     </room-seg-display>
 
     <div *ngIf="!(processInfo[0] === 'add')">
-        <div id='resize-container-bottom' (mousedown)="resizeContainerControl($event, true, 'bottom')" (mouseup)="resizeContainerControl($event, false, 'bottom')"></div>
-        <div id='resize-container-right' (mousedown)="resizeContainerControl($event, true, 'right')" (mouseup)="resizeContainerControl($event, false, 'right')"></div>
+        <div id='display-resize-container-bottom' (mousedown)="resizeContainerControl($event, true, 'bottom')" (mouseup)="resizeContainerControl($event, false, 'bottom')"></div>
+        <div id='display-resize-container-right' (mousedown)="resizeContainerControl($event, true, 'right')" (mouseup)="resizeContainerControl($event, false, 'right')"></div>
     </div>
 </div>
 

@@ -34,7 +34,7 @@ export class RoomSegUIComponent implements AfterViewInit {
   processCanConfirm: boolean = true;
   lineSetBeforeProcess: number[][];
 
-  @ViewChild('resizeContainerElement') resizeContainerElement: ElementRef;
+  @ViewChild('displayResizeContainerElement') displayResizeContainerElement: ElementRef;
   @ViewChild('displayElement') displayElement: ElementRef;
   @ViewChild('actionBtnContainerElement') actionBtnContainerElement: ElementRef;
   @ViewChild('processBtnContainerElement') processBtnContainerElement: ElementRef;
@@ -46,8 +46,8 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.setContainersPositions();
   }
   private setContainersPositions(): void {
-    this.renderer.setStyle(this.resizeContainerElement.nativeElement, 'height', String(this.canvasSideLength) + 'px');
-    this.renderer.setStyle(this.resizeContainerElement.nativeElement, 'width', String(this.canvasSideLength) + 'px');
+    this.renderer.setStyle(this.displayResizeContainerElement.nativeElement, 'height', String(this.canvasSideLength) + 'px');
+    this.renderer.setStyle(this.displayResizeContainerElement.nativeElement, 'width', String(this.canvasSideLength) + 'px');
 
     this.renderer.setStyle(this.actionBtnContainerElement.nativeElement, 'left', String(this.canvasSideLength + 30) + 'px');
 

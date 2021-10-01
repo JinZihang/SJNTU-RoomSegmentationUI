@@ -1,10 +1,10 @@
-#resize-container {
+#display-resize-container {
     position: absolute;
     top: 15px;
     left: 10px;
     background-color: cadetblue;
 }
-#resize-container-bottom {
+#display-resize-container-bottom {
     position: absolute;
     bottom: -5px;
     left: 0;
@@ -15,7 +15,7 @@
     opacity: .5;
     cursor: s-resize;
 }
-#resize-container-right {
+#display-resize-container-right {
     position: absolute;
     top: 0;
     bottom: 5px;
