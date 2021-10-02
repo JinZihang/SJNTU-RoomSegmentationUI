@@ -27,7 +27,7 @@ room-seg-history {
 
 #display-resize-container {
     position: absolute;
-    background-color: cadetblue;
+    border: 1px solid black;
 }
 #display-resize-container-bottom {
     position: absolute;

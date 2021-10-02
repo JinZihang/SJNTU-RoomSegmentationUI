@@ -114,6 +114,9 @@ export class RoomSegDisplayComponent implements OnChanges {
     this.imgScale = this.imgNaturalWidth/this.imgNaturalHeight;
 
     if (this.imgScale > 1) {
+      this.renderer.setStyle(this.imgElement.nativeElement, 'border-top', '1px solid rgba(0,0,0,.12)');
+      this.renderer.setStyle(this.imgElement.nativeElement, 'border-bottom', '1px solid rgba(0,0,0,.12)');
+
       this.canvasXMax = this.canvasSideLength;
       this.canvasYMax = this.canvasSideLength/this.imgScale;
 
@@ -124,6 +127,9 @@ export class RoomSegDisplayComponent implements OnChanges {
       this.renderer.setStyle(this.scaleContainerElement.nativeElement, 'height', height);
       this.renderer.setStyle(this.scaleContainerElement.nativeElement, 'margin-top', topMargin);
     } else {
+      this.renderer.setStyle(this.imgElement.nativeElement, 'border-left', '1px solid rgba(0,0,0,.12)');
+      this.renderer.setStyle(this.imgElement.nativeElement, 'border-right', '1px solid rgba(0,0,0,.12)');
+
       this.canvasXMax = this.canvasSideLength*this.imgScale;
       this.canvasYMax = this.canvasSideLength;
 
