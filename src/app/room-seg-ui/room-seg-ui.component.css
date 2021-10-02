@@ -8,6 +8,9 @@
     margin: auto;
     line-height: 1;
 }
+/deep/.mat-tooltip {
+    font-size: 12px;
+}
 room-seg-history {
     position: absolute;
     top: 40px;
