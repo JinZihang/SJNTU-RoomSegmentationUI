@@ -67,4 +67,5 @@ room-seg-display {
 button {
     display: block;
     margin-bottom: 10px;
+    font-size: 12px;
 }

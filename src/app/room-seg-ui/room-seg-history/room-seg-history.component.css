@@ -1,0 +1,15 @@
+table {
+    height: 100px;
+    width: 100%;
+}
+.mat-column-edit-index {
+    padding-left: 12px !important;
+    width: 20px;
+    text-align: center;
+    font-size: 12px;
+}
+.mat-column-edit-name {
+    padding-right: 0 !important;
+    text-align: center;
+    font-size: 12px;
+}

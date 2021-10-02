@@ -1,3 +1,8 @@
+export interface LineSetEditHistory {
+    editIndex: number;
+    editName: string;
+}
+
 export interface ProcessInfo {
     action: string,
     lineIndex?: number

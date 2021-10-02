@@ -101,7 +101,7 @@ export class RoomSegUIComponent implements AfterViewInit {
     }
   }
   public resizeContainer(event: any): void {
-    const minHistoryContainerWdith = 100;
+    const minHistoryContainerWdith = 150;
     const maxHistoryContainerWdith = 300;
     const minCanvasSideLength = 300;
     const maxCanvasSideLength = 650;

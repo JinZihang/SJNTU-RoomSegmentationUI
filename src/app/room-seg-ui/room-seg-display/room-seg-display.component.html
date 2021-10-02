@@ -45,7 +45,7 @@
                     (keyup)="lineAddProcessInputOnKey('firstExtremX', firstExtremX.value)" 
                     [formControl]='firstExtremXInputControl' type='number' required
                 />
-                <mat-error *ngIf="firstExtremXInputControl.invalid">Valid value required!</mat-error>
+                <mat-error *ngIf="firstExtremXInputControl.invalid"><em>Valid value required!</em></mat-error>
             </mat-form-field>
             <mat-form-field appearance='fill'>
                 <mat-label>1st Extremity's Y</mat-label>
@@ -54,7 +54,7 @@
                     (keyup)="lineAddProcessInputOnKey('firstExtremY', firstExtremY.value)" 
                     [formControl]='firstExtremYInputControl' type='number' required
                 />
-                <mat-error *ngIf="firstExtremYInputControl.invalid">Valid value required!</mat-error>
+                <mat-error *ngIf="firstExtremYInputControl.invalid"><em>Valid value required!</em></mat-error>
             </mat-form-field>
         </div>
         <div class='extremity-coor-input'>
@@ -65,7 +65,7 @@
                     (keyup)="lineAddProcessInputOnKey('secondExtremX', secondExtremX.value)" 
                     [formControl]='secondExtremXInputControl' type='number' required
                 />
-                <mat-error *ngIf="secondExtremXInputControl.invalid">Valid value required!</mat-error>
+                <mat-error *ngIf="secondExtremXInputControl.invalid"><em>Valid value required!</em></mat-error>
             </mat-form-field>
             <mat-form-field appearance='fill'>
                 <mat-label>2nd Extremity's Y</mat-label>
@@ -74,7 +74,7 @@
                     (keyup)="lineAddProcessInputOnKey('secondExtremY', secondExtremY.value)" 
                     [formControl]='secondExtremYInputControl' type='number' required
                 />
-                <mat-error *ngIf="secondExtremYInputControl.invalid">Valid value required!</mat-error>
+                <mat-error *ngIf="secondExtremYInputControl.invalid"><em>Valid value required!</em></mat-error>
             </mat-form-field>
         </div>
     </ng-container>

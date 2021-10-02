@@ -36,9 +36,11 @@ line {
 }
 #cursor-coor-text {
     margin-left: -5px;
+    font-size: 14px;
 }
 .cursor-coor-value {
     margin-left: 20px;
+    font-size: 14px;
 }
 
 form {
@@ -46,13 +48,17 @@ form {
     text-align: center;
     z-index: 3;
 }
-.extremity-coor-input {
-    margin-left: -10px;
-}
 mat-form-field {
     margin-left: 10px;
     margin-bottom: 10px;
+    font-size: 14px;
+}
+.extremity-coor-input {
+    margin-left: -10px;
 }
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
+}
+.mat-error {
+    font-size: 12px;
 }
