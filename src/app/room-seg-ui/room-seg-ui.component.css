@@ -8,7 +8,7 @@
     margin: auto;
     line-height: 1;
 }
-/deep/.mat-tooltip {
+::ng-deep .mat-tooltip {
     font-size: 12px;
 }
 room-seg-history {
