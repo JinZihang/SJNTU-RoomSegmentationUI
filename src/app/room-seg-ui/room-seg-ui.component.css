@@ -12,6 +12,7 @@ room-seg-history {
     position: absolute;
     top: 40px;
     width: 100%;
+    user-select: none;
 }
 #history-resize-container-right {
     position: absolute;
