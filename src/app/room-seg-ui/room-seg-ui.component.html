@@ -5,7 +5,11 @@
         <mat-icon>menu</mat-icon>
     </button>
 
-    <room-seg-history *ngIf='showEditHistory'></room-seg-history>
+    <ng-container *ngIf='showEditHistory'>
+        <room-seg-history></room-seg-history>
+
+        <div id='history-resize-container-right' (mousedown)="resizeContainerControl($event, true, 'history-right')" (mouseup)="resizeContainerControl($event, false, 'history-right')"></div>
+    </ng-container>
 </div>
 
 <div id='display-resize-container' #displayResizeContainerElement>
@@ -18,8 +22,8 @@
     </room-seg-display>
 
     <ng-container *ngIf="!(processInfo.action === 'add')">
-        <div id='display-resize-container-bottom' (mousedown)="resizeContainerControl($event, true, 'bottom')" (mouseup)="resizeContainerControl($event, false, 'bottom')"></div>
-        <div id='display-resize-container-right' (mousedown)="resizeContainerControl($event, true, 'right')" (mouseup)="resizeContainerControl($event, false, 'right')"></div>
+        <div id='display-resize-container-bottom' (mousedown)="resizeContainerControl($event, true, 'display-bottom')" (mouseup)="resizeContainerControl($event, false, 'display-bottom')"></div>
+        <div id='display-resize-container-right' (mousedown)="resizeContainerControl($event, true, 'display-right')" (mouseup)="resizeContainerControl($event, false, 'display-right')"></div>
     </ng-container>
 </div>
 

@@ -22,11 +22,13 @@ export class RoomSegUIComponent implements AfterViewInit {
 
   showEditHistory: boolean;
 
-  beforeResizeCanvasSideLength: number;
   resizeProcess: boolean = false;
-  resizeTriggeringSide: string;
+  resizeTriggeringElement: string;
+  beforeResizeHistoryContainerWidth: number;
+  beforeResizeCanvasSideLength: number;
   beforeResizeCursorPositionX: number;
   beforeResizeCursorPositionY: number;
+  afterResizeHistoryContainerWidth: number;
 
   imgSrc: string = '/assets/mock-image-1.png';
   imgScale: number[];
@@ -75,78 +77,101 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.showEditHistory = !this.showEditHistory;
 
     if (this.showEditHistory) {
-      this.historyContainerWidth = 200;
+      this.historyContainerWidth = this.afterResizeHistoryContainerWidth || 200;
     } else {
+      this.afterResizeHistoryContainerWidth = this.historyContainerWidth;
       this.historyContainerWidth = 40;
     }
     this.setContainersPositions()
   }
 
-  // For resizing the area to display image and line set.
-  public resizeContainerControl(event: any, resizeProcess: boolean, resizeTriggeringSide: string): void {
+  // For resizing containers.
+  public resizeContainerControl(event: any, resizeProcess: boolean, resizeTriggeringElement: string): void {
     this.resizeProcess = resizeProcess;
-    this.resizeTriggeringSide = this.resizeProcess ? resizeTriggeringSide : '';
+    this.resizeTriggeringElement = this.resizeProcess ? resizeTriggeringElement : '';
 
+    this.beforeResizeHistoryContainerWidth = this.historyContainerWidth;
     this.beforeResizeCanvasSideLength = this.canvasSideLength;
     this.beforeResizeCursorPositionX = event.clientX;
     this.beforeResizeCursorPositionY = event.clientY;
   }
-  public resizeContainer(event: any, direction: string): void {
+  @HostListener('document:mousemove', ['$event']) onMouseMove(mouseMovementListener: any) {
+    if (this.resizeProcess) {
+      this.resizeContainer(mouseMovementListener);
+    }
+  }
+  public resizeContainer(event: any): void {
+    const minHistoryContainerWdith = 100;
+    const maxHistoryContainerWdith = 300;
     const minCanvasSideLength = 300;
     const maxCanvasSideLength = 650;
 
     if (this.resizeProcess) {
-      if (this.canvasSideLength >= minCanvasSideLength && this.canvasSideLength <= maxCanvasSideLength) {
-        switch (direction) {
-          case 'bottom':
-            this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientY - this.beforeResizeCursorPositionY);
-            break;
-          case 'right':
-            this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientX - this.beforeResizeCursorPositionX);
-            break;
+      if (this.resizeTriggeringElement === 'history-right') { // Resize the history container.
+        if (this.historyContainerWidth >= minHistoryContainerWdith && this.historyContainerWidth <= maxHistoryContainerWdith) {
+          this.historyContainerWidth = this.beforeResizeHistoryContainerWidth + (event.clientX - this.beforeResizeCursorPositionX);
+        } else if (this.historyContainerWidth < minHistoryContainerWdith) {
+          if (event.clientX - this.beforeResizeCursorPositionX > 0) {
+            this.historyContainerWidth = this.beforeResizeHistoryContainerWidth + (event.clientX - this.beforeResizeCursorPositionX);
+          } else {
+            this.resizeProcess = false;
+          }
+        } else {
+          if (event.clientX - this.beforeResizeCursorPositionX < 0) {
+            this.historyContainerWidth = this.beforeResizeHistoryContainerWidth + (event.clientX - this.beforeResizeCursorPositionX);
+          } else {
+            this.resizeProcess = false;
+          }
         }
-      } else if (this.canvasSideLength < minCanvasSideLength) {
-        switch (direction) {
-          case 'bottom':
-            if (event.clientY - this.beforeResizeCursorPositionY > 0) {
+      } else { // Resize the area to display image and line set.
+        if (this.canvasSideLength >= minCanvasSideLength && this.canvasSideLength <= maxCanvasSideLength) {
+          switch (this.resizeTriggeringElement) {
+            case 'display-bottom':
               this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientY - this.beforeResizeCursorPositionY);
-            } else {
-              this.resizeProcess = false;
-            }
-            break;
-          case 'right':
-            if (event.clientX - this.beforeResizeCursorPositionX > 0) {
+              break;
+            case 'display-right':
               this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientX - this.beforeResizeCursorPositionX);
-            } else {
-              this.resizeProcess = false;
-            }
-            break;
-        }
-      } else {
-        switch (direction) {
-          case 'bottom':
-            if (event.clientY - this.beforeResizeCursorPositionY < 0) {
-              this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientY - this.beforeResizeCursorPositionY);
-            } else {
-              this.resizeProcess = false;
-            }
-            break;
-          case 'right':
-            if (event.clientX - this.beforeResizeCursorPositionX < 0) {
-              this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientX - this.beforeResizeCursorPositionX);
-            } else {
-              this.resizeProcess = false;
-            }
-            break;
+              break;
+          }
+        } else if (this.canvasSideLength < minCanvasSideLength) {
+          switch (this.resizeTriggeringElement) {
+            case 'display-bottom':
+              if (event.clientY - this.beforeResizeCursorPositionY > 0) {
+                this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientY - this.beforeResizeCursorPositionY);
+              } else {
+                this.resizeProcess = false;
+              }
+              break;
+            case 'display-right':
+              if (event.clientX - this.beforeResizeCursorPositionX > 0) {
+                this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientX - this.beforeResizeCursorPositionX);
+              } else {
+                this.resizeProcess = false;
+              }
+              break;
+          }
+        } else {
+          switch (this.resizeTriggeringElement) {
+            case 'display-bottom':
+              if (event.clientY - this.beforeResizeCursorPositionY < 0) {
+                this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientY - this.beforeResizeCursorPositionY);
+              } else {
+                this.resizeProcess = false;
+              }
+              break;
+            case 'display-right':
+              if (event.clientX - this.beforeResizeCursorPositionX < 0) {
+                this.canvasSideLength = this.beforeResizeCanvasSideLength + (event.clientX - this.beforeResizeCursorPositionX);
+              } else {
+                this.resizeProcess = false;
+              }
+              break;
+          }
         }
       }
       
+      
       this.setContainersPositions();
-    }
-  }
-  @HostListener('document:mousemove', ['$event']) onMouseMove(mouseMovementListener: any) {
-    if (this.resizeProcess) {
-      this.resizeContainer(mouseMovementListener, this.resizeTriggeringSide);
     }
   }
   

@@ -13,6 +13,16 @@ room-seg-history {
     top: 40px;
     width: 100%;
 }
+#history-resize-container-right {
+    position: absolute;
+    right: -5px;
+    height: 100%;
+    width: 10px;
+    z-index: 3;
+    background-color: transparent;
+    opacity: .5;
+    cursor: e-resize;
+}
 
 #display-resize-container {
     position: absolute;
