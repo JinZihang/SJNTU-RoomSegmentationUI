@@ -24,7 +24,7 @@
 </div>
 
 <div id='cursor-coor-container' #cursorCoorContainerElement>
-    <div *ngIf='showCursorCoor'>
+    <ng-container *ngIf='showCursorCoor'>
         <p>
             <em>
                 <span id='cursor-coor-text'>Cursor position: </span>
@@ -32,11 +32,11 @@
                 <span class='cursor-coor-value'>y:{{cursorCoor[1]}}</span>
             </em>
         </p>
-    </div>
+    </ng-container>
 </div>
 
 <form #coorInputContainer>
-    <div *ngIf="processInfo.action === 'add'">
+    <ng-container *ngIf="processInfo.action === 'add'">
         <div class='extremity-coor-input'>
             <mat-form-field appearance='fill'>
                 <mat-label>1st Extremity's X</mat-label>
@@ -77,5 +77,5 @@
                 <mat-error *ngIf="secondExtremYInputControl.invalid">Valid value required!</mat-error>
             </mat-form-field>
         </div>
-    </div>
+    </ng-container>
 </form>
