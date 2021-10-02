@@ -1,5 +1,6 @@
 import { Component, OnChanges, Input, Output, EventEmitter, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { ProcessInfo, LineAddProcessInfo } from '../room-segmentation';
 
 @Component({
   selector: 'room-seg-display',
@@ -11,14 +12,14 @@ export class RoomSegDisplayComponent implements OnChanges {
   @Input() imgSrc: string;
   @Input() lineSet: number[][];
   @Input() lineSetToDisplay: number[][];
-  @Input() processInfo: any[]; // Action, line index.
+  @Input() processInfo: ProcessInfo;
   @Input() updateTriggerer: string;
 
-  @Output() roomImgScale = new EventEmitter<number[]>(); // Image natural width, image natural height.
-  @Output() lineAddProcessControl = new EventEmitter<any[]>(); // Whether line extremities are complete, line to be added.
-  @Output() lineEditProcessControl = new EventEmitter<number>(); // Line index.
-  @Output() editResult = new EventEmitter<any[]>(); // Action, line index.
-  @Output() forceUpdate = new EventEmitter<any>(); // For triggering components to update.
+  @Output() roomImgScale = new EventEmitter<number[]>();
+  @Output() lineAddProcessControl = new EventEmitter<LineAddProcessInfo>();
+  @Output() lineEditProcessControl = new EventEmitter<number>();
+  @Output() editResult = new EventEmitter<ProcessInfo>();
+  @Output() forceUpdate = new EventEmitter<null>();
 
   initialized: boolean = false;
 
@@ -35,7 +36,7 @@ export class RoomSegDisplayComponent implements OnChanges {
 
   // Line-add process variables.
   lineToBeAdded: number[] = [-1, -1, -1, -1];
-  lineToBeAddedIsComplete: boolean;
+  isLineToBeAddedComplete: boolean;
   lineToBeAddedOutput: number[] = [-1, -1, -1, -1];
   lineAddProcessExtremities: number[][] = [[], []];
 
@@ -66,21 +67,18 @@ export class RoomSegDisplayComponent implements OnChanges {
   constructor(private renderer: Renderer2) {}
 
   ngOnChanges(): void {
-    const action = this.processInfo[0];
-    const lineIndex = this.processInfo[1];
-
     if (this.initialized) {
       this.lineSetCopy = JSON.parse(JSON.stringify(this.lineSet));
       this.lineSetToDisplayCopy = JSON.parse(JSON.stringify(this.lineSetToDisplay));
 
       this.setScaleContainerDimension();
 
-      if (action === 'add' && !this.lineToBeAddedIsComplete) {
+      if (this.processInfo.action === 'add' && !this.isLineToBeAddedComplete) {
         this.canvasPointer = true;
-      } else if (action !== 'add') {
+      } else if (this.processInfo.action !== 'add') {
         this.canvasPointer = false;
         this.lineToBeAdded = [-1, -1, -1, -1];
-        this.lineToBeAddedIsComplete = false;
+        this.isLineToBeAddedComplete = false;
         this.lineAddProcessExtremities = [[], []];
         this.lineAddInputIsFromLineEditProcess = false;
   
@@ -90,8 +88,8 @@ export class RoomSegDisplayComponent implements OnChanges {
         this.secondExtremYInputControl = new FormControl('', [Validators.required, Validators.min(0), Validators.max(this.canvasYMax)]);
       }
 
-      if (action === 'edit') {
-        this.editLine(true, lineIndex);
+      if (this.processInfo.action === 'edit') {
+        this.editLine(true, this.processInfo.lineIndex);
       }
     }
   }
@@ -182,7 +180,7 @@ export class RoomSegDisplayComponent implements OnChanges {
 
   // Line related functions.
   public lineClickAction(lineIndex: number): void {
-    switch (this.processInfo[0]) {
+    switch (this.processInfo.action) {
       case 'remove':
         this.removeLine(lineIndex);
         break;
@@ -195,31 +193,31 @@ export class RoomSegDisplayComponent implements OnChanges {
         break;
     }
   }
-  public lineAddProcessInputOnKey(placeHolder: string, value: any): void {
+  public lineAddProcessInputOnKey(placeHolder: string, value: string): void {
     switch (placeHolder) {
       case 'firstExtremX':
-        if(value === '' || value < 0 || value > this.canvasXMax) {
+        if(value === '' || Number(value) < 0 || Number(value) > this.canvasXMax) {
           this.lineToBeAdded[0] = -1;
         } else {
           this.lineToBeAdded[0] = Number(value);
         }
         break;
       case 'firstExtremY':
-        if(value === '' || value < 0 || value > this.canvasYMax) {
+        if(value === '' || Number(value) < 0 || Number(value) > this.canvasYMax) {
           this.lineToBeAdded[1] = -1;
         } else {
           this.lineToBeAdded[1] = Number(value);
         }
         break;
       case 'secondExtremX':
-        if(value === '' || value < 0 || value > this.canvasXMax) {
+        if(value === '' || Number(value) < 0 || Number(value) > this.canvasXMax) {
           this.lineToBeAdded[2] = -1;
         } else {
           this.lineToBeAdded[2] = Number(value);
         }
         break;
       case 'secondExtremY':
-        if(value === '' || value < 0 || value > this.canvasYMax) {
+        if(value === '' || Number(value) < 0 || Number(value) > this.canvasYMax) {
           this.lineToBeAdded[3] = -1;
         } else {
           this.lineToBeAdded[3] = Number(value);
@@ -228,7 +226,7 @@ export class RoomSegDisplayComponent implements OnChanges {
     }
 
     this.canvasPointer = true;
-    this.lineToBeAddedIsComplete = false;
+    this.isLineToBeAddedComplete = false;
     this.lineAddProcessExtremities = [[], []];
     
     if (this.lineToBeAdded[0] >= 0 && this.lineToBeAdded[0] <= this.canvasXMax
@@ -237,7 +235,7 @@ export class RoomSegDisplayComponent implements OnChanges {
       && this.lineToBeAdded[3] >= 0 && this.lineToBeAdded[3] <= this.canvasYMax) { // Line complete.
         this.canvasPointer = false;
 
-        this.lineToBeAddedIsComplete = true;
+        this.isLineToBeAddedComplete = true;
         this.adjustLinesetCoordinates(true);
 
         this.lineAddProcessExtremities[0].push(this.lineToBeAdded[0], this.lineToBeAdded[1]);
@@ -252,12 +250,16 @@ export class RoomSegDisplayComponent implements OnChanges {
         this.lineToBeAddedOutput = [-1, -1, -1, -1];
     }
 
-    this.lineAddProcessControl.emit([this.lineToBeAddedIsComplete, this.lineToBeAddedOutput, this.lineAddInputIsFromLineEditProcess]);
+    this.lineAddProcessControl.emit({
+      isLineToBeAddedComplete: this.isLineToBeAddedComplete,
+      isTriggeredByLineEditProcess: this.lineAddInputIsFromLineEditProcess,
+      lineToBeAdded: this.lineToBeAddedOutput
+    });
   }
   public moveLineProcessControl(event: any, startProcess: boolean): void {
     this.moveLineProcessStart = startProcess;
 
-    if (this.processInfo[0] === 'add') {
+    if (this.processInfo.action === 'add') {
       const selectX = event.offsetX;
       const selectY = event.offsetY
 
@@ -289,31 +291,38 @@ export class RoomSegDisplayComponent implements OnChanges {
   }
   public removeLine(lineIndex: number): void {
     this.extremities = [];
-    this.editResult.emit(['remove', lineIndex]);
+    this.editResult.emit({
+      action: 'remove',
+      lineIndex: lineIndex
+    });
   }
-  public editLine(startProcess: boolean, lineIndex: number): void {
-    if (!startProcess) {
-      this.lineToBeEdited = this.lineSetCopy[lineIndex];
-      this.lineEditProcessControl.emit(lineIndex);
+  public editLine(startProcess: boolean, lineIndex?: number): void {
+    if (lineIndex) {
+      if (!startProcess) {
+        this.lineToBeEdited = this.lineSetCopy[lineIndex];
+        this.lineEditProcessControl.emit(lineIndex);
+      } else {
+        this.processInfo.action = 'add';
+        this.lineAddInputIsFromLineEditProcess = true;
+  
+        this.firstExtremXInputControl.setValue(this.lineToBeEdited[0].toFixed(0));
+        this.firstExtremYInputControl.setValue(this.lineToBeEdited[1].toFixed(0));
+        this.secondExtremXInputControl.setValue(this.lineToBeEdited[2].toFixed(0));
+        this.secondExtremYInputControl.setValue(this.lineToBeEdited[3].toFixed(0));
+  
+        this.lineAddProcessInputOnKey('firstExtremX', String(this.lineToBeEdited[0]));
+        this.lineAddProcessInputOnKey('firstExtremY', String(this.lineToBeEdited[1]));
+        this.lineAddProcessInputOnKey('secondExtremX', String(this.lineToBeEdited[2]));
+        this.lineAddProcessInputOnKey('secondExtremY', String(this.lineToBeEdited[3]));
+      }
     } else {
-      this.processInfo[0] = 'add';
-      this.lineAddInputIsFromLineEditProcess = true;
-
-      this.firstExtremXInputControl.setValue(this.lineToBeEdited[0].toFixed(0));
-      this.firstExtremYInputControl.setValue(this.lineToBeEdited[1].toFixed(0));
-      this.secondExtremXInputControl.setValue(this.lineToBeEdited[2].toFixed(0));
-      this.secondExtremYInputControl.setValue(this.lineToBeEdited[3].toFixed(0));
-
-      this.lineAddProcessInputOnKey('firstExtremX', this.lineToBeEdited[0]);
-      this.lineAddProcessInputOnKey('firstExtremY', this.lineToBeEdited[1]);
-      this.lineAddProcessInputOnKey('secondExtremX', this.lineToBeEdited[2]);
-      this.lineAddProcessInputOnKey('secondExtremY', this.lineToBeEdited[3]);
+      console.error('editLine(): line index missing!')
     }
   }
   public showExtremities(lineIndex: number): void {
     if (lineIndex === -1) {
       this.extremities = [];
-    } else if (this.processInfo[0] !== 'add') {
+    } else if (this.processInfo.action !== 'add') {
       this.extremities = this.lineSetCopy[lineIndex];
     }
   }
@@ -331,7 +340,7 @@ export class RoomSegDisplayComponent implements OnChanges {
     this.cursorCoor[1] = event.offsetY;
 
     // For the line-move process.
-    if (this.processInfo[0] === 'add' && this.moveLineProcessStart) {
+    if (this.processInfo.action === 'add' && this.moveLineProcessStart) {
       const cursorX = event.offsetX;
       const cursorY = event.offsetY;
 
@@ -339,15 +348,15 @@ export class RoomSegDisplayComponent implements OnChanges {
         case 'firstExtremity':
           this.firstExtremXInputControl.setValue(cursorX);
           this.firstExtremYInputControl.setValue(cursorY);
-          this.lineAddProcessInputOnKey('firstExtremX', cursorX);
-          this.lineAddProcessInputOnKey('firstExtremY', cursorY);
+          this.lineAddProcessInputOnKey('firstExtremX', String(cursorX));
+          this.lineAddProcessInputOnKey('firstExtremY', String(cursorY));
           break;
 
         case 'secondExtremity':
           this.secondExtremXInputControl.setValue(cursorX);
           this.secondExtremYInputControl.setValue(cursorY);
-          this.lineAddProcessInputOnKey('secondExtremX', cursorX);
-          this.lineAddProcessInputOnKey('secondExtremY', cursorY);
+          this.lineAddProcessInputOnKey('secondExtremX', String(cursorX));
+          this.lineAddProcessInputOnKey('secondExtremY', String(cursorY));
           break;
 
         case 'lineToBeAdded':
@@ -368,10 +377,10 @@ export class RoomSegDisplayComponent implements OnChanges {
               this.secondExtremXInputControl.setValue((afterMoveSecondExtremX).toFixed(0));
               this.secondExtremYInputControl.setValue((afterMoveSecondExtremY).toFixed(0));
 
-              this.lineAddProcessInputOnKey('firstExtremX', afterMoveFirstExtremX);
-              this.lineAddProcessInputOnKey('firstExtremY', afterMoveFirstExtremY);
-              this.lineAddProcessInputOnKey('secondExtremX', afterMoveSecondExtremX);
-              this.lineAddProcessInputOnKey('secondExtremY', afterMoveSecondExtremY);
+              this.lineAddProcessInputOnKey('firstExtremX', String(afterMoveFirstExtremX));
+              this.lineAddProcessInputOnKey('firstExtremY', String(afterMoveFirstExtremY));
+              this.lineAddProcessInputOnKey('secondExtremX', String(afterMoveSecondExtremX));
+              this.lineAddProcessInputOnKey('secondExtremY', String(afterMoveSecondExtremY));
           }
 
           break;
@@ -381,21 +390,21 @@ export class RoomSegDisplayComponent implements OnChanges {
     }
   }
   public canvasCursorClickAction(): void {
-    if (this.processInfo[0] === 'add' && !this.lineToBeAddedIsComplete) {
+    if (this.processInfo.action === 'add' && !this.isLineToBeAddedComplete) {
       if (!(this.lineToBeAdded[0] >= 0 && this.lineToBeAdded[0] <= this.canvasXMax 
         && this.lineToBeAdded[1] >= 0 && this.lineToBeAdded[1] <= this.canvasYMax)) { // The first extremity coordinates are incomplete.
           this.firstExtremXInputControl.setValue(this.cursorCoor[0]);
           this.firstExtremYInputControl.setValue(this.cursorCoor[1]);
 
-          this.lineAddProcessInputOnKey('firstExtremX', this.cursorCoor[0]);
-          this.lineAddProcessInputOnKey('firstExtremY', this.cursorCoor[1]);
+          this.lineAddProcessInputOnKey('firstExtremX', String(this.cursorCoor[0]));
+          this.lineAddProcessInputOnKey('firstExtremY', String(this.cursorCoor[1]));
       } else if (!(this.lineToBeAdded[2] >= 0 && this.lineToBeAdded[2] <= this.canvasXMax
         && this.lineToBeAdded[3] >= 0 && this.lineToBeAdded[3] <= this.canvasYMax)) { // The second extremity coordinates are incomplete.
           this.secondExtremXInputControl.setValue(this.cursorCoor[0]);
           this.secondExtremYInputControl.setValue(this.cursorCoor[1]);
 
-          this.lineAddProcessInputOnKey('secondExtremX', this.cursorCoor[0]);
-          this.lineAddProcessInputOnKey('secondExtremY', this.cursorCoor[1]);
+          this.lineAddProcessInputOnKey('secondExtremX', String(this.cursorCoor[0]));
+          this.lineAddProcessInputOnKey('secondExtremY', String(this.cursorCoor[1]));
       }
     }
   }

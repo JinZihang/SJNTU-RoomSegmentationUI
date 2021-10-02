@@ -1,7 +1,8 @@
 import { Component, AfterViewInit, Output, EventEmitter, ViewChild, ElementRef, Renderer2, HostListener } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { RoomSegDialogComponent } from './room-seg-dialog/room-seg-dialog.component';
+import { ProcessInfo, LineAddProcessInfo } from './room-segmentation';
 import linesetData from '../../assets/mock-lineset-1.json';
-import { RoomSegDialogComponent } from './room-seg-dialog/room-seg-dialog.component'
 
 @Component({
   selector: 'room-seg-ui',
@@ -35,7 +36,7 @@ export class RoomSegUIComponent implements AfterViewInit {
   lineSetToggle: boolean = false;
   lineSetToDisplay: number[][] = this.lineSet;
 
-  processInfo: any[] = ['', -1]; // Action, line index.
+  processInfo: ProcessInfo = { action: 'none' };
   updateTriggerer: string = 'Triggering updates.';
   processCanConfirm: boolean = true;
   lineSetBeforeProcess: number[][];
@@ -180,7 +181,7 @@ export class RoomSegUIComponent implements AfterViewInit {
 
           if (yAtx0 < 0) {
             if (yAtxMax < 0) {
-              console.error('Check line ' + i + '.');
+              console.error('extendLineSegments(): error from line ' + i + '!');
             } else if (yAtxMax > yMax) {
               this.lineSetExtended.push([xAty0, 0, xAtyMax, yMax]);
             } else {
@@ -190,7 +191,7 @@ export class RoomSegUIComponent implements AfterViewInit {
             if (yAtxMax < 0) {
               this.lineSetExtended.push([xAtyMax, yMax, xAty0, 0]);
             } else if (yAtxMax > yMax) {
-              console.error('Check line ' + i + '.');
+              console.error('extendLineSegments(): error from line ' + i + '!');
             } else {
               this.lineSetExtended.push([xAtyMax, yMax, xMax, yAtxMax]);
             }
@@ -221,17 +222,17 @@ export class RoomSegUIComponent implements AfterViewInit {
         'Use cursor to place line segments\' extremities or key in their coordinates. (Canvas resize will be disabled through this process.)', 
         -1);
     } else {
-      this.processInfo[0] = 'add';
-      this.processInfo[1] = lineIndex;
+      this.processInfo.action = 'add';
+      this.processInfo.lineIndex = lineIndex;
       this.processCanConfirm = false;
 
       this.forceUpdate();
     }
   }
-  public lineAddProcessControl(lineAddProcessInfo: any) {
-    this.processCanConfirm = lineAddProcessInfo[0];
-    const lineToBeAdded = lineAddProcessInfo[1];
-    const fromLineEditProcess = lineAddProcessInfo[2];
+  public lineAddProcessControl(lineAddProcessInfo: LineAddProcessInfo) {
+    this.processCanConfirm = lineAddProcessInfo.isLineToBeAddedComplete;
+    const fromLineEditProcess = lineAddProcessInfo.isTriggeredByLineEditProcess;
+    const lineToBeAdded = lineAddProcessInfo.lineToBeAdded;
 
     const lineSetLengthBeforeAddProcess = fromLineEditProcess ? this.lineSetBeforeProcess.length - 1: this.lineSetBeforeProcess.length;
     
@@ -261,7 +262,7 @@ export class RoomSegUIComponent implements AfterViewInit {
     if (!processStart) {
       this.openDialog('remove', 'Start removing segmentation lines?', 'Click on the lines that you want to remove.', -1);
     } else {
-      this.processInfo[0] = 'remove';
+      this.processInfo.action = 'remove';
     }
   }
   public lineEditProcess(processStart: boolean, lineIndex: number) {
@@ -272,10 +273,13 @@ export class RoomSegUIComponent implements AfterViewInit {
         'Use cursor to set or key in its new extremities\' coordinates. (Canvas resize will be disabled through this process.)', 
         lineIndex);
     } else {
-      this.processInfo[0] = 'edit';
-      this.processInfo[1] = lineIndex;
+      this.processInfo.action = 'edit';
+      this.processInfo.lineIndex = lineIndex;
 
-      this.updateLineSet(['remove', lineIndex]);
+      this.updateLineSet({
+        action: 'remove',
+        lineIndex: lineIndex
+      });
     }
   }
   public completeSegmentation(): void {
@@ -324,7 +328,7 @@ export class RoomSegUIComponent implements AfterViewInit {
     });
   }
   public processControl(confirmChanges: boolean): void {
-    this.processInfo = ['', -1];
+    this.processInfo = { action: 'none' };
     this.processCanConfirm = true;
 
     if (!confirmChanges) {
@@ -333,18 +337,23 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
     }
   }
-  public updateLineSet(editResult: any[]): void {
-    const action = editResult[0];
-    const lineIndex = editResult[1];
+  public updateLineSet(editResult: ProcessInfo): void {
+    const action = editResult.action;
+    const lineIndex = editResult.lineIndex;
 
     switch (action) {
       case 'remove':
-        this.lineSet = this.lineSet.filter(e => e !== this.lineSet[lineIndex]);
-        this.extendLineSegments();
-        this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
+        if (lineIndex) {
+          this.lineSet = this.lineSet.filter(e => e !== this.lineSet[lineIndex]);
+          this.extendLineSegments();
+          this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
+        } else {
+          console.error('updateLineSet(): line index missing!')
+        }
         break;
+
       case 'edit':
-        this.lineAddProcess(true, lineIndex);
+        lineIndex ? this.lineAddProcess(true, lineIndex) : console.error('updateLineSet(): line index missing!');
         break;
     }
   }

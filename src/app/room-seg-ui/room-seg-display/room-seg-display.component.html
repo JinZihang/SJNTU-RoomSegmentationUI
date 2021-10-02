@@ -36,7 +36,7 @@
 </div>
 
 <form #coorInputContainer>
-    <div *ngIf="processInfo[0] === 'add'">
+    <div *ngIf="processInfo.action === 'add'">
         <div class='extremity-coor-input'>
             <mat-form-field appearance='fill'>
                 <mat-label>1st Extremity's X</mat-label>
