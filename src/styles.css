@@ -3,6 +3,5 @@
 
 body {
     position: absolute;
-    height: 98%;
-    width: 98%;
+    margin: 0;
 }

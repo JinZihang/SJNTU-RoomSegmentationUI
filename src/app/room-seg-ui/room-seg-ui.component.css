@@ -1,6 +1,23 @@
+#header-bar {
+    position: fixed;
+    width: 100%;
+    border-bottom: 1px solid black;
+    z-index: 4;
+}
+#header {
+    position: relative;
+    top: 8px;
+    left: 40px;
+    font-size: 18px;
+    font-weight: 600;
+    user-select: none;
+}
+
 #history-resize-container {
-    position: absolute;
+    position: fixed;
+    left: 0;
     height: 100%;
+    width: 100%;
 }
 #history-display-control-button {
     position: absolute;
@@ -13,7 +30,6 @@
 }
 room-seg-history {
     position: absolute;
-    top: 40px;
     width: 100%;
     user-select: none;
 }
@@ -24,7 +40,6 @@ room-seg-history {
     width: 10px;
     z-index: 3;
     background-color: transparent;
-    opacity: .5;
     cursor: e-resize;
 }
 

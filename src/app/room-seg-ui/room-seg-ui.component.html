@@ -1,10 +1,16 @@
-<div id='history-resize-container' #historyResizeContainerElement>
+<div id='header-bar' #headerBarElement>
     <button id='history-display-control-button' mat-icon-button 
         matTooltip='Edit History' matTooltipPosition='after' 
         (click)='displayEditHistory()'>
         <mat-icon>menu</mat-icon>
     </button>
 
+    <span id='header'>
+        Room Segmentation
+    </span>
+</div>
+
+<div id='history-resize-container' #historyResizeContainerElement>
     <ng-container *ngIf='showEditHistory'>
         <room-seg-history></room-seg-history>
 

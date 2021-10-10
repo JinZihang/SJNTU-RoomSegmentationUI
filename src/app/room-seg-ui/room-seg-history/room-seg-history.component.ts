@@ -9,7 +9,29 @@ import { LineSetEditHistory } from '../room-segmentation';
 export class RoomSegHistoryComponent {
   historyTableDataSource: LineSetEditHistory[] = [
     {editIndex: 1, editName: 'Add'},
-    {editIndex: 2, editName: 'Remove'}
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
+    {editIndex: 2, editName: 'Remove'},
   ];
 
   displayedColumns: string[] = ['edit-index', 'edit-name'];
