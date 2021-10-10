@@ -259,8 +259,26 @@ export class RoomSegDisplayComponent implements OnChanges {
       lineToBeAdded: this.lineToBeAddedOutput
     });
   }
-  public alignLineToBeAdded(basePoint: string): void {
+  public lineAlignment(basePoint: string): void {
+    const alignHorizontally = Math.abs(this.lineToBeAdded[0]-this.lineToBeAdded[2]) > Math.abs(this.lineToBeAdded[1]-this.lineToBeAdded[3]);
 
+    if (basePoint === 'firstPoint') {
+      if (alignHorizontally) {
+        this.secondExtremYInputControl.setValue(this.lineToBeAdded[1]);
+        this.lineAddProcessInputOnKey('secondExtremY', String(this.lineToBeAdded[1]));
+      } else {
+        this.secondExtremXInputControl.setValue(this.lineToBeAdded[0]);
+        this.lineAddProcessInputOnKey('secondExtremX', String(this.lineToBeAdded[0]));
+      }
+    } else {
+      if (alignHorizontally) {
+        this.firstExtremYInputControl.setValue(this.lineToBeAdded[3]);
+        this.lineAddProcessInputOnKey('firstExtremY', String(this.lineToBeAdded[3]));
+      } else {
+        this.firstExtremXInputControl.setValue(this.lineToBeAdded[2]);
+        this.lineAddProcessInputOnKey('firstExtremX', String(this.lineToBeAdded[2]));
+      }
+    }
   }
   public moveLineProcessControl(event: any, startProcess: boolean): void {
     this.moveLineProcessStart = startProcess;
@@ -275,7 +293,7 @@ export class RoomSegDisplayComponent implements OnChanges {
       const secondExtremY = this.lineToBeAdded[3];
 
       // The equation of line is 'y = (x-x1) * (y1-y2)/(x1-x2) + y1' ('x = (y-y1) * (x1-x2)/(y1-y2) + x1').
-      const valueDifference = Math.abs(firstExtremX - secondExtremX) > Math.abs(firstExtremY - secondExtremY)
+      const valueDifference = Math.abs(firstExtremX-secondExtremX) > Math.abs(firstExtremY-secondExtremY)
       // Assume the mouse down point to be on the line, use one of its coordinate value to calculate the other one.
       // Then compare it with the real value to see if the click point is approximately on the line. 
         ? Math.abs(Math.abs(selectY) - Math.abs((selectX-firstExtremX) * (firstExtremY-secondExtremY)/(firstExtremX-secondExtremX) + firstExtremY)) // If the line is approximately horizontal.

@@ -82,7 +82,7 @@
 
 <div id='alignment-button-container' #alignmentBtnContainerElement>
     <ng-container *ngIf="processInfo.action === 'add'">
-        <button mat-stroked-button (click)="alignLineToBeAdded('basedOnFirstPoint')">Auto Align</button>
-        <button mat-stroked-button (click)="alignLineToBeAdded('basedOnSecondPoint')">Auto Align</button>
+        <button mat-stroked-button (click)="lineAlignment('firstPoint')" matTooltip='Based on the First Point' matTooltipPosition='after' [disabled]='!isLineToBeAddedComplete'>Auto Align</button>
+        <button mat-stroked-button (click)="lineAlignment('secondPoint')" matTooltip='Based on the Second Point' matTooltipPosition='after' [disabled]='!isLineToBeAddedComplete'>Auto Align</button>
     </ng-container>
 </div>
