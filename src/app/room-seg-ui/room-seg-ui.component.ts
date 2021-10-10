@@ -103,7 +103,7 @@ export class RoomSegUIComponent implements AfterViewInit {
   public resizeContainer(event: any): void {
     const minHistoryContainerWdith = 150;
     const maxHistoryContainerWdith = 300;
-    const minCanvasSideLength = 300;
+    const minCanvasSideLength = 450;
     const maxCanvasSideLength = 650;
 
     if (this.resizeProcess) {
@@ -244,7 +244,7 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.openDialog(
         'add', 
         'Add a segmentation line?', 
-        'Use cursor to place line segments\' extremities or key in their coordinates. (Canvas resize will be disabled through this process.)', 
+        'Use cursor to place line segments\' extremities on the canvas or key in their coordinates. (Canvas resize will be disabled through this process.)', 
         -1);
     } else {
       this.processInfo.action = 'add';
@@ -295,7 +295,7 @@ export class RoomSegUIComponent implements AfterViewInit {
       this.openDialog(
         'edit', 
         'Edit this segmentation line?', 
-        'Use cursor to set or key in its new extremities\' coordinates. (Canvas resize will be disabled through this process.)', 
+        'Use cursor to place line segments\' extremities on the canvas or key in their coordinates. (Canvas resize will be disabled through this process.)', 
         lineIndex);
     } else {
       this.processInfo.action = 'edit';
@@ -308,7 +308,7 @@ export class RoomSegUIComponent implements AfterViewInit {
     }
   }
   public completeSegmentation(): void {
-    this.openDialog('complete', 'Proceed with this room segmentaion result?', 'Press cancel if you want to make further edits.', -1);
+    this.openDialog('complete', 'Proceed with this room segmentaion result?', 'Press cancel if you want to make further changes.', -1);
   }
 
   // Process controls.

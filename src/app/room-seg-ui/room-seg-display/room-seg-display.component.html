@@ -35,7 +35,7 @@
     </ng-container>
 </div>
 
-<form #coorInputContainer>
+<form #coorInputContainerElement>
     <ng-container *ngIf="processInfo.action === 'add'">
         <div class='extremity-coor-input'>
             <mat-form-field appearance='fill'>
@@ -79,3 +79,10 @@
         </div>
     </ng-container>
 </form>
+
+<div id='alignment-button-container' #alignmentBtnContainerElement>
+    <ng-container *ngIf="processInfo.action === 'add'">
+        <button mat-stroked-button (click)="alignLineToBeAdded('basedOnFirstPoint')">Auto Align</button>
+        <button mat-stroked-button (click)="alignLineToBeAdded('basedOnSecondPoint')">Auto Align</button>
+    </ng-container>
+</div>

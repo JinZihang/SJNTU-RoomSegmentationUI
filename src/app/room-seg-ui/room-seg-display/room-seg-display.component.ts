@@ -62,7 +62,8 @@ export class RoomSegDisplayComponent implements OnChanges {
   @ViewChild('roomTopViewImageElement') imgElement: ElementRef;
   @ViewChild('svgCanvasElement') svgCanvasElement: ElementRef;
   @ViewChild('cursorCoorContainerElement') cursorCoorContainerElement: ElementRef;
-  @ViewChild('coorInputContainer') coorInputContainerElement: ElementRef;
+  @ViewChild('coorInputContainerElement') coorInputContainerElement: ElementRef;
+  @ViewChild('alignmentBtnContainerElement') alignmentBtnContainerElement: ElementRef;
 
   constructor(private renderer: Renderer2) {}
 
@@ -142,8 +143,7 @@ export class RoomSegDisplayComponent implements OnChanges {
     }
 
     this.adjustLinesetCoordinates(false);
-    this.setCursorCoordinatesContainerPosition();
-    this.setCoordinatesInputContainerPosition();
+    this.setContainersPositions();
 
     this.roomImgScale.emit([this.imgNaturalWidth, this.imgNaturalHeight]);
   }
@@ -169,19 +169,16 @@ export class RoomSegDisplayComponent implements OnChanges {
       this.lineToBeAddedOutput[3] = (this.lineToBeAdded[3] / this.canvasYMax) * this.imgNaturalHeight;
     }
   }
-  private setCursorCoordinatesContainerPosition(): void {
-    const top = String(this.canvasSideLength - 10) + 'px';
-    const width = String(this.canvasSideLength) + 'px';
+  private setContainersPositions(): void {
+    this.renderer.setStyle(this.cursorCoorContainerElement.nativeElement, 'top', String(this.canvasSideLength - 10) + 'px');
+    this.renderer.setStyle(this.cursorCoorContainerElement.nativeElement, 'width', String(this.canvasSideLength) + 'px');
 
-    this.renderer.setStyle(this.cursorCoorContainerElement.nativeElement, 'top', top);
-    this.renderer.setStyle(this.cursorCoorContainerElement.nativeElement, 'width', width);
-  }
-  private setCoordinatesInputContainerPosition(): void {
-    const top = String(this.canvasSideLength + 35) + 'px';
-    const width = String(this.canvasSideLength) + 'px';
+    this.renderer.setStyle(this.coorInputContainerElement.nativeElement, 'top', String(this.canvasSideLength + 35) + 'px');
+    this.renderer.setStyle(this.coorInputContainerElement.nativeElement, 'width', String(this.canvasSideLength) + 'px');
 
-    this.renderer.setStyle(this.coorInputContainerElement.nativeElement, 'top', top);
-    this.renderer.setStyle(this.coorInputContainerElement.nativeElement, 'width', width);
+    this.renderer.setStyle(this.alignmentBtnContainerElement.nativeElement, 'top', String(this.canvasSideLength + 35) + 'px');
+    this.renderer.setStyle(this.alignmentBtnContainerElement.nativeElement, 'margin-left', String(0.5*this.canvasSideLength + 216) + 'px');
+    this.renderer.setStyle(this.alignmentBtnContainerElement.nativeElement, 'width', String(this.canvasSideLength) + 'px');
   }
 
   // Line related functions.
@@ -261,6 +258,9 @@ export class RoomSegDisplayComponent implements OnChanges {
       isTriggeredByLineEditProcess: this.lineAddInputIsFromLineEditProcess,
       lineToBeAdded: this.lineToBeAddedOutput
     });
+  }
+  public alignLineToBeAdded(basePoint: string): void {
+
   }
   public moveLineProcessControl(event: any, startProcess: boolean): void {
     this.moveLineProcessStart = startProcess;
