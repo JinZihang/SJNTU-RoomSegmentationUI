@@ -1,9 +1,9 @@
 <div id='scale-container' #scaleContainerElement>
     <img id='room-top-view-image' #roomTopViewImageElement [src]='imgSrc' (load)='roomTopViewImgOnLoad()'>
-    <svg #svgCanvasElement [ngStyle]="{cursor: canvasPointer ? 'pointer' : ''}"
+    <svg #svgCanvasElement [ngStyle]='{cursor: canvasCursor}'
         (mouseover)='showCursorCoordinates(true)' (mouseleave)='showCursorCoordinates(false)' (mousemove)='canvasCursorMoveAction($event)' 
         (mousedown)='moveLineProcessControl($event, true)' (mouseup)='moveLineProcessControl($event, false)' (click)='canvasCursorClickAction()'>
-        <line #line
+        <line [ngStyle]='{cursor: lineCursor}'
             *ngFor='let line of lineSetToDisplayCopy; let lineIndex = index;' 
             [attr.x1]='line[0]' [attr.y1]='line[1]' [attr.x2]='line[2]' [attr.y2]='line[3]' 
             (mouseover)='showExtremities(lineIndex)' (mouseout)='showExtremities(-1)'

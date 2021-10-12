@@ -28,7 +28,11 @@ export class RoomSegDisplayComponent implements OnChanges {
   imgNaturalHeight: number;
   canvasXMax: number;
   canvasYMax: number;
-  canvasPointer: boolean = false;
+
+  showCursorCoor: boolean;
+  cursorCoor: number[] = [-1, -1];
+  canvasCursor: string = 'default';
+  lineCursor: string = 'pointer';
 
   lineSetCopy: number[][];
   lineSetToDisplayCopy: number[][];
@@ -55,9 +59,6 @@ export class RoomSegDisplayComponent implements OnChanges {
   lineMoveProcessMouseDownCoor: number[];
   lineMoveProcessInitialLinePosition: number[];
 
-  showCursorCoor: boolean;
-  cursorCoor: number[] = [-1, -1];
-
   @ViewChild('scaleContainerElement') scaleContainerElement: ElementRef;
   @ViewChild('roomTopViewImageElement') imgElement: ElementRef;
   @ViewChild('svgCanvasElement') svgCanvasElement: ElementRef;
@@ -75,9 +76,11 @@ export class RoomSegDisplayComponent implements OnChanges {
       this.setScaleContainerDimension();
 
       if (this.processInfo.action === 'add' && !this.isLineToBeAddedComplete) {
-        this.canvasPointer = true;
+        this.canvasCursor = 'pointer';
       } else if (this.processInfo.action !== 'add') {
-        this.canvasPointer = false;
+        this.canvasCursor = 'default';
+        this.lineCursor = 'pointer';
+        
         this.lineToBeAdded = [-1, -1, -1, -1];
         this.isLineToBeAddedComplete = false;
         this.lineAddProcessExtremities = [[], []];
@@ -228,7 +231,9 @@ export class RoomSegDisplayComponent implements OnChanges {
         break;
     }
 
-    this.canvasPointer = true;
+    if (!this.moveLineProcessStart) {
+      this.canvasCursor = 'pointer';
+    }
     this.isLineToBeAddedComplete = false;
     this.lineAddProcessExtremities = [[], []];
     
@@ -236,13 +241,16 @@ export class RoomSegDisplayComponent implements OnChanges {
       && this.lineToBeAdded[1] >= 0 && this.lineToBeAdded[1] <= this.canvasYMax
       && this.lineToBeAdded[2] >= 0 && this.lineToBeAdded[2] <= this.canvasXMax
       && this.lineToBeAdded[3] >= 0 && this.lineToBeAdded[3] <= this.canvasYMax) { // Line complete.
-        this.canvasPointer = false;
-
+        if (!this.moveLineProcessStart) {
+          this.canvasCursor = 'default';
+          this.lineCursor = 'default';
+        }
+        
         this.isLineToBeAddedComplete = true;
         this.adjustLinesetCoordinates(true);
 
         this.lineAddProcessExtremities[0].push(this.lineToBeAdded[0], this.lineToBeAdded[1]);
-        this.lineAddProcessExtremities[1].push(this.lineToBeAdded[2], this.lineToBeAdded[3]);
+        this.lineAddProcessExtremities[1].push(this.lineToBeAdded[2], this.lineToBeAdded[3]);        
     } else if (this.lineToBeAdded[0] >= 0 && this.lineToBeAdded[0] <= this.canvasXMax 
       && this.lineToBeAdded[1] >= 0 && this.lineToBeAdded[1] <= this.canvasYMax) { // First extremity complete.
         this.lineAddProcessExtremities[0].push(this.lineToBeAdded[0], this.lineToBeAdded[1]);
@@ -277,39 +285,6 @@ export class RoomSegDisplayComponent implements OnChanges {
       } else {
         this.firstExtremXInputControl.setValue(this.lineToBeAdded[2]);
         this.lineAddProcessInputOnKey('firstExtremX', String(this.lineToBeAdded[2]));
-      }
-    }
-  }
-  public moveLineProcessControl(event: any, startProcess: boolean): void {
-    this.moveLineProcessStart = startProcess;
-
-    if (this.processInfo.action === 'add') {
-      const selectX = event.offsetX;
-      const selectY = event.offsetY
-
-      const firstExtremX = this.lineToBeAdded[0];
-      const firstExtremY = this.lineToBeAdded[1];
-      const secondExtremX = this.lineToBeAdded[2];
-      const secondExtremY = this.lineToBeAdded[3];
-
-      // The equation of line is 'y = (x-x1) * (y1-y2)/(x1-x2) + y1' ('x = (y-y1) * (x1-x2)/(y1-y2) + x1').
-      const valueDifference = Math.abs(firstExtremX-secondExtremX) > Math.abs(firstExtremY-secondExtremY)
-      // Assume the mouse down point to be on the line, use one of its coordinate value to calculate the other one.
-      // Then compare it with the real value to see if the click point is approximately on the line. 
-        ? Math.abs(Math.abs(selectY) - Math.abs((selectX-firstExtremX) * (firstExtremY-secondExtremY)/(firstExtremX-secondExtremX) + firstExtremY)) // If the line is approximately horizontal.
-        : Math.abs(Math.abs(selectX) - Math.abs((selectY-firstExtremY) * (firstExtremX-secondExtremX)/(firstExtremY-secondExtremY) + firstExtremX)); // If the line is approximately vertical.
-
-      if (Math.abs(firstExtremX-selectX) <= 3 && Math.abs(firstExtremY-selectY) <= 3) { // The mouse down point is around the first line extremity.
-          this.elementToBeMoved = 'firstExtremity';
-      } else if (Math.abs(secondExtremX-selectX) <= 3 && Math.abs(secondExtremY-selectY) <= 3) { // The mouse down point is around the second line extremity.
-          this.elementToBeMoved = 'secondExtremity';
-      } else if (valueDifference <= 3) { // The mouse down point is approximately on the line.
-        this.elementToBeMoved = 'lineToBeAdded';
-
-        this.lineMoveProcessMouseDownCoor = [selectX, selectY];
-        this.lineMoveProcessInitialLinePosition = JSON.parse(JSON.stringify(this.lineToBeAdded));
-      } else {
-        this.elementToBeMoved = '';
       }
     }
   }
@@ -358,61 +333,6 @@ export class RoomSegDisplayComponent implements OnChanges {
       this.moveLineProcessStart = false;
     }
   }
-  public canvasCursorMoveAction(event: any): void {
-    // For displaying cursor position.
-    this.cursorCoor[0] = event.offsetX;
-    this.cursorCoor[1] = event.offsetY;
-
-    // For the line-move process.
-    if (this.processInfo.action === 'add' && this.moveLineProcessStart) {
-      const cursorX = event.offsetX;
-      const cursorY = event.offsetY;
-
-      switch (this.elementToBeMoved) {
-        case 'firstExtremity':
-          this.firstExtremXInputControl.setValue(cursorX);
-          this.firstExtremYInputControl.setValue(cursorY);
-          this.lineAddProcessInputOnKey('firstExtremX', String(cursorX));
-          this.lineAddProcessInputOnKey('firstExtremY', String(cursorY));
-          break;
-
-        case 'secondExtremity':
-          this.secondExtremXInputControl.setValue(cursorX);
-          this.secondExtremYInputControl.setValue(cursorY);
-          this.lineAddProcessInputOnKey('secondExtremX', String(cursorX));
-          this.lineAddProcessInputOnKey('secondExtremY', String(cursorY));
-          break;
-
-        case 'lineToBeAdded':
-          const xDisplacement = cursorX - this.lineMoveProcessMouseDownCoor[0];
-          const yDisplacement = cursorY - this.lineMoveProcessMouseDownCoor[1];
-
-          const afterMoveFirstExtremX = this.lineMoveProcessInitialLinePosition[0] + xDisplacement;
-          const afterMoveFirstExtremY = this.lineMoveProcessInitialLinePosition[1] + yDisplacement;
-          const afterMoveSecondExtremX = this.lineMoveProcessInitialLinePosition[2] + xDisplacement;
-          const afterMoveSecondExtremY = this.lineMoveProcessInitialLinePosition[3] + yDisplacement;
-
-          if (afterMoveFirstExtremX >= 0 && afterMoveFirstExtremX <= this.canvasXMax
-            && afterMoveFirstExtremY >= 0 && afterMoveFirstExtremY <= this.canvasYMax
-            && afterMoveSecondExtremX >= 0 && afterMoveSecondExtremX <= this.canvasXMax
-            && afterMoveSecondExtremY >= 0 && afterMoveSecondExtremY <= this.canvasYMax) {
-              this.firstExtremXInputControl.setValue((afterMoveFirstExtremX).toFixed(0));
-              this.firstExtremYInputControl.setValue((afterMoveFirstExtremY).toFixed(0));
-              this.secondExtremXInputControl.setValue((afterMoveSecondExtremX).toFixed(0));
-              this.secondExtremYInputControl.setValue((afterMoveSecondExtremY).toFixed(0));
-
-              this.lineAddProcessInputOnKey('firstExtremX', String(afterMoveFirstExtremX));
-              this.lineAddProcessInputOnKey('firstExtremY', String(afterMoveFirstExtremY));
-              this.lineAddProcessInputOnKey('secondExtremX', String(afterMoveSecondExtremX));
-              this.lineAddProcessInputOnKey('secondExtremY', String(afterMoveSecondExtremY));
-          }
-
-          break;
-      }
-
-      this.forceUpdate.emit();
-    }
-  }
   public canvasCursorClickAction(): void {
     if (this.processInfo.action === 'add' && !this.isLineToBeAddedComplete) {
       if (!(this.lineToBeAdded[0] >= 0 && this.lineToBeAdded[0] <= this.canvasXMax 
@@ -429,6 +349,117 @@ export class RoomSegDisplayComponent implements OnChanges {
 
           this.lineAddProcessInputOnKey('secondExtremX', String(this.cursorCoor[0]));
           this.lineAddProcessInputOnKey('secondExtremY', String(this.cursorCoor[1]));
+      }
+    }
+  }
+  public moveLineProcessControl(event: any, startProcess: boolean): void {
+    this.moveLineProcessStart = startProcess;
+
+    if (startProcess && this.processInfo.action === 'add') {
+      const selectX = event.offsetX;
+      const selectY = event.offsetY
+
+      const firstExtremX = this.lineToBeAdded[0];
+      const firstExtremY = this.lineToBeAdded[1];
+      const secondExtremX = this.lineToBeAdded[2];
+      const secondExtremY = this.lineToBeAdded[3];
+
+      // The equation of line is 'y = (x-x1) * (y1-y2)/(x1-x2) + y1' ('x = (y-y1) * (x1-x2)/(y1-y2) + x1').
+      const valueDifference = Math.abs(firstExtremX-secondExtremX) > Math.abs(firstExtremY-secondExtremY)
+      // Assume the mouse down point to be on the line, use one of its coordinate value to calculate the other one.
+      // Then compare it with the real value to see if the click point is approximately on the line. 
+        ? Math.abs(Math.abs(selectY) - Math.abs((selectX-firstExtremX) * (firstExtremY-secondExtremY)/(firstExtremX-secondExtremX) + firstExtremY)) // If the line is approximately horizontal.
+        : Math.abs(Math.abs(selectX) - Math.abs((selectY-firstExtremY) * (firstExtremX-secondExtremX)/(firstExtremY-secondExtremY) + firstExtremX)); // If the line is approximately vertical.
+
+      if (Math.abs(firstExtremX-selectX) <= 3 && Math.abs(firstExtremY-selectY) <= 3) { // The mouse down point is around the first line extremity.
+          this.elementToBeMoved = 'firstExtremity';
+      } else if (Math.abs(secondExtremX-selectX) <= 3 && Math.abs(secondExtremY-selectY) <= 3) { // The mouse down point is around the second line extremity.
+          this.elementToBeMoved = 'secondExtremity';
+      } else if (valueDifference <= 3) { // The mouse down point is approximately on the line.
+        this.elementToBeMoved = 'lineToBeAdded';
+        
+        this.lineMoveProcessMouseDownCoor = [selectX, selectY];
+        this.lineMoveProcessInitialLinePosition = JSON.parse(JSON.stringify(this.lineToBeAdded));
+      } else {
+        this.elementToBeMoved = '';
+      }
+    }
+  }
+  public canvasCursorMoveAction(event: any): void {
+    // For displaying cursor position.
+    this.cursorCoor[0] = event.offsetX;
+    this.cursorCoor[1] = event.offsetY;
+
+    // For the line-move process.
+    if (this.processInfo.action === 'add') {
+      const cursorX = event.offsetX;
+      const cursorY = event.offsetY;
+
+      if (this.moveLineProcessStart) {
+        switch (this.elementToBeMoved) {
+          case 'firstExtremity':
+            this.firstExtremXInputControl.setValue(cursorX);
+            this.firstExtremYInputControl.setValue(cursorY);
+            this.lineAddProcessInputOnKey('firstExtremX', String(cursorX));
+            this.lineAddProcessInputOnKey('firstExtremY', String(cursorY));
+            break;
+
+          case 'secondExtremity':
+            this.secondExtremXInputControl.setValue(cursorX);
+            this.secondExtremYInputControl.setValue(cursorY);
+            this.lineAddProcessInputOnKey('secondExtremX', String(cursorX));
+            this.lineAddProcessInputOnKey('secondExtremY', String(cursorY));
+            break;
+
+          case 'lineToBeAdded':
+            const xDisplacement = cursorX - this.lineMoveProcessMouseDownCoor[0];
+            const yDisplacement = cursorY - this.lineMoveProcessMouseDownCoor[1];
+
+            const afterMoveFirstExtremX = this.lineMoveProcessInitialLinePosition[0] + xDisplacement;
+            const afterMoveFirstExtremY = this.lineMoveProcessInitialLinePosition[1] + yDisplacement;
+            const afterMoveSecondExtremX = this.lineMoveProcessInitialLinePosition[2] + xDisplacement;
+            const afterMoveSecondExtremY = this.lineMoveProcessInitialLinePosition[3] + yDisplacement;
+
+            if (afterMoveFirstExtremX >= 0 && afterMoveFirstExtremX <= this.canvasXMax
+              && afterMoveFirstExtremY >= 0 && afterMoveFirstExtremY <= this.canvasYMax
+              && afterMoveSecondExtremX >= 0 && afterMoveSecondExtremX <= this.canvasXMax
+              && afterMoveSecondExtremY >= 0 && afterMoveSecondExtremY <= this.canvasYMax) {
+                this.firstExtremXInputControl.setValue((afterMoveFirstExtremX).toFixed(0));
+                this.firstExtremYInputControl.setValue((afterMoveFirstExtremY).toFixed(0));
+                this.secondExtremXInputControl.setValue((afterMoveSecondExtremX).toFixed(0));
+                this.secondExtremYInputControl.setValue((afterMoveSecondExtremY).toFixed(0));
+
+                this.lineAddProcessInputOnKey('firstExtremX', String(afterMoveFirstExtremX));
+                this.lineAddProcessInputOnKey('firstExtremY', String(afterMoveFirstExtremY));
+                this.lineAddProcessInputOnKey('secondExtremX', String(afterMoveSecondExtremX));
+                this.lineAddProcessInputOnKey('secondExtremY', String(afterMoveSecondExtremY));
+            }
+
+            break;
+        }
+
+        this.forceUpdate.emit();
+      } else {
+        const firstExtremX = this.lineToBeAdded[0];
+        const firstExtremY = this.lineToBeAdded[1];
+        const secondExtremX = this.lineToBeAdded[2];
+        const secondExtremY = this.lineToBeAdded[3];
+
+        // Same logic as in the moveLineProcessControl().
+        // The equation of line is 'y = (x-x1) * (y1-y2)/(x1-x2) + y1' ('x = (y-y1) * (x1-x2)/(y1-y2) + x1').
+        const valueDifference = Math.abs(firstExtremX-secondExtremX) > Math.abs(firstExtremY-secondExtremY)
+        // Assume the mouse down point to be on the line, use one of its coordinate value to calculate the other one.
+        // Then compare it with the real value to see if the click point is approximately on the line. 
+          ? Math.abs(Math.abs(cursorY) - Math.abs((cursorX-firstExtremX) * (firstExtremY-secondExtremY)/(firstExtremX-secondExtremX) + firstExtremY)) // If the line is approximately horizontal.
+          : Math.abs(Math.abs(cursorX) - Math.abs((cursorY-firstExtremY) * (firstExtremX-secondExtremX)/(firstExtremY-secondExtremY) + firstExtremX)); // If the line is approximately vertical.
+
+        if (valueDifference <= 3) { // The cursor is approximately over the added line.
+          this.lineCursor = 'grab';
+          this.canvasCursor = 'grab';
+        } else {
+          this.canvasCursor = this.isLineToBeAddedComplete ? 'default' : 'pointer';
+          this.lineCursor = this.isLineToBeAddedComplete ? 'default' : 'pointer';
+        }
       }
     }
   }
