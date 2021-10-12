@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { LineSetEditHistory } from '../room-segmentation';
 
 @Component({
-  selector: 'room-seg-history',
-  templateUrl: 'room-seg-history.component.html',
-  styleUrls: ['room-seg-history.component.css']
+  selector: 'room-seg-history-table',
+  templateUrl: 'room-seg-history-table.component.html',
+  styleUrls: ['room-seg-history-table.component.css']
 })
-export class RoomSegHistoryComponent {
+export class RoomSegHistoryTableComponent {
   historyTableDataSource: LineSetEditHistory[] = [
     {editIndex: 1, editName: 'Remove'},
     {editIndex: 2, editName: 'Remove'},

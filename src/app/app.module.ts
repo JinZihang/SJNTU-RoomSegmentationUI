@@ -4,27 +4,28 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { MatToolbarModule } from "@angular/material/toolbar";
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTableModule } from "@angular/material/table";
+import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AppComponent } from './app.component';
 import { RoomSegUIComponent } from './room-seg-ui/room-seg-ui.component';
-import { RoomSegHistoryComponent } from './room-seg-ui/room-seg-history/room-seg-history.component';
+import { RoomSegLineTableComponent } from './room-seg-ui/room-seg-line-table/room-seg-line-table.component';
 import { RoomSegDisplayComponent } from './room-seg-ui/room-seg-display/room-seg-display.component';
 import { RoomSegDialogComponent } from './room-seg-ui/room-seg-dialog/room-seg-dialog.component';
+import { RoomSegHistoryTableComponent } from './room-seg-ui/room-seg-history-table/room-seg-history-table.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     RoomSegUIComponent,
-    RoomSegHistoryComponent,
+    RoomSegLineTableComponent,
     RoomSegDisplayComponent,
-    RoomSegDialogComponent
+    RoomSegDialogComponent,
+    RoomSegHistoryTableComponent
   ],
   imports: [
     BrowserModule,
@@ -33,13 +34,12 @@ import { RoomSegDialogComponent } from './room-seg-ui/room-seg-dialog/room-seg-d
     FormsModule,
     ReactiveFormsModule,
 
-    MatToolbarModule,
-    MatIconModule,
-    MatTooltipModule,
     MatTableModule,
+    MatToolbarModule,
     MatButtonModule,
     MatDialogModule,
-    MatInputModule
+    MatInputModule,
+    MatTooltipModule
   ],
   providers: [],
   bootstrap: [AppComponent]
