@@ -1,26 +1,12 @@
-<div id='header-bar' #headerBarElement>
-    <button id='history-display-control-button' mat-icon-button 
-        matTooltip='Edit History' matTooltipPosition='after' 
-        (click)='displayEditHistory()'>
-        <mat-icon>home</mat-icon>
-    </button>
-
+<div id='header-bar'>
     <span id='header'>
         Room Segmentation
     </span>
 </div>
 
-<div id='history-resize-container' #historyResizeContainerElement>
-    <ng-container *ngIf='showEditHistory'>
-        <room-seg-history></room-seg-history>
-
-        <div id='history-resize-container-right' (mousedown)="resizeContainerControl($event, true, 'history-right')" (mouseup)="resizeContainerControl($event, false, 'history-right')"></div>
-    </ng-container>
-</div>
-
 <div id='content'>
     <div id='display-resize-container' #displayResizeContainerElement>
-        <room-seg-display #displayElement 
+        <room-seg-display 
             [canvasSideLength]='canvasSideLength' [imgSrc]='imgSrc' (roomImgScale)='getRoomImgScale($event)'
             [lineSet]='lineSet' [lineSetToDisplay]='lineSetToDisplay'
             [processInfo]='processInfo' (forceUpdate)='forceUpdate()' [updateTriggerer]='updateTriggerer' 

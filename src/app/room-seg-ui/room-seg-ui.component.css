@@ -7,43 +7,12 @@
     z-index: 4;
 }
 #header {
-    position: relative;
+    position: absolute;
     top: 8px;
-    left: 40px;
+    left: 20px;
     font-size: 18px;
     font-weight: 600;
     user-select: none;
-}
-
-#history-resize-container {
-    position: fixed;
-    top: 40px;
-    left: 0;
-    height: 100%;
-    width: 100%;
-}
-#history-display-control-button {
-    position: absolute;
-    top: 0;
-    margin: auto;
-    line-height: 1;
-}
-::ng-deep .mat-tooltip {
-    font-size: 12px;
-}
-room-seg-history {
-    position: absolute;
-    width: 100%;
-    user-select: none;
-}
-#history-resize-container-right {
-    position: absolute;
-    right: -5px;
-    height: 100%;
-    width: 10px;
-    z-index: 3;
-    background-color: transparent;
-    cursor: e-resize;
 }
 
 #content {
@@ -56,6 +25,7 @@ room-seg-history {
 #display-resize-container {
     position: absolute;
     top: 21px;
+    left: 20px;
     border: 1px solid black;
 }
 #display-resize-container-bottom {
