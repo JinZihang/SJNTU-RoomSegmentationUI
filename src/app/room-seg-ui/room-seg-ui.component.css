@@ -1,5 +1,7 @@
 #header-bar {
     position: fixed;
+    top: 0;
+    height: 40px;
     width: 100%;
     border-bottom: 1px solid black;
     z-index: 4;
@@ -15,6 +17,7 @@
 
 #history-resize-container {
     position: fixed;
+    top: 40px;
     left: 0;
     height: 100%;
     width: 100%;
@@ -43,8 +46,16 @@ room-seg-history {
     cursor: e-resize;
 }
 
+#content {
+    position: fixed;
+    top: 40px;
+    height: calc(100% - 40px);
+    width: 100%;
+}
+
 #display-resize-container {
     position: absolute;
+    top: 21px;
     border: 1px solid black;
 }
 #display-resize-container-bottom {
@@ -76,6 +87,7 @@ room-seg-display {
 
 #action-button-container {
     position: absolute;
+    top: 21px;
     width: 230px;
 }
 #process-button-container {

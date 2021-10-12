@@ -15,7 +15,6 @@ export class RoomSegUIComponent implements AfterViewInit {
 
   @Output() segmentationComplete = new EventEmitter<number[][]>(); // Final segmentation line set.
 
-  pageHeaderHeight: number = 40; // Constant.
   historyContainerWidth: number = 0;
   canvasSideLength: number = 600;
 
@@ -56,20 +55,15 @@ export class RoomSegUIComponent implements AfterViewInit {
     this.setContainersPositions();
   }
   private setContainersPositions(): void {
-    this.renderer.setStyle(this.headerBarElement.nativeElement, 'height', String(this.pageHeaderHeight) + 'px');
-
-    this.renderer.setStyle(this.historyResizeContainerElement.nativeElement, 'top', String(this.pageHeaderHeight) + 'px');
     this.renderer.setStyle(this.historyResizeContainerElement.nativeElement, 'width', String(this.historyContainerWidth) + 'px');
 
-    this.renderer.setStyle(this.displayResizeContainerElement.nativeElement, 'top', String(this.pageHeaderHeight + 17) + 'px');
     this.renderer.setStyle(this.displayResizeContainerElement.nativeElement, 'left', String(this.historyContainerWidth + 20) + 'px');
     this.renderer.setStyle(this.displayResizeContainerElement.nativeElement, 'height', String(this.canvasSideLength) + 'px');
     this.renderer.setStyle(this.displayResizeContainerElement.nativeElement, 'width', String(this.canvasSideLength) + 'px');
 
-    this.renderer.setStyle(this.actionBtnContainerElement.nativeElement, 'top', String(this.pageHeaderHeight + 17) + 'px');
     this.renderer.setStyle(this.actionBtnContainerElement.nativeElement, 'left', String(this.historyContainerWidth + this.canvasSideLength + 40) + 'px');
 
-    this.renderer.setStyle(this.processBtnContainerElement.nativeElement, 'top', String(this.pageHeaderHeight + this.canvasSideLength - 64) + 'px');
+    this.renderer.setStyle(this.processBtnContainerElement.nativeElement, 'top', String(this.canvasSideLength - 59) + 'px');
     this.renderer.setStyle(this.processBtnContainerElement.nativeElement, 'left', String(this.historyContainerWidth + this.canvasSideLength + 40) + 'px');
   }
 

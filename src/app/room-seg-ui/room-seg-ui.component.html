@@ -2,7 +2,7 @@
     <button id='history-display-control-button' mat-icon-button 
         matTooltip='Edit History' matTooltipPosition='after' 
         (click)='displayEditHistory()'>
-        <mat-icon>menu</mat-icon>
+        <mat-icon>home</mat-icon>
     </button>
 
     <span id='header'>
@@ -18,31 +18,33 @@
     </ng-container>
 </div>
 
-<div id='display-resize-container' #displayResizeContainerElement>
-    <room-seg-display #displayElement 
-        [canvasSideLength]='canvasSideLength' [imgSrc]='imgSrc' (roomImgScale)='getRoomImgScale($event)'
-        [lineSet]='lineSet' [lineSetToDisplay]='lineSetToDisplay'
-        [processInfo]='processInfo' (forceUpdate)='forceUpdate()' [updateTriggerer]='updateTriggerer' 
-        (lineAddProcessControl)='lineAddProcessControl($event)' (lineEditProcessControl)='lineEditProcess(false, $event)' 
-        (editResult)='updateLineSet($event)'>
-    </room-seg-display>
+<div id='content'>
+    <div id='display-resize-container' #displayResizeContainerElement>
+        <room-seg-display #displayElement 
+            [canvasSideLength]='canvasSideLength' [imgSrc]='imgSrc' (roomImgScale)='getRoomImgScale($event)'
+            [lineSet]='lineSet' [lineSetToDisplay]='lineSetToDisplay'
+            [processInfo]='processInfo' (forceUpdate)='forceUpdate()' [updateTriggerer]='updateTriggerer' 
+            (lineAddProcessControl)='lineAddProcessControl($event)' (lineEditProcessControl)='lineEditProcess(false, $event)' 
+            (editResult)='updateLineSet($event)'>
+        </room-seg-display>
 
-    <ng-container *ngIf="!(processInfo.action === 'add')">
-        <div id='display-resize-container-bottom' (mousedown)="resizeContainerControl($event, true, 'display-bottom')" (mouseup)="resizeContainerControl($event, false, 'display-bottom')"></div>
-        <div id='display-resize-container-right' (mousedown)="resizeContainerControl($event, true, 'display-right')" (mouseup)="resizeContainerControl($event, false, 'display-right')"></div>
-    </ng-container>
-</div>
+        <ng-container *ngIf="!(processInfo.action === 'add')">
+            <div id='display-resize-container-bottom' (mousedown)="resizeContainerControl($event, true, 'display-bottom')" (mouseup)="resizeContainerControl($event, false, 'display-bottom')"></div>
+            <div id='display-resize-container-right' (mousedown)="resizeContainerControl($event, true, 'display-right')" (mouseup)="resizeContainerControl($event, false, 'display-right')"></div>
+        </ng-container>
+    </div>
 
-<div id='action-button-container' #actionBtnContainerElement>
-    <button mat-stroked-button (click)='toggleBetweenLineSegmentsAndLines()'>Segment/Extended</button>
-    <button mat-stroked-button (click)='lineAddProcess(false, -1)' [disabled]="!(processInfo.action === 'none')">Add a Segmentation Line</button>
-    <button mat-stroked-button (click)='lineRemoveProcess(false)' [disabled]="!(processInfo.action === 'none')">Remove Segmentation Lines</button>
-    <button mat-stroked-button (click)='completeSegmentation()' [disabled]="!(processInfo.action === 'none')">Confirm Result</button>
-</div>
+    <div id='action-button-container' #actionBtnContainerElement>
+        <button mat-stroked-button (click)='toggleBetweenLineSegmentsAndLines()'>Segment/Extended</button>
+        <button mat-stroked-button (click)='lineAddProcess(false, -1)' [disabled]="!(processInfo.action === 'none')">Add a Segmentation Line</button>
+        <button mat-stroked-button (click)='lineRemoveProcess(false)' [disabled]="!(processInfo.action === 'none')">Remove Segmentation Lines</button>
+        <button mat-stroked-button (click)='completeSegmentation()' [disabled]="!(processInfo.action === 'none')">Confirm Result</button>
+    </div>
 
-<div id='process-button-container' #processBtnContainerElement>
-    <ng-container *ngIf="!(processInfo.action === 'none')">
-        <button mat-stroked-button (click)='processControl(true)' [disabled]='!(processCanConfirm)'>Confirm Edit</button>
-        <button mat-stroked-button (click)='processControl(false)'>Cancel Edit</button>
-    </ng-container>
+    <div id='process-button-container' #processBtnContainerElement>
+        <ng-container *ngIf="!(processInfo.action === 'none')">
+            <button mat-stroked-button (click)='processControl(true)' [disabled]='!(processCanConfirm)'>Confirm Edit</button>
+            <button mat-stroked-button (click)='processControl(false)'>Cancel Edit</button>
+        </ng-container>
+    </div>
 </div>
