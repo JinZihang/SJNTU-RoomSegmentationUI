@@ -20,6 +20,7 @@
     top: 40px;
     height: calc(100% - 40px);
     width: 100%;
+    overflow-y: auto;
 }
 
 #display-resize-container {
