@@ -11,6 +11,9 @@
         />
         <circle class='line-segment-extremity' *ngIf='extremities[0]' [attr.cx]='extremities[0]' [attr.cy]='extremities[1]' r='3'/>
         <circle class='line-segment-extremity' *ngIf='extremities[0]' [attr.cx]='extremities[2]' [attr.cy]='extremities[3]' r='3'/>
+        <!-- Selected line's extremities. -->
+        <circle class='line-segment-extremity' *ngIf='selectedLine !== undefined' [attr.cx]='lineSetCopy[selectedLine][0]' [attr.cy]='lineSetCopy[selectedLine][1]' r='3'/>
+        <circle class='line-segment-extremity' *ngIf='selectedLine !== undefined' [attr.cx]='lineSetCopy[selectedLine][2]' [attr.cy]='lineSetCopy[selectedLine][3]' r='3'/>
         <!-- Add line process extremities. -->
         <circle class='line-segment-extremity' 
             *ngIf='lineAddProcessExtremities[0][0]' 

@@ -12,6 +12,7 @@ export class RoomSegDisplayComponent implements OnChanges {
   @Input() imgSrc: string;
   @Input() lineSet: number[][];
   @Input() lineSetToDisplay: number[][];
+  @Input() selectedLine?: number;
   @Input() processInfo: ProcessInfo;
   @Input() updateTriggerer: string;
 

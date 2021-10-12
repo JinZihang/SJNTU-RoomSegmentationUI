@@ -29,6 +29,7 @@ export class RoomSegUIComponent implements AfterViewInit {
   lineSetExtended: number[][];
   lineSetToggle: boolean = false;
   lineSetToDisplay: number[][] = this.lineSet;
+  selectedLine?: number;
 
   processInfo: ProcessInfo = { action: 'none' };
   updateTriggerer: string = 'Triggering updates.';
@@ -331,6 +332,11 @@ export class RoomSegUIComponent implements AfterViewInit {
         break;
     }
   }
+
+  public selectLineFromLineTable(lineIndex?: number) {
+    this.selectedLine = lineIndex;
+  }
+
   // The ngOnChanges in the display component only listen for reference changes.
   // Thus the following step is sometimes necessary for triggering the ngOnChanges function in the display component.
   public forceUpdate(): void {
