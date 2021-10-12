@@ -296,7 +296,7 @@ export class RoomSegDisplayComponent implements OnChanges {
     });
   }
   public editLine(startProcess: boolean, lineIndex?: number): void {
-    if (lineIndex) {
+    if (lineIndex !== undefined) {
       if (!startProcess) {
         this.lineToBeEdited = this.lineSetCopy[lineIndex];
         this.lineEditProcessControl.emit(lineIndex);

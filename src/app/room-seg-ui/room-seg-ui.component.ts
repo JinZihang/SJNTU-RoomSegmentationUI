@@ -371,7 +371,7 @@ export class RoomSegUIComponent implements AfterViewInit {
 
     switch (action) {
       case 'remove':
-        if (lineIndex) {
+        if (lineIndex !== undefined) {
           this.lineSet = this.lineSet.filter(e => e !== this.lineSet[lineIndex]);
           this.extendLineSegments();
           this.lineSetToDisplay = this.lineSetToggle ? this.lineSetExtended : this.lineSet;
