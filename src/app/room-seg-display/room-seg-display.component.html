@@ -1,0 +1,21 @@
+<div id="display-container" #displayContainer class="d-flex justify-content-center">
+    <div #displayDimensionContainer>
+        <img id="background-image" #backgroundImage [src]="imgSrc" (load)="onImageLoad()">
+        <svg #svgContainer [ngStyle]="{cursor: canvasCursor}"
+            (mousemove)="onCanvasCursorMove($event)" (mouseleave)="hideCursorCoordinates()" 
+            (mousedown)="moveLineProcessControl(true)" (mouseup)="moveLineProcessControl(false)"
+            (click)="onCanvasClick()">
+            <circle *ngIf="extremities[0]" [attr.cx]="extremities[0]" [attr.cy]="extremities[1]" r="3"/>
+            <circle *ngIf="extremities[0]" [attr.cx]="extremities[2]" [attr.cy]="extremities[3]" r="3"/>
+
+            <circle *ngIf="lineBeingEditedExtremities[0]" [attr.cx]="lineBeingEditedExtremities[0]" [attr.cy]="lineBeingEditedExtremities[1]" r="3"/>
+            <circle *ngIf="lineBeingEditedExtremities[2]" [attr.cx]="lineBeingEditedExtremities[2]" [attr.cy]="lineBeingEditedExtremities[3]" r="3"/>
+            
+            <line [ngStyle]="{cursor: lineCursor}"
+                *ngFor="let line of lineSetToDisplayCoorAdjusted; let lineIndex = index;"
+                [attr.x1]="line[0]" [attr.y1]="line[1]" [attr.x2]="line[2]" [attr.y2]="line[3]"
+                (mouseover)="onLineMouseEvent(lineIndex)" (mouseleave)="onLineMouseEvent()"
+                (click)="onLineClick(lineIndex)"/>
+        </svg>
+    </div>
+</div>

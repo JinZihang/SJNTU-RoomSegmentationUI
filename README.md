@@ -1,8 +1,17 @@
-# RoomSegmentationUi
+# RoomSegmentationUI
 
-- This UI was developed for manually fixing room segmentation flaws, as a component of a SJ-NTU Corp Lab project.
+- An Angular dialog to edit the AI-generated room segmentation result.
+- Designed for SJ-NTU Corp Lab's iScan2BIM platform.
 
-# Notes
+# Features
 
-- Run `npm i` to install all dependencies.
-- Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+### Input Data
+
+1. Room's top-down view image.
+2. AI-generated room segmentation line set data.
+
+### Functions
+
+1. **Add segmentation line:** key in line extremities' coordinates or click the canvas to place line extremities. Then the added line can be adjusted by cursor.
+2. **Remove segmentation line:** click on any line to remove it.
+3. **Edit existing segmentation line:** click to select a line, then edit the selected line by keying new line extremities' coordinates or by cursor.
