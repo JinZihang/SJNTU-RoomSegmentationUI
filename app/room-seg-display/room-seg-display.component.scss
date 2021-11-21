@@ -1,10 +1,12 @@
 #display-container {
     border: 1px solid black;
 }
+#display-dimension-container {
+    position: absolute;
+}
 
 #background-image {
-    margin-top: -1px;
-    margin-left: -1px;
+    position: absolute;
     width: 100%;
     height: 100%;
     border: 1px solid rgba(0, 0, 0, 0.2);

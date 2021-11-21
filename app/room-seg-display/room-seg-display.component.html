@@ -1,5 +1,5 @@
 <div id="display-container" #displayContainer class="d-flex justify-content-center">
-    <div #displayDimensionContainer>
+    <div id="display-dimension-container" #displayDimensionContainer>
         <img id="background-image" #backgroundImage [src]="imgSrc" (load)="onImageLoad()">
         <svg #svgContainer [ngStyle]="{cursor: canvasCursor}"
             (mousemove)="onCanvasCursorMove($event)" (mouseleave)="hideCursorCoordinates()" 

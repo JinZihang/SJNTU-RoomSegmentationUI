@@ -98,11 +98,12 @@ export class RoomSegDisplayComponent implements OnChanges {
 
     this.dimContainerDimension = { x: dimContainerX, y: dimContainerY };
 
+    // 10px from room-seg-display-container's margin
+    this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "top", String((this.containerSideLength - dimContainerY) / 2 + 10) + "px");
+    this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "left", String((this.containerSideLength - dimContainerX) / 2 + 10) + "px");
     this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "width", String(dimContainerX) + "px");
     this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "height", String(dimContainerY) + "px");
 
-    this.renderer.setStyle(this.svgContainer.nativeElement, "top", String((this.containerSideLength - dimContainerY) / 2 + 10) + "px"); // 10px from room-seg-display-container's margin
-    this.renderer.setStyle(this.svgContainer.nativeElement, "left", String((this.containerSideLength - dimContainerX) / 2 + 10) + "px");
     this.renderer.setStyle(this.svgContainer.nativeElement, "width", String(dimContainerX) + "px");
     this.renderer.setStyle(this.svgContainer.nativeElement, "height", String(dimContainerY) + "px");
   }
