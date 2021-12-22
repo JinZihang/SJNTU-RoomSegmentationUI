@@ -4,7 +4,7 @@ import { AiProcessTask } from 'src/app/business-core/business-core.type';
 import { AwsService } from 'src/app/shared-cloud/aws.service';
 import { BcService } from 'src/app/business-core/bc.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { switchMap, switchMapTo } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-room-seg-editor',
@@ -72,7 +72,7 @@ export class RoomSegEditorComponent implements OnInit {
       this.bc.getAiProcessTaskById(this.backgroundFile.aiProcessTaskId).subscribe(data => {
         this.aiTask = data;
         if (this.aiTask.lineSetJson) {
-          this.lineSet = <number[][]>JSON.parse(this.aiTask.lineSetJson);
+          this.lineSet = this.aiTask.lineSetJson == "null" ? [] : <number[][]>JSON.parse(this.aiTask.lineSetJson);
           this.lineSetToDisplay = this.lineSet;
         } else {
           console.error("AI Process task has no line set!");
