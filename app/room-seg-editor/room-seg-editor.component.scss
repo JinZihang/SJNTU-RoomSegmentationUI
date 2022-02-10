@@ -1,6 +1,14 @@
 #room-seg-display-container {
     margin: 10px;
+    margin-bottom: 0;
     user-select: none;
+}
+p {
+    margin-top: 4px;
+    margin-bottom: 8px;
+    height: 16px;
+    font-size: small;
+    z-index: 3;
 }
 
 #button-container {

@@ -4,7 +4,7 @@ import { AiProcessTask } from 'src/app/business-core/business-core.type';
 import { AwsService } from 'src/app/shared-cloud/aws.service';
 import { BcService } from 'src/app/business-core/bc.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, switchMapTo } from 'rxjs/operators';
 
 @Component({
   selector: 'app-room-seg-editor',
@@ -21,6 +21,7 @@ export class RoomSegEditorComponent implements OnInit {
   imgSrc: string;
   elementsDims: DisplayElementsDimensions;
 
+  sessionStorageLineSet: string = "lineSet-id";
   lineSet: number[][];
   lineSetExtended: number[][];
   lineSetToDisplay: number[][];
@@ -68,7 +69,8 @@ export class RoomSegEditorComponent implements OnInit {
         console.error("Get CC Background image error: ", error);
       });
 
-    if (sessionStorage.getItem("lineSet") === null) {
+    this.sessionStorageLineSet += this.backgroundFile.aiProcessTaskId;
+    if (sessionStorage.getItem(this.sessionStorageLineSet) === null) {
       this.bc.getAiProcessTaskById(this.backgroundFile.aiProcessTaskId).subscribe(data => {
         this.aiTask = data;
         if (this.aiTask.lineSetJson) {
@@ -81,7 +83,7 @@ export class RoomSegEditorComponent implements OnInit {
         console.error("Get AI Process task error: ", error);
       })
     } else {
-      this.lineSet = JSON.parse(sessionStorage.getItem("lineSet"));
+      this.lineSet = JSON.parse(sessionStorage.getItem(this.sessionStorageLineSet));
       this.lineSetToDisplay = this.lineSet;
     }
   }
@@ -93,13 +95,14 @@ export class RoomSegEditorComponent implements OnInit {
     this.extendLineSegments();
   }
   private adjustContainers(): void {
-    this.renderer.setStyle(this.buttonContainer.nativeElement, "height", String(this.elementsDims.containerSideLength) + "px")
-    this.renderer.setStyle(this.inputContainer.nativeElement, "width", String(this.elementsDims.containerSideLength) + "px")
     if (this.process === "Add") {
       this.renderer.setStyle(this.inputContainer.nativeElement, "margin-bottom", "10px");
     } else {
       this.renderer.removeStyle(this.inputContainer.nativeElement, "margin-bottom");
     }
+    
+    this.renderer.setStyle(this.inputContainer.nativeElement, "width", `${this.elementsDims.containerDimension.x}px`)
+    this.renderer.setStyle(this.buttonContainer.nativeElement, "height", `${this.elementsDims.containerDimension.y}px`)
   }
   private extendLineSegments(): void {
     const xMax = this.elementsDims.imgDimension.x;
@@ -214,7 +217,7 @@ export class RoomSegEditorComponent implements OnInit {
         type: "danger",
         message: "Room Segmentation failed: " + err
       })
-    sessionStorage.removeItem("lineSet");
+    sessionStorage.removeItem(this.sessionStorageLineSet);
   }
   public processControl(applyEdit: boolean): void {
     this.process = "None";
@@ -232,7 +235,7 @@ export class RoomSegEditorComponent implements OnInit {
     this.isSecondExtremXValid = false;
     this.isSecondExtremYValid = false;
 
-    sessionStorage.setItem("lineSet", JSON.stringify(this.lineSet));
+    sessionStorage.setItem(this.sessionStorageLineSet, JSON.stringify(this.lineSet));
 
     if (!applyEdit) {
       this.lineSet = JSON.parse(JSON.stringify(this.lineSetBeforeProcess));
@@ -424,6 +427,7 @@ export class RoomSegEditorComponent implements OnInit {
       case "None":
         this.lineBeingEditedIndex = lineIndex;
         this.activateProcess("Edit");
+        this.lineBeingEditedIsComplete = true;
         break;
     }
   }

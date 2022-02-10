@@ -6,9 +6,17 @@ export type Dimension = {
 export type Coordinate = Dimension
 
 export type DisplayElementsDimensions = {
-  containerSideLength: number
+  containerDimension: Dimension
   imgDimension: Dimension
 }
+
+export type DisplayZoomInfo = {
+  percentage: number
+  shift: Coordinate
+  display: Dimension
+}
+
+export type Direction = "Up" | "Down" | "Left" | "Right"
 
 export type RoomSegCursorCoorInfo = {
   showCursor: boolean

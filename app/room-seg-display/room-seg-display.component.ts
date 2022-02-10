@@ -1,5 +1,5 @@
 import { Component, OnChanges, Input, Output, EventEmitter, ViewChild, ElementRef, Renderer2 } from '@angular/core';
-import { RoomSegEditProcess, DisplayElementsDimensions, RoomSegCursorCoorInfo, Dimension, RoomSegDisplayCursor, Coordinate, RoomSegEditSelection } from '../shared-ui.type';
+import { RoomSegEditProcess, DisplayElementsDimensions, DisplayZoomInfo, Direction, RoomSegCursorCoorInfo, Dimension, RoomSegDisplayCursor, Coordinate, RoomSegEditSelection } from '../shared-ui.type';
 
 @Component({
   selector: 'room-seg-display',
@@ -20,15 +20,27 @@ export class RoomSegDisplayComponent implements OnChanges {
   @Output() lineIndexEmitter = new EventEmitter<number>();
   @Output() elementSelectionEmitter = new EventEmitter<RoomSegEditSelection>();
 
-  @ViewChild('backgroundImage') backgroundImage: ElementRef;
-  @ViewChild('displayContainer') displayContainer: ElementRef;
-  @ViewChild('displayDimensionContainer') displayDimensionContainer: ElementRef;
-  @ViewChild('svgContainer') svgContainer: ElementRef;
+  @ViewChild("backgroundImage") backgroundImage: ElementRef;
+  @ViewChild("displayContainer") displayContainer: ElementRef;
+  @ViewChild("displayDimensionContainer") displayDimensionContainer: ElementRef;
+  @ViewChild("svgContainer") svgContainer: ElementRef;
+  @ViewChild("verticalShiftButtonContainer") verticalShiftButtonContainer: ElementRef;
+  @ViewChild("horizontalShiftButtonContainer") horizontalShiftButtonContainer: ElementRef;
 
-  containerSideLength: number = 600;
+  containerDimension: Dimension = { x: 876, y: 500 };
   imgLoaded: boolean = false;
   imgDimension: Dimension;
   dimContainerDimension: Dimension;
+  zoomInfo: DisplayZoomInfo = {
+    percentage: 1,
+    shift: { x: 0, y: 0 },
+    display: { x: 0, y: 0 }
+  };
+  zooming: boolean = false;
+  shifting: boolean = false;
+  shiftingWithCursor: boolean = false;
+  beforeShiftingCursorCoor: Coordinate;
+  beforeShiftingZoomInfoShift: Coordinate;
 
   lineSetCoorAdjusted: number[][];
   lineSetToDisplayCoorAdjusted: number[][];
@@ -79,48 +91,54 @@ export class RoomSegDisplayComponent implements OnChanges {
     this.adjustLineCoordinates();
 
     this.displayElementsDimEmitter.emit({
-      containerSideLength: this.containerSideLength,
+      containerDimension: this.containerDimension,
       imgDimension: this.imgDimension
     });
   }
   private adjustContainers(): void {
-    this.renderer.setStyle(this.displayContainer.nativeElement, "width", String(this.containerSideLength) + "px");
-    this.renderer.setStyle(this.displayContainer.nativeElement, "height", String(this.containerSideLength) + "px");
+    this.renderer.setStyle(this.displayContainer.nativeElement, "width", `${this.containerDimension.x}px`);
+    this.renderer.setStyle(this.displayContainer.nativeElement, "height", `${this.containerDimension.y}px`);
 
     let dimContainerX, dimContainerY;
     if (this.imgDimension.x > this.imgDimension.y) {
-      dimContainerX = this.containerSideLength;
-      dimContainerY = this.containerSideLength * this.imgDimension.y / this.imgDimension.x;
+      dimContainerX = this.containerDimension.x;
+      dimContainerY = this.containerDimension.x * this.imgDimension.y / this.imgDimension.x;
     } else {
-      dimContainerX = this.containerSideLength * this.imgDimension.x / this.imgDimension.y;
-      dimContainerY = this.containerSideLength;
+      dimContainerX = this.containerDimension.y * this.imgDimension.x / this.imgDimension.y;
+      dimContainerY = this.containerDimension.y;
     }
 
     this.dimContainerDimension = { x: dimContainerX, y: dimContainerY };
 
-    // 10px from room-seg-display-container's margin
-    this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "top", String((this.containerSideLength - dimContainerY) / 2 + 10) + "px");
-    this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "left", String((this.containerSideLength - dimContainerX) / 2 + 10) + "px");
-    this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "width", String(dimContainerX) + "px");
-    this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "height", String(dimContainerY) + "px");
+    this.zoomInfo.display.x = dimContainerX;
+    this.zoomInfo.display.y = dimContainerY;
 
-    this.renderer.setStyle(this.svgContainer.nativeElement, "width", String(dimContainerX) + "px");
-    this.renderer.setStyle(this.svgContainer.nativeElement, "height", String(dimContainerY) + "px");
+    // 10px from room-seg-display-container's margin
+    this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "top", `${(this.containerDimension.y - dimContainerY) / 2 + 10}px`);
+    this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "left", `${(this.containerDimension.x - dimContainerX) / 2 + 10}px`);
+    this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "width", `${dimContainerX}px`);
+    this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "height", `${dimContainerY}px`);
+
+    this.updateCanvasDisplayArea();
+
+    // 2 * 4 from buttons' margins, 2 from border displacements
+    this.renderer.setStyle(this.horizontalShiftButtonContainer.nativeElement, "width", `${this.containerDimension.x - 10}px`);
+    this.renderer.setStyle(this.verticalShiftButtonContainer.nativeElement, "height", `${this.containerDimension.y - 10}px`);
   }
   private adjustLineCoordinates(): void {
     this.lineSetCoorAdjusted = JSON.parse(JSON.stringify(this.lineSet));
     this.lineSetToDisplayCoorAdjusted = JSON.parse(JSON.stringify(this.lineSetToDisplay));
 
     for (let i = 0; i < this.lineSet.length; i++) {
-      this.lineSetCoorAdjusted[i][0] = (this.lineSet[i][0] / this.imgDimension.x) * this.dimContainerDimension.x;
-      this.lineSetCoorAdjusted[i][1] = (this.lineSet[i][1] / this.imgDimension.y) * this.dimContainerDimension.y;
-      this.lineSetCoorAdjusted[i][2] = (this.lineSet[i][2] / this.imgDimension.x) * this.dimContainerDimension.x;
-      this.lineSetCoorAdjusted[i][3] = (this.lineSet[i][3] / this.imgDimension.y) * this.dimContainerDimension.y;
+      this.lineSetCoorAdjusted[i][0] = (this.lineSet[i][0] / this.imgDimension.x) * this.zoomInfo.display.x;
+      this.lineSetCoorAdjusted[i][1] = (this.lineSet[i][1] / this.imgDimension.y) * this.zoomInfo.display.y;
+      this.lineSetCoorAdjusted[i][2] = (this.lineSet[i][2] / this.imgDimension.x) * this.zoomInfo.display.x;
+      this.lineSetCoorAdjusted[i][3] = (this.lineSet[i][3] / this.imgDimension.y) * this.zoomInfo.display.y;
 
-      this.lineSetToDisplayCoorAdjusted[i][0] = (this.lineSetToDisplay[i][0] / this.imgDimension.x) * this.dimContainerDimension.x;
-      this.lineSetToDisplayCoorAdjusted[i][1] = (this.lineSetToDisplay[i][1] / this.imgDimension.y) * this.dimContainerDimension.y;
-      this.lineSetToDisplayCoorAdjusted[i][2] = (this.lineSetToDisplay[i][2] / this.imgDimension.x) * this.dimContainerDimension.x;
-      this.lineSetToDisplayCoorAdjusted[i][3] = (this.lineSetToDisplay[i][3] / this.imgDimension.y) * this.dimContainerDimension.y;
+      this.lineSetToDisplayCoorAdjusted[i][0] = (this.lineSetToDisplay[i][0] / this.imgDimension.x) * this.zoomInfo.display.x;
+      this.lineSetToDisplayCoorAdjusted[i][1] = (this.lineSetToDisplay[i][1] / this.imgDimension.y) * this.zoomInfo.display.y;
+      this.lineSetToDisplayCoorAdjusted[i][2] = (this.lineSetToDisplay[i][2] / this.imgDimension.x) * this.zoomInfo.display.x;
+      this.lineSetToDisplayCoorAdjusted[i][3] = (this.lineSetToDisplay[i][3] / this.imgDimension.y) * this.zoomInfo.display.y;
     }
 
     if (this.process === "Add") {
@@ -150,22 +168,117 @@ export class RoomSegDisplayComponent implements OnChanges {
     }
   }
 
-  public onCanvasCursorMove(event: any): void {
-    if (this.imgDimension.x > this.imgDimension.y) {
-      this.cursorCoor = {
-        x: event.offsetX * this.imgDimension.x / this.containerSideLength,
-        y: event.offsetY * this.imgDimension.x / this.containerSideLength
-      }
-    } else {
-      this.cursorCoor = {
-        x: event.offsetX * this.imgDimension.y / this.containerSideLength,
-        y: event.offsetY * this.imgDimension.y / this.containerSideLength
-      }
+  public zoomWithCursor(event: any): void {
+    event.preventDefault();
+    this.zoom(event.deltaY > 0);
+  }
+  public zoomingProcessControl(processStart: boolean, zoomIn?: boolean) {
+    this.zooming = processStart;
+    if (processStart) this.zoom(zoomIn);
+  } 
+  private zoom(zoomIn: boolean): void {
+    const zoomChange = zoomIn ? - 0.01 : 0.01;
+    this.zoomInfo.percentage = Number((this.zoomInfo.percentage + zoomChange).toFixed(2));
+    this.zoomInfo.display.x = this.dimContainerDimension.x / this.zoomInfo.percentage;
+    this.zoomInfo.display.y = this.dimContainerDimension.y / this.zoomInfo.percentage;
+    this.updateCanvasDisplayArea();
+
+    if (this.zooming) setTimeout(() => {this.zoom(zoomIn);}, 50); 
+  }
+  public shiftingProcessControlWithCursor(processStart: boolean, event: any): void {
+    this.shiftingWithCursor = processStart && event?.button === 2;
+
+    if (this.shiftingWithCursor) {
+      this.beforeShiftingCursorCoor = {
+        x: event.clientX,
+        y: event.clientY
+      };
+
+      this.beforeShiftingZoomInfoShift = {
+        x: this.zoomInfo.shift.x,
+        y: this.zoomInfo.shift.y
+      };
+    }
+  }
+  public shiftWithCursor(event: any): void {
+    if (this.shiftingWithCursor) {
+      this.zoomInfo.shift = {
+        x: this.beforeShiftingZoomInfoShift.x - (event.clientX - this.beforeShiftingCursorCoor.x),
+        y: this.beforeShiftingZoomInfoShift.y + (event.clientY - this.beforeShiftingCursorCoor.y)
+      };
+      this.updateCanvasDisplayArea();
+    }
+  }
+  public shiftingProcessControl(processStart: boolean, direction?: Direction): void {
+    this.shifting = processStart;
+    if (processStart) this.shift(direction);
+  }
+  private shift(direction: Direction): void {
+    switch (direction) {
+      case "Up":
+        this.zoomInfo.shift.y += 5;
+        break;
+      case "Down":
+        this.zoomInfo.shift.y -= 5;
+        break;
+      case "Left":
+        this.zoomInfo.shift.x -= 5;
+        break;
+      case "Right":
+        this.zoomInfo.shift.x += 5;
+        break;
+    }
+    this.updateCanvasDisplayArea();
+
+    if (this.shifting) setTimeout(() => {this.shift(direction);}, 50); 
+  }
+  private updateCanvasDisplayArea(): void {
+    this.applyZoomAndShiftConstraints();
+
+    this.renderer.setStyle(this.backgroundImage.nativeElement, "top", `${this.zoomInfo.shift.y}px`);
+    this.renderer.setStyle(this.backgroundImage.nativeElement, "left", `${-this.zoomInfo.shift.x}px`);
+    this.renderer.setStyle(this.backgroundImage.nativeElement, "width", `${this.zoomInfo.display.x}px`);
+    this.renderer.setStyle(this.backgroundImage.nativeElement, "height", `${this.zoomInfo.display.y}px`);
+
+    this.renderer.setStyle(this.svgContainer.nativeElement, "top", `${this.zoomInfo.shift.y}px`);
+    this.renderer.setStyle(this.svgContainer.nativeElement, "left", `${-this.zoomInfo.shift.x}px`);
+    this.renderer.setStyle(this.svgContainer.nativeElement, "width", `${this.zoomInfo.display.x}px`);
+    this.renderer.setStyle(this.svgContainer.nativeElement, "height", `${this.zoomInfo.display.y}px`);
+
+    this.adjustLineCoordinates();
+    this.extremitiesDisplayControl();
+  }
+  private applyZoomAndShiftConstraints(): void {
+    if (this.zoomInfo.percentage > 1) this.zoomInfo.percentage = 1; {
+      this.zoomInfo.display.x = this.dimContainerDimension.x / this.zoomInfo.percentage;
+      this.zoomInfo.display.y = this.dimContainerDimension.y / this.zoomInfo.percentage;
     }
 
-    this.updateCurcorCoordinates();
+    if (this.zoomInfo.shift.x < 0) this.zoomInfo.shift.x = 0;
+    if (this.zoomInfo.shift.x + this.dimContainerDimension.x > this.zoomInfo.display.x) {
+      this.zoomInfo.shift.x = this.zoomInfo.display.x - this.dimContainerDimension.x;
+      this.zoomInfo.shift.x = Math.floor(this.zoomInfo.shift.x);
+    }
+    if (this.zoomInfo.shift.y > 0) this.zoomInfo.shift.y = 0;
+    if (- this.zoomInfo.shift.y + this.dimContainerDimension.y > this.zoomInfo.display.y) {
+      this.zoomInfo.shift.y = - this.zoomInfo.display.y + this.dimContainerDimension.y;
+      this.zoomInfo.shift.y = Math.ceil(this.zoomInfo.shift.y);
+    }
   }
-  private updateCurcorCoordinates(): void {
+
+  public updateCurcorCoordinates(event: any): void {
+    if (this.imgDimension.x > this.imgDimension.y) {
+      this.cursorCoor = {
+        x: event.offsetX * this.zoomInfo.percentage * this.imgDimension.x / this.containerDimension.x,
+        y: event.offsetY * this.zoomInfo.percentage * this.imgDimension.x / this.containerDimension.x
+      };
+    } else {
+      this.cursorCoor = {
+        x: event.offsetX * this.zoomInfo.percentage * this.imgDimension.y / this.containerDimension.y,
+        y: event.offsetY * this.zoomInfo.percentage * this.imgDimension.y / this.containerDimension.y
+      };
+    }
+
     this.cursorCoorEmitter.emit({
       showCursor: true,
       cursorCoor: {
@@ -224,7 +337,7 @@ export class RoomSegDisplayComponent implements OnChanges {
   public onCanvasClick(): void {
     this.canvasClickEmitter.emit();
   }
-  public onLineMouseEvent(lineIndex?: number): void {
+  public onLineMouseEvents(lineIndex?: number): void {
     this.lineCursorControl(lineIndex);
     this.extremitiesDisplayControl(lineIndex);
   }
