@@ -12,6 +12,7 @@
 
 ### Functions
 
-1. **Add segmentation line:** key in line extremities' coordinates or click the canvas to place line extremities. Then the added line can be adjusted by cursor.
-2. **Remove segmentation line:** click on any line to remove it.
-3. **Edit existing segmentation line:** click to select a line, then edit the selected line by keying new line extremities' coordinates or by cursor.
+1. **Display room segmentation result:** the display allows zooming and shifting via cursor or buttons.
+2. **Add segmentation line:** key in line extremities' coordinates or click the canvas to place line extremities. Then the added line can be adjusted by cursor.
+3. **Remove segmentation line:** click on any line to remove it.
+4. **Edit existing segmentation line:** click to select a line, then edit the selected line by keying new line extremities' coordinates or by cursor.
