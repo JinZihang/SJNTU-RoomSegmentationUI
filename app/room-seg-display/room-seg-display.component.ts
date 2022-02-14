@@ -168,6 +168,15 @@ export class RoomSegDisplayComponent implements OnChanges {
     }
   }
 
+  public resetZoomInfo(): void {
+    this.zoomInfo = {
+      percentage: 1,
+      shift: { x: 0, y: 0 },
+      display: { x: 0, y: 0 }
+    };
+
+    this.updateCanvasDisplayArea();
+  }
   public zoomWithCursor(event: any): void {
     event.preventDefault();
     this.zoom(event.deltaY > 0);
