@@ -258,7 +258,12 @@ export class RoomSegDisplayComponent implements OnChanges {
     this.extremitiesDisplayControl();
   }
   private applyZoomAndShiftConstraints(): void {
-    if (this.zoomInfo.percentage > 1) this.zoomInfo.percentage = 1; {
+    if (this.zoomInfo.percentage < 0.2) {
+      this.zoomInfo.percentage = 0.2;
+      this.zoomInfo.display.x = this.dimContainerDimension.x / this.zoomInfo.percentage;
+      this.zoomInfo.display.y = this.dimContainerDimension.y / this.zoomInfo.percentage;
+    } else if (this.zoomInfo.percentage > 1) {
+      this.zoomInfo.percentage = 1;
       this.zoomInfo.display.x = this.dimContainerDimension.x / this.zoomInfo.percentage;
       this.zoomInfo.display.y = this.dimContainerDimension.y / this.zoomInfo.percentage;
     }
