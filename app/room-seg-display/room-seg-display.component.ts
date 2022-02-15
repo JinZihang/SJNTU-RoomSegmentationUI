@@ -1,4 +1,4 @@
-import { Component, OnChanges, Input, Output, EventEmitter, ViewChild, ElementRef, Renderer2 } from '@angular/core';
+import { Component, OnChanges, Input, Output, EventEmitter, ViewChild, ElementRef, ViewChildren, QueryList, Renderer2 } from '@angular/core';
 import { RoomSegEditProcess, DisplayElementsDimensions, DisplayZoomInfo, Direction, RoomSegCursorCoorInfo, Dimension, RoomSegDisplayCursor, Coordinate, RoomSegEditSelection } from '../shared-ui.type';
 
 @Component({
@@ -24,6 +24,7 @@ export class RoomSegDisplayComponent implements OnChanges {
   @ViewChild("displayContainer") displayContainer: ElementRef;
   @ViewChild("displayDimensionContainer") displayDimensionContainer: ElementRef;
   @ViewChild("svgContainer") svgContainer: ElementRef;
+  @ViewChildren("lines") lines: QueryList<ElementRef>;
   @ViewChild("verticalShiftButtonContainer") verticalShiftButtonContainer: ElementRef;
   @ViewChild("horizontalShiftButtonContainer") horizontalShiftButtonContainer: ElementRef;
 
@@ -31,10 +32,11 @@ export class RoomSegDisplayComponent implements OnChanges {
   imgLoaded: boolean = false;
   imgDimension: Dimension;
   dimContainerDimension: Dimension;
+  lineWidth: number = 3;
   zoomInfo: DisplayZoomInfo = {
     percentage: 1,
-    shift: { x: 0, y: 0 },
-    display: { x: 0, y: 0 }
+    display: { x: 0, y: 0 },
+    shift: { x: 0, y: 0 }
   };
   zooming: boolean = false;
   shifting: boolean = false;
@@ -168,11 +170,30 @@ export class RoomSegDisplayComponent implements OnChanges {
     }
   }
 
+  public resetLineThickness(): void {
+    this.lineWidth = 3;
+    this.adjustLineThickness();
+  }
+  public lineThicknessControl(thicken: boolean): void {
+    this.lineWidth += thicken ? 1 : -1;
+    if (this.lineWidth < 1) this.lineWidth = 1;
+    if (this.lineWidth > 3) this.lineWidth = 3;
+    this.adjustLineThickness();
+  }
+  private adjustLineThickness(): void {
+    this.lines.forEach(line => {
+      this.renderer.setStyle(line.nativeElement, "stroke-width", `${this.lineWidth}`);
+    });
+  }
+
   public resetZoomInfo(): void {
     this.zoomInfo = {
       percentage: 1,
-      shift: { x: 0, y: 0 },
-      display: { x: 0, y: 0 }
+      display: {
+        x: this.dimContainerDimension.x,
+        y: this.dimContainerDimension.y
+      },
+      shift: { x: 0, y: 0 }
     };
 
     this.updateCanvasDisplayArea();
@@ -262,21 +283,31 @@ export class RoomSegDisplayComponent implements OnChanges {
       this.zoomInfo.percentage = 0.2;
       this.zoomInfo.display.x = this.dimContainerDimension.x / this.zoomInfo.percentage;
       this.zoomInfo.display.y = this.dimContainerDimension.y / this.zoomInfo.percentage;
+      this.zooming = false;
     } else if (this.zoomInfo.percentage > 1) {
       this.zoomInfo.percentage = 1;
       this.zoomInfo.display.x = this.dimContainerDimension.x / this.zoomInfo.percentage;
       this.zoomInfo.display.y = this.dimContainerDimension.y / this.zoomInfo.percentage;
+      this.zooming = false;
     }
 
-    if (this.zoomInfo.shift.x < 0) this.zoomInfo.shift.x = 0;
+    if (this.zoomInfo.shift.x < 0) {
+      this.zoomInfo.shift.x = 0;
+      this.shifting = false;
+    }
     if (this.zoomInfo.shift.x + this.dimContainerDimension.x > this.zoomInfo.display.x) {
       this.zoomInfo.shift.x = this.zoomInfo.display.x - this.dimContainerDimension.x;
       this.zoomInfo.shift.x = Math.floor(this.zoomInfo.shift.x);
+      this.shifting = false;
     }
-    if (this.zoomInfo.shift.y > 0) this.zoomInfo.shift.y = 0;
+    if (this.zoomInfo.shift.y > 0) {
+      this.zoomInfo.shift.y = 0;
+      this.shifting = false;
+    }
     if (- this.zoomInfo.shift.y + this.dimContainerDimension.y > this.zoomInfo.display.y) {
       this.zoomInfo.shift.y = - this.zoomInfo.display.y + this.dimContainerDimension.y;
       this.zoomInfo.shift.y = Math.ceil(this.zoomInfo.shift.y);
+      this.shifting = false;
     }
   }
 

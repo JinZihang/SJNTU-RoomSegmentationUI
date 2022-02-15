@@ -12,8 +12,8 @@ export type DisplayElementsDimensions = {
 
 export type DisplayZoomInfo = {
   percentage: number
-  shift: Coordinate
   display: Dimension
+  shift: Coordinate
 }
 
 export type Direction = "Up" | "Down" | "Left" | "Right"
