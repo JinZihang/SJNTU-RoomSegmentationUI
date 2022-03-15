@@ -1,4 +1,4 @@
-# RoomSegmentationUI
+# Introduction to the Room Segmentation UI
 
 - An Angular & Bootstrap based UI to edit the AI-generated room segmentation result.
 - Developed for SJ-NTU Corp Lab's iScan2BIM platform.
