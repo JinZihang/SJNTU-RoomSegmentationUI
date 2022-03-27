@@ -102,7 +102,7 @@ export class RoomSegDisplayComponent implements OnChanges {
     this.renderer.setStyle(this.displayContainer.nativeElement, "height", `${this.containerDimension.y}px`);
 
     let dimContainerX, dimContainerY;
-    if (this.imgDimension.x > this.imgDimension.y) {
+    if (this.imgDimension.x / this.imgDimension.y > this.containerDimension.x / this.containerDimension.y) {
       dimContainerX = this.containerDimension.x;
       dimContainerY = this.containerDimension.x * this.imgDimension.y / this.imgDimension.x;
     } else {
@@ -115,9 +115,9 @@ export class RoomSegDisplayComponent implements OnChanges {
     this.zoomInfo.display.x = dimContainerX;
     this.zoomInfo.display.y = dimContainerY;
 
-    // 10px from room-seg-display-container's margin
-    this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "top", `${(this.containerDimension.y - dimContainerY) / 2 + 10}px`);
-    this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "left", `${(this.containerDimension.x - dimContainerX) / 2 + 10}px`);
+    // -1px from display-dimension-container's border thickness
+    this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "top", `${(this.containerDimension.y - dimContainerY) / 2 - 1}px`);
+    this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "left", `${(this.containerDimension.x - dimContainerX) / 2 - 1}px`);
     this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "width", `${dimContainerX}px`);
     this.renderer.setStyle(this.displayDimensionContainer.nativeElement, "height", `${dimContainerY}px`);
 
