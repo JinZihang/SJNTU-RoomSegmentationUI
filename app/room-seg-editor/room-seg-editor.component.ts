@@ -1,48 +1,48 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, Renderer2 } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, Renderer2, AfterViewInit } from '@angular/core';
 import { ProjectFile, DisplayElementsDimensions, Coordinate, RoomSegEditProcess, RoomSegMoveLineProcessInfo, RoomSegCursorCoorInfo, RoomSegEditSelection } from '../shared-ui.type';
 import { AiProcessTask } from 'src/app/business-core/business-core.type';
 import { AwsService } from 'src/app/shared-cloud/aws.service';
 import { BcService } from 'src/app/business-core/bc.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { switchMap, switchMapTo } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-room-seg-editor',
   templateUrl: './room-seg-editor.component.html',
   styleUrls: ['./room-seg-editor.component.scss']
 })
-export class RoomSegEditorComponent implements OnInit {
-  @Input() backgroundFile: ProjectFile;
-  aiTask: AiProcessTask;
+export class RoomSegEditorComponent implements AfterViewInit {
+  @Input() backgroundFile?: ProjectFile;
+  aiTask?: AiProcessTask;
 
-  @ViewChild("buttonContainer") buttonContainer: ElementRef;
-  @ViewChild("inputContainer") inputContainer: ElementRef;
+  @ViewChild("buttonContainer") buttonContainer?: ElementRef;
+  @ViewChild("inputContainer") inputContainer?: ElementRef;
 
-  imgSrc: string;
-  elementsDims: DisplayElementsDimensions;
+  imgSrc?: string;
+  elementsDims?: DisplayElementsDimensions;
 
   sessionStorageLineSet: string = "lineSet-id";
-  lineSet: number[][];
-  lineSetExtended: number[][];
-  lineSetToDisplay: number[][];
+  lineSet: number[][] = new Array<Array<number>>();
+  lineSetExtended: number[][] = new Array<Array<number>>();
+  lineSetToDisplay: number[][] = new Array<Array<number>>();
   displayExtendedLineSet: boolean = false;
 
   showCursorCoor: boolean = false;
-  cursorCoor: Coordinate;
+  cursorCoor?: Coordinate;
 
   process: RoomSegEditProcess = "None";
-  lineSetBeforeProcess: number[][];
-  lineBeingEditedIndex: number;
+  lineSetBeforeProcess: number[][] = new Array<Array<number>>();
+  lineBeingEditedIndex: number = 0;
   lineBeingEditedIsComplete: boolean = false;
-  moveLineProcessInfo: RoomSegMoveLineProcessInfo;
-  lineSetBeforeMoveProcess: number[][];
+  moveLineProcessInfo?: RoomSegMoveLineProcessInfo;
+  lineSetBeforeMoveProcess: number[][] = new Array<Array<number>>();
   updateTriggerer: boolean = false;
   alert: any;
 
-  firstExtremXValue: number;
-  firstExtremYValue: number;
-  secondExtremXValue: number;
-  secondExtremYValue: number;
+  firstExtremXValue: number = 0;
+  firstExtremYValue: number = 0;
+  secondExtremXValue: number = 0;
+  secondExtremYValue: number = 0;
 
   isFirstExtremXTouched: boolean = false;
   isFirstExtremYTouched: boolean = false;
@@ -54,14 +54,20 @@ export class RoomSegEditorComponent implements OnInit {
   isSecondExtremXValid: boolean = false;
   isSecondExtremYValid: boolean = false;
 
+  title: string = "Room Segmentation Editor";
+
   constructor(
     private aws: AwsService,
     private bc: BcService,
     private renderer: Renderer2,
     private modalService: NgbModal
-  ) { }
+  ) {
+  }
+  closeModal(): void {
+    this.modalService.dismissAll();
+  }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.aws.getObjectUrl(this.backgroundFile.s3Key, this.backgroundFile.contentType, 1).then(url => {
       this.imgSrc = url;
     })
@@ -100,7 +106,7 @@ export class RoomSegEditorComponent implements OnInit {
     } else {
       this.renderer.removeStyle(this.inputContainer.nativeElement, "margin-bottom");
     }
-    
+
     this.renderer.setStyle(this.inputContainer.nativeElement, "width", `${this.elementsDims.containerDimension.x}px`)
     this.renderer.setStyle(this.buttonContainer.nativeElement, "height", `${this.elementsDims.containerDimension.y}px`)
   }

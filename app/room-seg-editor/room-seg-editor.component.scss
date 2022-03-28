@@ -1,7 +1,8 @@
 #room-seg-display-container {
-    margin: 10px;
-    margin-bottom: 0;
-    user-select: none;
+    position: relative;
+      margin: 10px;
+      margin-bottom: 0;
+      user-select: none;
 }
 p {
     margin-top: 4px;
@@ -27,3 +28,4 @@ input::-webkit-inner-spin-button {
     margin-top: 38px;
     height: 38px;
 }
+  

@@ -1,32 +1,42 @@
+<div class="d-flex justify-content-between align-items-center">
+  <span></span>
+  <h1>{{title}}</h1>
+  <button type="button" class="btn btn-secondary me-2" (click)="closeModal()">Close</button>
+</div>
+<hr/>
 <div class="d-flex flex-row">
   <div class="d-flex flex-column">
     <div id="room-seg-display-container">
-      <room-seg-display *ngIf="imgSrc && lineSetToDisplay"
-        [imgSrc]="imgSrc" [lineSet]="lineSet" [lineSetToDisplay]="lineSetToDisplay" [process]="process" [lineBeingEditedIndex]="lineBeingEditedIndex" [triggerUpdate]="updateTriggerer"
-        (displayElementsDimEmitter)="getDisplayElementsDimensions($event)" (cursorCoorEmitter)="updateCursorCoordinates($event)"
-        (canvasClickEmitter)="onCanvasClickReceive()" (lineIndexEmitter)="onLineIndexReceive($event)" (elementSelectionEmitter)="moveLineProcessControl($event)">
+      <room-seg-display *ngIf="imgSrc && lineSetToDisplay" [imgSrc]="imgSrc" [lineSet]="lineSet"
+        [lineSetToDisplay]="lineSetToDisplay" [process]="process" [lineBeingEditedIndex]="lineBeingEditedIndex"
+        [triggerUpdate]="updateTriggerer" (displayElementsDimEmitter)="getDisplayElementsDimensions($event)"
+        (cursorCoorEmitter)="updateCursorCoordinates($event)" (canvasClickEmitter)="onCanvasClickReceive()"
+        (lineIndexEmitter)="onLineIndexReceive($event)" (elementSelectionEmitter)="moveLineProcessControl($event)">
       </room-seg-display>
     </div>
 
     <div class="text-center" *ngIf="showCursorCoor">
       <p>
         <em>
-            <span>Cursor Position: </span>
-            <span> x:{{cursorCoor.x}}</span>
-            <span> y:{{cursorCoor.y}}</span>
+          <span>Cursor Position: </span>
+          <span> x:{{cursorCoor.x}}</span>
+          <span> y:{{cursorCoor.y}}</span>
         </em>
       </p>
     </div>
   </div>
 
   <div id="button-container" #buttonContainer class="d-flex flex-column">
-    <ngb-alert [type]="alert.type" *ngIf="alert"  (closed)="closeAlert(alert)">{{ alert.message }}</ngb-alert>
+    <ngb-alert [type]="alert.type" *ngIf="alert" (closed)="closeAlert(alert)">{{ alert.message }}</ngb-alert>
     <ng-container *ngIf="elementsDims">
       <div class="d-flex flex-column mb-auto">
         <button class="btn btn-outline-secondary mb-1" (click)="toggleLineSetToDisplay()">Segment/Extended</button>
-        <button class="btn btn-outline-secondary mb-1" (click)="activateProcess('Add')" [disabled]="process !== 'None'">Add a Segmentation Line</button>
-        <button class="btn btn-outline-secondary mb-1" (click)="activateProcess('Remove')" [disabled]="process !== 'None'">Remove Segmentation Lines</button>
-        <button class="btn btn-outline-secondary mb-1" (click)="confrimSegmentationResult()" [disabled]="process !== 'None'">Confirm Result</button>
+        <button class="btn btn-outline-secondary mb-1" (click)="activateProcess('Add')"
+          [disabled]="process !== 'None'">Add a Segmentation Line</button>
+        <button class="btn btn-outline-secondary mb-1" (click)="activateProcess('Remove')"
+          [disabled]="process !== 'None'">Remove Segmentation Lines</button>
+        <button class="btn btn-outline-secondary mb-1" (click)="confrimSegmentationResult()"
+          [disabled]="process !== 'None'">Confirm Result</button>
       </div>
 
       <div class="d-flex flex-column" *ngIf="process !== 'None'">
@@ -42,41 +52,43 @@
     <div class="d-flex flex-row justify-content-around">
       <div class="form-group">
         <label for="firstExtremX" class="col-form-label">1st Extremity's X</label>
-        <input #firstExtremX class="form-control" placeholder="Input a coordinate value"  [value]="firstExtremXValue"
-          (keyup)="inputOnKey('firstExtremX', firstExtremX.value)"
-          type="number" required>
-        <div *ngIf="!isFirstExtremXValid && isFirstExtremXTouched" class="invalid-feedback d-block">Invalid input!</div>
+        <input #firstExtremX class="form-control" placeholder="Input a coordinate value" [value]="firstExtremXValue"
+          (keyup)="inputOnKey('firstExtremX', firstExtremX.value)" type="number" required>
+        <div *ngIf="!isFirstExtremXValid && isFirstExtremXTouched" class="invalid-feedback d-block">Invalid
+          input!</div>
       </div>
 
       <div class="form-group">
         <label for="firstExtremY" class="col-form-label">1st Extremity's Y</label>
         <input #firstExtremY class="form-control" placeholder="Input a coordinate value" [value]="firstExtremYValue"
-        (keyup)="inputOnKey('firstExtremY', firstExtremY.value)"
-        type="number" required>
-        <div *ngIf="!isFirstExtremYValid && isFirstExtremYTouched" class="invalid-feedback d-block">Invalid input!</div>
+          (keyup)="inputOnKey('firstExtremY', firstExtremY.value)" type="number" required>
+        <div *ngIf="!isFirstExtremYValid && isFirstExtremYTouched" class="invalid-feedback d-block">Invalid
+          input!</div>
       </div>
 
-      <button class="auto-align-button btn btn-outline-secondary" (click)="autoLineAlign(true)" [disabled]="!lineBeingEditedIsComplete">Auto Align</button>
+      <button class="auto-align-button btn btn-outline-secondary" (click)="autoLineAlign(true)"
+        [disabled]="!lineBeingEditedIsComplete">Auto Align</button>
     </div>
 
     <div class="d-flex flex-row justify-content-around">
       <div class="form-group">
         <label for="secondExtremX" class="col-form-label">2nd Extremity's' X</label>
         <input #secondExtremX class="form-control" placeholder="Input a coordinate value" [value]="secondExtremXValue"
-        (keyup)="inputOnKey('secondExtremX', secondExtremX.value)"
-        type="number" required>
-        <div *ngIf="!isSecondExtremXValid && isSecondExtremXTouched" class="invalid-feedback d-block">Invalid input!</div>
+          (keyup)="inputOnKey('secondExtremX', secondExtremX.value)" type="number" required>
+        <div *ngIf="!isSecondExtremXValid && isSecondExtremXTouched" class="invalid-feedback d-block">Invalid
+          input!</div>
       </div>
 
       <div class="form-group">
         <label for="secondExtremY" class="col-form-label">2nd Extremity's Y</label>
         <input #secondExtremY class="form-control" placeholder="Input a coordinate value" [value]="secondExtremYValue"
-        (keyup)="inputOnKey('secondExtremY', secondExtremY.value)"
-        type="number" required>
-        <div *ngIf="!isSecondExtremYValid && isSecondExtremYTouched" class="invalid-feedback d-block">Invalid input!</div>
+          (keyup)="inputOnKey('secondExtremY', secondExtremY.value)" type="number" required>
+        <div *ngIf="!isSecondExtremYValid && isSecondExtremYTouched" class="invalid-feedback d-block">Invalid
+          input!</div>
       </div>
 
-      <button class="auto-align-button btn btn-outline-secondary"  (click)="autoLineAlign(false)" [disabled]="!lineBeingEditedIsComplete">Auto Align</button>
+      <button class="auto-align-button btn btn-outline-secondary" (click)="autoLineAlign(false)"
+        [disabled]="!lineBeingEditedIsComplete">Auto Align</button>
     </div>
   </ng-container>
 </div>

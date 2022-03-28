@@ -1,7 +1,7 @@
 <div id="display-container" #displayContainer class="d-flex justify-content-center">
     <div id="display-dimension-container" #displayDimensionContainer
         (wheel)="zoomWithCursor($event)"
-        (mousedown)="shiftingProcessControlWithCursor(true, $event)" oncontextmenu="return false;" (mousemove)="shiftWithCursor($event)" 
+        (mousedown)="shiftingProcessControlWithCursor(true, $event)" oncontextmenu="return false;" (mousemove)="shiftWithCursor($event)"
         (mouseup)="shiftingProcessControlWithCursor(false, $event)" (mouseleave)="shiftingProcessControlWithCursor(false, $event)">
         <img id="background-image" #backgroundImage [src]="imgSrc" (load)="onImageLoad()">
         <svg #svgContainer [ngStyle]="{cursor: canvasCursor}"
@@ -13,7 +13,7 @@
 
             <circle *ngIf="lineBeingEditedExtremities[0]" [attr.cx]="lineBeingEditedExtremities[0]" [attr.cy]="lineBeingEditedExtremities[1]" r="3"/>
             <circle *ngIf="lineBeingEditedExtremities[2]" [attr.cx]="lineBeingEditedExtremities[2]" [attr.cy]="lineBeingEditedExtremities[3]" r="3"/>
-            
+
             <line #lines [ngStyle]="{'cursor': lineCursor, 'stroke-width': lineWidth}"
                 *ngFor="let line of lineSetToDisplayCoorAdjusted; let lineIndex = index;"
                 [attr.x1]="line[0]" [attr.y1]="line[1]" [attr.x2]="line[2]" [attr.y2]="line[3]"
@@ -22,60 +22,60 @@
         </svg>
     </div>
 
-    <div class="d-flex flex-column mr-auto">
+    <div class="d-flex flex-column me-auto">
         <div class="d-flex mt-1 mb-auto">
-            <button class="btn btn-outline-secondary ml-1" *ngIf="imgLoaded" (click)="resetLineThickness()">
+            <button class="btn btn-outline-secondary ms-1" *ngIf="imgLoaded" (click)="resetLineThickness()">
                 <i class="fas fa-sync"></i>
             </button>
-            <button class="btn btn-outline-secondary ml-1" *ngIf="imgLoaded" (click)="lineThicknessControl(true)" [disabled]="lineWidth === 3">
+            <button class="btn btn-outline-secondary ms-1" *ngIf="imgLoaded" (click)="lineThicknessControl(true)" [disabled]="lineWidth === 3">
                 <i class="fas fa-plus"></i>
             </button>
-            <button class="btn btn-outline-secondary ml-1" *ngIf="imgLoaded" (click)="lineThicknessControl(false)" [disabled]="lineWidth === 1">
+            <button class="btn btn-outline-secondary ms-1" *ngIf="imgLoaded" (click)="lineThicknessControl(false)" [disabled]="lineWidth === 1">
                 <i class="fas fa-minus"></i>
             </button>
         </div>
 
         <div class="d-flex mb-1">
-            <button class="btn btn-outline-secondary ml-1" *ngIf="imgLoaded" (click)="resetZoomInfo()">
+            <button class="btn btn-outline-secondary ms-1" *ngIf="imgLoaded" (click)="resetZoomInfo()">
                 <i class="fas fa-sync"></i>
             </button>
-            <button class="btn btn-outline-secondary ml-1" *ngIf="imgLoaded"
+            <button class="btn btn-outline-secondary ms-1" *ngIf="imgLoaded"
                 (mousedown)="zoomingProcessControl(true, true)" (mouseup)="zoomingProcessControl(false)" (mouseleave)="zoomingProcessControl(false)"
-                [disabled]="zoomInfo.percentage === 1">
+                [disabled]="zoomInfo.percentage === 0.2">
                 <i class="fas fa-search-plus"></i>
             </button>
-            <button class="btn btn-outline-secondary ml-1" *ngIf="imgLoaded"
+            <button class="btn btn-outline-secondary ms-1" *ngIf="imgLoaded"
                 (mousedown)="zoomingProcessControl(true, false)" (mouseup)="zoomingProcessControl(false)" (mouseleave)="zoomingProcessControl(false)"
-                [disabled]="zoomInfo.percentage === 0.2">
+                [disabled]="zoomInfo.percentage === 1">
                 <i class="fas fa-search-minus"></i>
             </button>
         </div>
     </div>
     <div #verticalShiftButtonContainer id="vertical-shift-button-container" class="d-flex flex-row">
-        <button #shiftUpButton class="shift-button btn btn-outline-secondary align-self-start" *ngIf="imgLoaded" 
+        <button #shiftUpButton class="shift-button btn btn-outline-secondary align-self-start" *ngIf="imgLoaded"
             (mousedown)="shiftingProcessControl(true, 'Up')" (mouseup)="shiftingProcessControl(false)" (mouseleave)="shiftingProcessControl(false)"
             [disabled]="zoomInfo.shift.y === 0">
             <i class="fas fa-arrow-up"></i>
         </button>
-        <button #shiftDownButton class="shift-button btn btn-outline-secondary align-self-end" *ngIf="imgLoaded" 
+        <button #shiftDownButton class="shift-button btn btn-outline-secondary align-self-end" *ngIf="imgLoaded"
             (mousedown)="shiftingProcessControl(true, 'Down')" (mouseup)="shiftingProcessControl(false)" (mouseleave)="shiftingProcessControl(false)"
             [disabled]="- zoomInfo.shift.y + dimContainerDimension.y >= zoomInfo.display.y - 1">
             <i class="fas fa-arrow-down"></i>
         </button>
     </div>
     <div #horizontalShiftButtonContainer id="horizontal-shift-button-container" class="d-flex flex-column align-self-center">
-        <button #shiftLeftButton class="shift-button btn btn-outline-secondary align-self-start" *ngIf="imgLoaded" 
+        <button #shiftLeftButton class="shift-button btn btn-outline-secondary align-self-start" *ngIf="imgLoaded"
             (mousedown)="shiftingProcessControl(true, 'Left')" (mouseup)="shiftingProcessControl(false)" (mouseleave)="shiftingProcessControl(false)"
             [disabled]="zoomInfo.shift.x === 0">
             <i class="fas fa-arrow-left"></i>
         </button>
-        <button #shiftRightButton class="shift-button btn btn-outline-secondary align-self-end" *ngIf="imgLoaded" 
+        <button #shiftRightButton class="shift-button btn btn-outline-secondary align-self-end" *ngIf="imgLoaded"
             (mousedown)="shiftingProcessControl(true, 'Right')" (mouseup)="shiftingProcessControl(false)" (mouseleave)="shiftingProcessControl(false)"
             [disabled]="zoomInfo.shift.x + dimContainerDimension.x >= zoomInfo.display.x - 1">
             <i class="fas fa-arrow-right"></i>
         </button>
     </div>
-    <div class="zoom-info mt-auto ml-auto text-center" *ngIf="imgLoaded">
+    <div class="zoom-info mt-auto ms-auto text-center" *ngIf="imgLoaded">
         <p>
           <em>
               <span>Display Ratio:{{zoomInfo.percentage}}</span>

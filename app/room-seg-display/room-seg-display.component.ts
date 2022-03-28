@@ -83,6 +83,9 @@ export class RoomSegDisplayComponent implements OnChanges {
   }
 
   public onImageLoad(): void {
+    this.containerDimension.x = window.innerWidth - 263;
+    this.containerDimension.y = window.innerHeight - 310;
+
     this.imgLoaded = true;
     this.imgDimension = {
       x: (this.backgroundImage.nativeElement as HTMLImageElement).naturalWidth,
@@ -205,7 +208,7 @@ export class RoomSegDisplayComponent implements OnChanges {
   public zoomingProcessControl(processStart: boolean, zoomIn?: boolean) {
     this.zooming = processStart;
     if (processStart) this.zoom(zoomIn);
-  } 
+  }
   private zoom(zoomIn: boolean): void {
     const zoomChange = zoomIn ? - 0.01 : 0.01;
     this.zoomInfo.percentage = Number((this.zoomInfo.percentage + zoomChange).toFixed(2));
@@ -213,7 +216,7 @@ export class RoomSegDisplayComponent implements OnChanges {
     this.zoomInfo.display.y = this.dimContainerDimension.y / this.zoomInfo.percentage;
     this.updateCanvasDisplayArea();
 
-    if (this.zooming) setTimeout(() => {this.zoom(zoomIn);}, 50); 
+    if (this.zooming) setTimeout(() => {this.zoom(zoomIn);}, 50);
   }
   public shiftingProcessControlWithCursor(processStart: boolean, event: any): void {
     this.shiftingWithCursor = processStart && event?.button === 2;
@@ -260,7 +263,7 @@ export class RoomSegDisplayComponent implements OnChanges {
     }
     this.updateCanvasDisplayArea();
 
-    if (this.shifting) setTimeout(() => {this.shift(direction);}, 50); 
+    if (this.shifting) setTimeout(() => {this.shift(direction);}, 50);
   }
   private updateCanvasDisplayArea(): void {
     this.applyZoomAndShiftConstraints();

@@ -1,56 +1,58 @@
 #display-container {
-    border: 1px solid black;
-}
-#display-dimension-container {
-    position: absolute;
-    overflow: hidden;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-}
-
-#background-image {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-}
-
-svg {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    z-index: 2;
-}
-line {
-    stroke: black;
-}
-circle {
-    fill: black;
-}
-
-button {
-    height: 30px;
-    width: 30px;
-    z-index: 3;
-}
-#vertical-shift-button-container {
-    position: absolute;
-}
-#horizontal-shift-button-container {
-    position: absolute;
-    left: 11px; // 10 from the left border, 1 from the border width
-}
-.shift-button {
-    position: absolute;
-    margin: 4px;
-}
-.fas {
     position: relative;
-    top: -4px;
-    left: -5.5px;
-}
-.zoom-info {
-    z-index: 3;
-    margin-bottom: 4px;
-    margin-right: 4px;
-    height: 16px;
-    font-size: small;
-}
+      border: 1px solid black;
+  }
+  #display-dimension-container {
+      position: absolute;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+  }
+  
+  #background-image {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+  }
+  
+  svg {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      z-index: 2;
+  }
+  line {
+      stroke: black;
+  }
+  circle {
+      fill: black;
+  }
+  
+  button {
+      height: 30px;
+      width: 30px;
+      z-index: 3;
+  }
+  #vertical-shift-button-container {
+      position: absolute;
+  }
+  #horizontal-shift-button-container {
+      position: absolute;
+      left: 11px; // 10 from the left border, 1 from the border width
+  }
+  .shift-button {
+      position: absolute;
+      margin: 4px;
+  }
+  .fas {
+      position: relative;
+      top: -4px;
+      left: -5.5px;
+  }
+  .zoom-info {
+      z-index: 3;
+      margin-bottom: 4px;
+      margin-right: 4px;
+      height: 16px;
+      font-size: small;
+  }
+  
