@@ -126,9 +126,11 @@ export class RoomSegDisplayComponent implements OnChanges {
 
     this.updateCanvasDisplayArea();
 
+    this.renderer.setStyle(this.verticalShiftButtonContainer.nativeElement, "left", `${this.containerDimension.x / 2 - 20}px`);
+    this.renderer.setStyle(this.horizontalShiftButtonContainer.nativeElement, "top", `${this.containerDimension.y / 2 - 20}px`);
     // 2 * 4 from buttons' margins, 2 from border displacements
-    this.renderer.setStyle(this.horizontalShiftButtonContainer.nativeElement, "width", `${this.containerDimension.x - 10}px`);
     this.renderer.setStyle(this.verticalShiftButtonContainer.nativeElement, "height", `${this.containerDimension.y - 10}px`);
+    this.renderer.setStyle(this.horizontalShiftButtonContainer.nativeElement, "width", `${this.containerDimension.x - 10}px`);
   }
   private adjustLineCoordinates(): void {
     this.lineSetCoorAdjusted = JSON.parse(JSON.stringify(this.lineSet));

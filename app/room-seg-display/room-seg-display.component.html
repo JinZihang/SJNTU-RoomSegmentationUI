@@ -57,19 +57,19 @@
             [disabled]="zoomInfo.shift.y === 0">
             <i class="fas fa-arrow-up"></i>
         </button>
-        <button #shiftDownButton class="shift-button btn btn-outline-secondary align-self-end" *ngIf="imgLoaded"
+        <button class="shift-button btn btn-outline-secondary align-self-end" *ngIf="imgLoaded"
             (mousedown)="shiftingProcessControl(true, 'Down')" (mouseup)="shiftingProcessControl(false)" (mouseleave)="shiftingProcessControl(false)"
             [disabled]="- zoomInfo.shift.y + dimContainerDimension.y >= zoomInfo.display.y - 1">
             <i class="fas fa-arrow-down"></i>
         </button>
     </div>
-    <div #horizontalShiftButtonContainer id="horizontal-shift-button-container" class="d-flex flex-column align-self-center">
+    <div #horizontalShiftButtonContainer id="horizontal-shift-button-container" class="d-flex flex-column">
         <button #shiftLeftButton class="shift-button btn btn-outline-secondary align-self-start" *ngIf="imgLoaded"
             (mousedown)="shiftingProcessControl(true, 'Left')" (mouseup)="shiftingProcessControl(false)" (mouseleave)="shiftingProcessControl(false)"
             [disabled]="zoomInfo.shift.x === 0">
             <i class="fas fa-arrow-left"></i>
         </button>
-        <button #shiftRightButton class="shift-button btn btn-outline-secondary align-self-end" *ngIf="imgLoaded"
+        <button class="shift-button btn btn-outline-secondary align-self-end" *ngIf="imgLoaded"
             (mousedown)="shiftingProcessControl(true, 'Right')" (mouseup)="shiftingProcessControl(false)" (mouseleave)="shiftingProcessControl(false)"
             [disabled]="zoomInfo.shift.x + dimContainerDimension.x >= zoomInfo.display.x - 1">
             <i class="fas fa-arrow-right"></i>

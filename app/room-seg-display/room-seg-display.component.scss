@@ -34,10 +34,11 @@
   }
   #vertical-shift-button-container {
       position: absolute;
+      top: 0;
   }
   #horizontal-shift-button-container {
       position: absolute;
-      left: 11px; // 10 from the left border, 1 from the border width
+      left: 0;
   }
   .shift-button {
       position: absolute;
